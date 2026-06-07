@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 import Logo from "@/components/ui/logo";
+import { OnboardingProvider } from "./context/OnboardingContext";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -18,13 +19,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={geist.variable}>
       <body className={cn("font-sans bg-background text-foreground")}>
-        
-        <header className="fixed top-0 left-0 w-full flex items-center justify-end px-6 py-4 z-50">
-          <Logo />
-        </header>
-
+        <OnboardingProvider>
         {children}
-
+        </OnboardingProvider>
       </body>
     </html>
   );

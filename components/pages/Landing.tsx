@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 import Input from "@/components/ui/input";
 import { Spotlight } from "@/components/ui/spotlight";
-import { LoginModal } from "@/components/modal/modalLogin";
+import  LoginModal  from "@/components/modal/modalLogin";
 import { Instrument_Serif } from "next/font/google";
 
 const instrumentSerif = Instrument_Serif({
