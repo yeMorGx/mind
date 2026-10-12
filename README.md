@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mind
 
-## Getting Started
+Biblioteca pessoal de prompts feita com Next.js, React, TypeScript, Tailwind CSS e Firebase.
 
-First, run the development server:
+## O que já funciona
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Cadastro por e-mail e senha com onboarding salvo no Cloud Firestore.
+- Login por e-mail/senha e Google, recuperação de senha e provedor Discord OIDC opcional.
+- Criação de workspace pessoal ou de equipe.
+- Criação, edição, busca, exclusão e favoritar prompts no workspace.
+- Regras do Firestore que limitam cada perfil e workspace ao proprietário.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Rodar localmente
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Instale as dependências com `npm install`.
+2. Configure o Firebase seguindo [FIREBASE_SETUP.md](./FIREBASE_SETUP.md).
+3. Inicie o servidor com `npm run dev` e abra [http://localhost:3000](http://localhost:3000).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Rotas principais: `/` (landing/login), `/register` (onboarding) e `/home` (biblioteca de prompts).
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` inicia o servidor local.
+- `npm run build` gera a versão de produção.
+- `npm run lint` executa ESLint.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Limites atuais
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Convites ficam salvos como pendentes, sem envio de e-mail. O workspace ainda é privado ao proprietário; colaboração exige um fluxo de convite e regras de acesso adicionais. O Discord precisa de configuração OIDC no Firebase Console.

@@ -1,7 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { useOnboarding } from "@/app/context/OnboardingContext";
+import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
+import { saveOnboardingProgress } from "@/lib/firebase/data";
 
 const sources = [
   {
@@ -40,6 +44,44 @@ const sources = [
 
 export default function Step3Page() {
   const router = useRouter();
+  const { user, ready } = useOnboardingGuard();
+  const { data, updateData } = useOnboarding();
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+
+  async function selectSource(source: string) {
+    if (!user) return;
+    setPending(true);
+    setError("");
+    try {
+      await saveOnboardingProgress(user, { source });
+      updateData({ source });
+      router.push("/register/step-4");
+    } catch {
+      setError("Não foi possível salvar sua resposta. Tente novamente.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function skipStep() {
+    if (!user) return;
+    setPending(true);
+    setError("");
+    try {
+      await saveOnboardingProgress(user, { source: "" });
+      updateData({ source: "" });
+      router.push("/register/step-4");
+    } catch {
+      setError("Não foi possível continuar. Tente novamente.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  if (!ready) {
+    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando cadastro...</main>;
+  }
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
@@ -78,10 +120,9 @@ export default function Step3Page() {
             {sources.map((source) => (
               <button
                 key={source.title}
-                onClick={() =>
-                  router.push("/register/step-4")
-                }
-                className="
+                disabled={pending}
+                onClick={() => void selectSource(source.title)}
+                className={`
                   rounded-2xl
                   border
                   border-white/10
@@ -92,7 +133,10 @@ export default function Step3Page() {
                   hover:border-white/30
                   hover:bg-white/[0.06]
                   hover:scale-[1.02]
-                "
+                  disabled:cursor-wait
+                  disabled:opacity-60
+                  ${data.source === source.title ? "border-white/40 bg-white/[0.08]" : ""}
+                `}
               >
                 <div className="text-3xl">
                   {source.emoji}
@@ -107,17 +151,21 @@ export default function Step3Page() {
           </div>
 
           <button
-            onClick={() => router.push("/register/step-4")}
+            disabled={pending}
+            onClick={() => void skipStep()}
             className="
               mt-8
               text-sm
               text-white/50
               hover:text-white
               transition
+              disabled:opacity-50
             "
           >
             Pular esta etapa
           </button>
+
+          {error && <p role="alert" className="mt-4 text-sm text-red-300">{error}</p>}
 
         </motion.div>
       </div>

@@ -3,191 +3,164 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import type { User } from "firebase/auth";
+import { useOnboarding } from "@/app/context/OnboardingContext";
+import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
+import { createWorkspaceForUser, type OnboardingData } from "@/lib/firebase/data";
 
-const icons = [
-  "🧠",
-  "🚀",
-  "💻",
-  "📚",
-  "⚡",
-  "🔥",
-  "🎯",
-  "✨",
-];
+const icons = ["🧠", "🚀", "💻", "📚", "⚡", "🔥", "🎯", "✨"];
 
 export default function Step7Page() {
-  const router = useRouter();
-
-  const [workspace, setWorkspace] =
-    useState("");
-
-  const [selectedIcon, setSelectedIcon] =
-    useState("🧠");
-
-  const slug = workspace
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-");
+  const { user, ready } = useOnboardingGuard();
+  const { data, updateData } = useOnboarding();
+  if (!ready || !user) {
+    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando cadastro...</main>;
+  }
 
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+    <Step7Form
+      key={user.uid}
+      user={user}
+      initialWorkspaceName={data.workspaceName}
+      initialWorkspaceIcon={data.workspaceIcon || "🧠"}
+      updateData={updateData}
+    />
+  );
+}
+
+function Step7Form({
+  user,
+  initialWorkspaceName,
+  initialWorkspaceIcon,
+  updateData,
+}: {
+  user: User;
+  initialWorkspaceName: string;
+  initialWorkspaceIcon: string;
+  updateData: (values: Partial<OnboardingData>) => void;
+}) {
+  const router = useRouter();
+  const [workspace, setWorkspace] = useState(initialWorkspaceName);
+  const [selectedIcon, setSelectedIcon] = useState(initialWorkspaceIcon);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+  const { data } = useOnboarding();
+
+  const slug = workspace
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  async function finishWorkspace() {
+    if (!user) return;
+    if (!workspace.trim()) {
+      setError("Digite um nome para o workspace.");
+      return;
+    }
+
+    setPending(true);
+    setError("");
+    const values = {
+      ...data,
+      workspaceName: workspace.trim(),
+      workspaceIcon: selectedIcon,
+    };
+
+    try {
+      const workspaceId = await createWorkspaceForUser(user, values);
+      updateData({ ...values, primaryWorkspaceId: workspaceId, onboardingComplete: true });
+      router.push("/register/finish");
+    } catch (workspaceError) {
+      setError(workspaceError instanceof Error ? workspaceError.message : "Não foi possível criar seu workspace. Tente novamente.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
       <div className="w-full max-w-2xl">
-
         <div className="mb-10">
-          <p className="text-sm text-white/50">
-            Passo 7 de 7
-          </p>
-
+          <p className="text-sm text-white/50">Passo 7 de 7</p>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
             <div className="h-full w-full rounded-full bg-white" />
           </div>
         </div>
 
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 20,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-        >
-          <h1 className="text-4xl font-bold">
-            Crie seu Workspace
-          </h1>
-
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-4xl font-bold">Crie seu Workspace</h1>
           <p className="mt-3 text-white/60">
             Esse será o espaço onde seus prompts e coleções ficarão organizados.
           </p>
 
           <div className="mt-8">
-
-            <label className="mb-2 block text-sm text-white/50">
+            <label htmlFor="workspace-name" className="mb-2 block text-sm text-white/50">
               Nome do Workspace
             </label>
-
             <input
+              id="workspace-name"
+              required
               value={workspace}
-              onChange={(e) =>
-                setWorkspace(e.target.value)
-              }
+              onChange={(event) => setWorkspace(event.target.value)}
               placeholder="Prompt Vault"
-              className="
-                w-full
-                rounded-xl
-                border
-                border-white/10
-                bg-white/5
-                px-4
-                py-4
-                outline-none
-                transition
-                focus:border-white/30
-              "
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-4 outline-none transition focus:border-white/30"
             />
-
           </div>
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <p className="text-sm text-white/50">
-              URL do Workspace
-            </p>
-
-            <p className="mt-2 font-medium">
-              mind.app/{slug || "workspace"}
-            </p>
+            <p className="text-sm text-white/50">Endereço sugerido</p>
+            <p className="mt-2 font-medium">mind.app/{slug || "workspace"}</p>
           </div>
 
           <div className="mt-8">
-            <p className="mb-4 text-sm text-white/50">
-              Escolha um ícone
-            </p>
-
+            <p className="mb-4 text-sm text-white/50">Escolha um ícone</p>
             <div className="grid grid-cols-4 gap-3">
-
               {icons.map((icon) => (
                 <button
                   key={icon}
-                  onClick={() =>
-                    setSelectedIcon(icon)
-                  }
-                  className={`
-                    h-16
-                    rounded-xl
-                    text-3xl
-                    transition
-                    ${
-                      selectedIcon === icon
-                        ? "border border-white bg-white/10"
-                        : "border border-white/10 bg-white/[0.03]"
-                    }
-                  `}
+                  type="button"
+                  aria-label={`Usar ícone ${icon}`}
+                  aria-pressed={selectedIcon === icon}
+                  onClick={() => setSelectedIcon(icon)}
+                  className={`h-16 rounded-xl text-3xl transition ${selectedIcon === icon ? "border border-white bg-white/10" : "border border-white/10 bg-white/[0.03]"}`}
                 >
                   {icon}
                 </button>
               ))}
-
             </div>
           </div>
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <p className="text-sm text-white/50">
-              Preview
-            </p>
-
+            <p className="text-sm text-white/50">Preview</p>
             <div className="mt-4 flex items-center gap-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-2xl">
                 {selectedIcon}
               </div>
-
               <div>
-                <h3 className="font-medium">
-                  {workspace || "Meu Workspace"}
-                </h3>
-
-                <p className="text-sm text-white/50">
-                  mind.app/{slug || "workspace"}
-                </p>
+                <h3 className="font-medium">{workspace.trim() || "Meu Workspace"}</h3>
+                <p className="text-sm text-white/50">mind.app/{slug || "workspace"}</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 flex justify-between">
+          {error && <p role="alert" className="mt-4 text-sm text-red-300">{error}</p>}
 
-            <button
-              onClick={() => router.back()}
-              className="
-                rounded-xl
-                border
-                border-white/10
-                px-6
-                py-3
-              "
-            >
+          <div className="mt-8 flex justify-between">
+            <button onClick={() => router.back()} className="rounded-xl border border-white/10 px-6 py-3">
               Voltar
             </button>
-
             <button
-              onClick={() =>
-                router.push("/register/finish")
-              }
-              className="
-                rounded-xl
-                bg-white
-                px-6
-                py-3
-                font-semibold
-                text-black
-              "
+              disabled={pending || !workspace.trim()}
+              onClick={() => void finishWorkspace()}
+              className="rounded-xl bg-white px-6 py-3 font-semibold text-black disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Criar Workspace →
+              {pending ? "Criando..." : "Criar Workspace →"}
             </button>
-
           </div>
-
         </motion.div>
-
       </div>
     </main>
   );

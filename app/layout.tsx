@@ -1,10 +1,13 @@
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 
-import Logo from "@/components/ui/logo";
 import { OnboardingProvider } from "./context/OnboardingContext";
+
+export const metadata = {
+  title: "Mind — sua biblioteca de prompts",
+  description: "Salve, organize e encontre seus prompts em um só lugar.",
+};
 
 const geist = Geist({
   subsets: ["latin"],
@@ -20,7 +23,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={geist.variable}>
       <body className={cn("font-sans bg-background text-foreground")}>
         <OnboardingProvider>
-        {children}
+          {children}
         </OnboardingProvider>
       </body>
     </html>

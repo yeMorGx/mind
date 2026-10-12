@@ -1,12 +1,23 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { FaDiscord } from "react-icons/fa";
+import {
+  GoogleAuthProvider,
+  OAuthProvider,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  type UserCredential,
+} from "firebase/auth";
 
 import Logo from "@/components/ui/logo";
+import { getFirebaseServices } from "@/lib/firebase/client";
+import { ensureUserProfile, getAuthDestination, getFirebaseAuthMessage } from "@/lib/firebase/auth";
 
 type Props = {
   isOpen: boolean;
@@ -18,6 +29,85 @@ export default function LoginModal({
   onClose,
 }: Props) {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [pending, setPending] = useState(false);
+
+  async function finishSignIn(action: () => Promise<UserCredential>) {
+    setPending(true);
+    setError("");
+    setNotice("");
+    try {
+      const credential = await action();
+      await ensureUserProfile(credential.user);
+      const destination = await getAuthDestination(credential.user);
+      onClose();
+      router.push(destination);
+    } catch (signInError) {
+      setError(getFirebaseAuthMessage(signInError));
+    } finally {
+      setPending(false);
+    }
+  }
+
+  function handleEmailSignIn() {
+    return finishSignIn(() => {
+      const services = getFirebaseServices();
+      if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
+      return signInWithEmailAndPassword(services.auth, email.trim(), password);
+    });
+  }
+
+  function handleGoogleSignIn() {
+    return finishSignIn(() => {
+      const services = getFirebaseServices();
+      if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
+      return signInWithPopup(services.auth, new GoogleAuthProvider());
+    });
+  }
+
+  function handleDiscordSignIn() {
+    return finishSignIn(() => {
+      const services = getFirebaseServices();
+      if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
+      return signInWithPopup(services.auth, new OAuthProvider("oidc.discord"));
+    });
+  }
+
+  async function handlePasswordReset() {
+    setError("");
+    setNotice("");
+    if (!email.trim()) {
+      setError("Digite seu e-mail para receber o link de redefinição.");
+      return;
+    }
+
+    const services = getFirebaseServices();
+    if (!services) {
+      setError("Configure o Firebase no arquivo .env.local.");
+      return;
+    }
+
+    setPending(true);
+    try {
+      await sendPasswordResetEmail(services.auth, email.trim());
+      setNotice("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha.");
+    } catch (resetError) {
+      const code =
+        typeof resetError === "object" && resetError !== null && "code" in resetError
+          ? String(resetError.code)
+          : "";
+      if (code === "auth/user-not-found") {
+        setNotice("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha.");
+      } else {
+        setError(getFirebaseAuthMessage(resetError));
+      }
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -39,6 +129,9 @@ export default function LoginModal({
 
           {/* Modal */}
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="login-modal-title"
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
             initial={{
               opacity: 0,
@@ -58,7 +151,8 @@ export default function LoginModal({
                 relative
                 w-full
                 max-w-6xl
-                overflow-hidden
+                max-h-[calc(100vh-2rem)]
+                overflow-y-auto
                 rounded-[32px]
                 border
                 border-white/10
@@ -66,14 +160,14 @@ export default function LoginModal({
                 shadow-2xl
               "
             >
-              <div className="grid min-h-[680px] md:grid-cols-[1fr_1.1fr]">
+              <div className="grid md:min-h-[680px] md:grid-cols-[1fr_1.1fr]">
                 {/* LEFT */}
-                <div className="flex flex-col justify-center p-12 lg:p-16">
+                <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-16">
                   <div className="mb-4 inline-flex w-fit rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/60">
                     ✨ Organize seus prompts em um único lugar
                   </div>
 
-                  <h1 className="mb-3 text-5xl font-semibold text-white">
+                  <h1 id="login-modal-title" className="mb-3 text-5xl font-semibold text-white">
                     Bem-vindo ao Mind.
                   </h1>
 
@@ -83,6 +177,9 @@ export default function LoginModal({
 
                   <div className="space-y-3">
                     <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => void handleGoogleSignIn()}
                       className="
                         flex
                         w-full
@@ -103,6 +200,9 @@ export default function LoginModal({
                     </button>
 
                     <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => void handleDiscordSignIn()}
                       className="
                         flex
                         w-full
@@ -130,8 +230,19 @@ export default function LoginModal({
                       <div className="h-px flex-1 bg-white/10" />
                     </div>
 
+                    <form
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        void handleEmailSignIn();
+                      }}
+                      className="space-y-3"
+                    >
                     <input
+                      required
                       type="email"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
                       placeholder="Email"
                       className="
                         w-full
@@ -150,7 +261,11 @@ export default function LoginModal({
                     />
 
                     <input
+                      required
                       type="password"
+                      autoComplete="current-password"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
                       placeholder="Senha"
                       className="
                         w-full
@@ -169,12 +284,17 @@ export default function LoginModal({
                     />
 
                     <div className="flex justify-end">
-                      <button className="text-sm text-white/50 transition hover:text-white">
+                      <button type="button" onClick={() => void handlePasswordReset()} disabled={pending} className="text-sm text-white/50 transition hover:text-white disabled:opacity-50">
                         Esqueceu sua senha?
                       </button>
                     </div>
 
+                    {error && <p role="alert" className="rounded-lg border border-red-400/20 bg-red-400/5 p-3 text-sm text-red-200">{error}</p>}
+                    {notice && <p role="status" className="rounded-lg border border-emerald-400/20 bg-emerald-400/5 p-3 text-sm text-emerald-100">{notice}</p>}
+
                     <button
+                      type="submit"
+                      disabled={pending || !email.trim() || !password}
                       className="
                         w-full
                         rounded-xl
@@ -187,12 +307,14 @@ export default function LoginModal({
                         active:scale-[0.98]
                       "
                     >
-                      Entrar no Mind →
+                      {pending ? "Aguarde..." : "Entrar no Mind →"}
                     </button>
+                    </form>
 
                     <div className="pt-3 text-center text-sm text-white/50">
                       Não possui conta?{" "}
                       <button
+                        type="button"
                         onClick={() =>
                           router.push("/register")
                         }
@@ -222,7 +344,7 @@ export default function LoginModal({
                     </h2>
 
                     <p className="mt-3 text-white/60">
-                      Crie coleções, organize ideias e mantenha tudo sincronizado.
+                      Organize suas ideias e encontre seus prompts quando precisar.
                     </p>
                   </div>
 

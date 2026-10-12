@@ -11,7 +11,7 @@ export default function OnboardingLayout({
   children,
   step,
 }: Props) {
-  const percentage = (step / 8) * 100;
+  const percentage = (step / 7) * 100;
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -19,7 +19,7 @@ export default function OnboardingLayout({
 
         <div className="mb-8">
           <p className="text-sm text-white/50">
-            Passo {step} de 8
+            Passo {step} de 7
           </p>
 
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">

@@ -1,12 +1,23 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useOnboarding } from "@/app/context/OnboardingContext";
+import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
 
 export default function FinishPage() {
   const router = useRouter();
   const { data } = useOnboarding();
+  const { ready } = useOnboardingGuard();
+
+  useEffect(() => {
+    if (ready && !data.onboardingComplete) router.replace("/register/step-7");
+  }, [data.onboardingComplete, ready, router]);
+
+  if (!ready || !data.onboardingComplete) {
+    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando seu workspace...</main>;
+  }
 
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
@@ -102,13 +113,13 @@ export default function FinishPage() {
               <li>✓ Seu workspace foi criado</li>
               <li>✓ Sua conta está pronta</li>
               <li>✓ Você pode começar a salvar prompts</li>
-              <li>✓ Coleções serão criadas automaticamente</li>
+              <li>✓ Seus prompts ficam salvos no workspace</li>
             </ul>
           </div>
 
           <button
             onClick={() =>
-              router.push("/dashboard")
+              router.push("/home")
             }
             className="
               mt-8
