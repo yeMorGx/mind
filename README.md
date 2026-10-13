@@ -7,6 +7,7 @@ Biblioteca de prompts com Next.js, React, TypeScript, Tailwind CSS e Firebase. O
 - Login por Google e e-mail/senha; recuperação de senha e Discord OIDC opcional.
 - Onboarding e contas existentes no Firebase Auth e no Firestore.
 - Criação, edição, busca, exclusão e favoritos na biblioteca privada do proprietário.
+- Clique no card para abrir a página individual em `/home/prompts/<id>`, com o texto completo, autor e datas. O botão de lápis mantém a edição disponível. Essa página usa o Firebase e exige a conta do proprietário.
 - Modal de login compacto com o visual original e imagem lateral.
 
 Para rodar localmente, instale as dependências com `npm install`, configure as variáveis Firebase seguindo [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) e execute `npm run dev`.

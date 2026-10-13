@@ -10,11 +10,14 @@ import type { Prompt } from "@/lib/supabase/types";
 
 /* eslint-disable @next/next/no-img-element -- Supabase returns short-lived signed image URLs. */
 
-export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [] }: {
+export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [], visibility = "public" }: {
   prompt: Prompt;
   creatorPrompts?: Prompt[];
   relatedPrompts?: Prompt[];
+  visibility?: "public" | "private";
 }) {
+  const isPrivate = visibility === "private";
+  const backHref = isPrivate ? "/home" : "/";
   const [activeImage, setActiveImage] = useState(0);
   const [copied, setCopied] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
@@ -58,18 +61,18 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
-        <Link href="/" aria-label="Mind — página inicial"><Logo /></Link>
+        <Link href={backHref} aria-label="Mind — página inicial"><Logo /></Link>
         <div className="flex items-center gap-2">
-          <button type="button" onClick={() => void sharePage()} className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white sm:px-4">
+          {!isPrivate && <button type="button" onClick={() => void sharePage()} className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white sm:px-4">
             <Share2 size={16} /> <span className="hidden sm:inline">Compartilhar</span>
-          </button>
-          <Link href="/" className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:bg-white/90">Explorar prompts</Link>
+          </button>}
+          <Link href={backHref} className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:bg-white/90">{isPrivate ? "Minha biblioteca" : "Explorar prompts"}</Link>
         </div>
       </header>
 
       <article className="mx-auto grid w-full max-w-7xl gap-10 px-5 pb-20 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,.95fr)] lg:gap-16 lg:pt-12">
         <section>
-          <Link href="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white"><ArrowLeft size={15} /> Todos os prompts</Link>
+          <Link href={backHref} className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white"><ArrowLeft size={15} /> {isPrivate ? "Voltar à biblioteca" : "Todos os prompts"}</Link>
           <div className="mt-8 flex flex-wrap gap-2">
             {prompt.category && <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70">{prompt.category}</span>}
             {prompt.model && <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/50">{prompt.model}</span>}
@@ -79,7 +82,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
           <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-white/45">
             <a href="#creator" className="hover:text-white">por <strong className="font-medium text-white/75">{creatorName}</strong></a>
             <span aria-hidden="true">·</span>
-            <span>Grátis para experimentar</span>
+            <span>{isPrivate ? "Privado · sua biblioteca" : "Grátis para experimentar"}</span>
           </div>
 
           {displayedImages.length > 0 ? (
@@ -102,7 +105,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
               </div>}
             </div>
           ) : (
-            <div className="mt-9 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-white/15 text-sm text-white/35">Nenhum exemplo visual nesta publicação.</div>
+            <div className="mt-9 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-white/15 text-sm text-white/35">Nenhuma imagem adicionada a este prompt.</div>
           )}
 
           {references.length > 0 && <section className="mt-8">
@@ -145,8 +148,8 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             <pre className="mt-6 max-h-[520px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-white/[0.07] bg-black/40 p-4 font-mono text-sm leading-6 text-white/75">{prompt.content}</pre>
             {shareMessage && <p role="status" className="mt-3 text-sm text-white/60">{shareMessage}</p>}
             <p role="status" className="sr-only">{copied ? "Prompt copiado para a área de transferência." : ""}</p>
-            <button type="button" onClick={() => void sharePage()} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-3 text-sm text-white/70 hover:bg-white/5 hover:text-white"><ExternalLink size={15} /> Compartilhar esta página</button>
-            <p className="mt-4 text-center text-xs leading-5 text-white/35">Sem pagamento e sem cadastro para visualizar ou copiar.</p>
+            {!isPrivate && <button type="button" onClick={() => void sharePage()} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-3 text-sm text-white/70 hover:bg-white/5 hover:text-white"><ExternalLink size={15} /> Compartilhar esta página</button>}
+            <p className="mt-4 text-center text-xs leading-5 text-white/35">{isPrivate ? "Este prompt pertence à sua biblioteca. O acesso exige sua conta." : "Sem pagamento e sem cadastro para visualizar ou copiar."}</p>
           </div>
 
           <section id="creator" aria-labelledby="creator-heading" className="mt-5 scroll-mt-8 rounded-2xl border border-white/10 p-5 sm:p-7">
@@ -158,7 +161,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
                 {prompt.creatorSlug && <p className="mt-1 break-words text-sm text-white/40">@{prompt.creatorSlug}</p>}
               </div>
             </div>
-            <p className="mt-4 text-sm leading-6 text-white/50">Compartilhou este prompt e seus exemplos de resultado com a comunidade Mind.</p>
+            <p className="mt-4 text-sm leading-6 text-white/50">{isPrivate ? "Autor deste prompt na sua biblioteca." : "Compartilhou este prompt e seus exemplos de resultado com a comunidade Mind."}</p>
             {creatorPrompts.length > 0 && <a href="#creator-prompts" className="mt-4 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">Mais prompts deste criador <ArrowRight size={15} /></a>}
           </section>
 
@@ -168,7 +171,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
               {[
                 ["Ferramenta / modelo", prompt.model || "Não informado"],
                 ["Categoria", prompt.category || "Não informada"],
-                ["Acesso", "Gratuito"],
+                ["Acesso", isPrivate ? "Privado" : "Gratuito"],
                 ["Criado em", formatDate(prompt.createdAt)],
                 ...(prompt.updatedAt > prompt.createdAt ? [["Atualizado em", formatDate(prompt.updatedAt)]] : []),
               ].map(([label, value]) => <div key={label} className="flex items-start justify-between gap-5"><dt className="text-white/40">{label}</dt><dd className="max-w-[60%] break-words text-right text-white/75">{value}</dd></div>)}

@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { signOut } from "firebase/auth";
 import { motion } from "framer-motion";
 import { Instrument_Serif } from "next/font/google";
-import { Copy, Star, Trash2 } from "lucide-react";
+import { Copy, Pencil, Star, Trash2 } from "lucide-react";
 import Sidebar, { type PromptView } from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import Input from "@/components/ui/input";
@@ -253,26 +254,29 @@ export default function HomePage() {
                   <motion.article
                     key={prompt.id}
                     whileHover={{ y: -3 }}
-                    className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-md"
+                    className="group relative rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-md"
                   >
                     <div className="flex items-start gap-3">
-                      <button type="button" onClick={() => openPrompt(prompt)} className="min-w-0 flex-1 text-left">
+                      <Link href={`/home/prompts/${encodeURIComponent(prompt.id)}`} aria-label={`Abrir página do prompt ${prompt.title}`} className="min-w-0 flex-1 text-left outline-none after:absolute after:inset-0 after:rounded-2xl focus-visible:after:ring-2 focus-visible:after:ring-white/50">
                         <h3 className="truncate font-medium">{prompt.title}</h3>
                         <p className="mt-2 line-clamp-4 whitespace-pre-wrap text-sm text-white/50">{prompt.content}</p>
-                      </button>
+                      </Link>
                       <button
                         type="button"
                         aria-label={prompt.isFavorite ? "Remove from favorites" : "Add to favorites"}
                         aria-pressed={prompt.isFavorite}
                         onClick={() => void toggleFavorite(prompt)}
-                        className="rounded-lg p-2 text-white/45 transition hover:bg-white/5 hover:text-yellow-200"
+                        className="relative z-10 rounded-lg p-2 text-white/45 transition hover:bg-white/5 hover:text-yellow-200"
                       >
                         <Star size={17} fill={prompt.isFavorite ? "currentColor" : "none"} />
                       </button>
                     </div>
                     <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-white/40">
                       <span>{prompt.updatedAt ? `Updated ${new Date(prompt.updatedAt).toLocaleDateString("pt-BR")}` : "Recently saved"}</span>
-                      <div className="flex items-center gap-1">
+                      <div className="relative z-10 flex items-center gap-1">
+                        <button type="button" aria-label={`Editar ${prompt.title}`} title="Editar prompt" onClick={() => openPrompt(prompt)} className="rounded-md p-1.5 text-white/45 transition hover:bg-white/5 hover:text-white">
+                          <Pencil size={14} />
+                        </button>
                         <button
                           type="button"
                           aria-label={`Copiar ${prompt.title}`}

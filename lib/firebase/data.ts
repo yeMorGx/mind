@@ -36,6 +36,7 @@ export type Prompt = {
   title: string;
   content: string;
   isFavorite: boolean;
+  createdAt: number | null;
   updatedAt: number | null;
 };
 
@@ -141,6 +142,7 @@ export function subscribeToPrompts(
             title: String(prompt.title ?? ""),
             content: String(prompt.content ?? ""),
             isFavorite: Boolean(prompt.isFavorite),
+            createdAt: (prompt.createdAt as Timestamp | undefined)?.toMillis() ?? null,
             updatedAt: (prompt.updatedAt as Timestamp | undefined)?.toMillis() ?? null,
           };
         }),
@@ -148,6 +150,21 @@ export function subscribeToPrompts(
     },
     onError,
   );
+}
+
+export async function getPrompt(workspaceId: string, promptId: string): Promise<Prompt | null> {
+  const { db } = requireFirebaseServices();
+  const snapshot = await getDoc(doc(db, "workspaces", workspaceId, "prompts", promptId));
+  if (!snapshot.exists()) return null;
+  const prompt = snapshot.data();
+  return {
+    id: snapshot.id,
+    title: String(prompt.title ?? ""),
+    content: String(prompt.content ?? ""),
+    isFavorite: Boolean(prompt.isFavorite),
+    createdAt: (prompt.createdAt as Timestamp | undefined)?.toMillis() ?? null,
+    updatedAt: (prompt.updatedAt as Timestamp | undefined)?.toMillis() ?? null,
+  };
 }
 
 export async function createPrompt(
