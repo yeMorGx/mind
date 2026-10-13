@@ -89,7 +89,7 @@ export default function RegisterPage() {
 
         {!supabaseConfigured && (
           <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-100/80">
-            Configure as variáveis Supabase no arquivo .env.local para habilitar o cadastro.
+            O cadastro está temporariamente indisponível. Tente novamente em instantes.
           </p>
         )}
         {notice && <p role="status" className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-4 text-sm text-emerald-100">{notice}</p>}

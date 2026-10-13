@@ -207,29 +207,30 @@ export default function HomePage() {
 
       <main className="ml-0 flex min-h-screen flex-col md:ml-72">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 md:px-8">
-          <section className="flex flex-col items-start justify-center gap-8 py-14 sm:flex-row sm:items-end sm:justify-between sm:py-20">
-            <div>
-              <p className="mb-4 text-xs uppercase tracking-[0.2em] text-white/40">Painel do criador</p>
-              <motion.h1
-                initial={{ opacity: 0, filter: "blur(10px)", y: 15 }}
-                animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                transition={{ duration: 0.8 }}
-                className={`${instrumentSerif.className} max-w-2xl text-5xl leading-[1.05] sm:text-6xl`}
-              >
-                Transforme seus prompts em páginas para compartilhar.
-              </motion.h1>
-              <p className="mt-4 max-w-xl text-sm leading-6 text-white/50">
-                Mostre exemplos, explique como usou e publique um link que qualquer pessoa pode abrir e copiar.
-              </p>
-            </div>
-            <button type="button" onClick={() => openNewPrompt()} className="shrink-0 rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-white/90">
-              + Criar publicação
-            </button>
-          </section>
+          <div className="flex flex-1 flex-col items-center justify-center py-16">
+            <motion.h1
+              initial={{ opacity: 0, filter: "blur(10px)", y: 15 }}
+              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+              transition={{ duration: 1 }}
+              className={`${instrumentSerif.className} mb-8 text-center text-5xl`}
+            >
+              Keep every great prompt organized.
+            </motion.h1>
 
-          <div className="mb-8 flex w-full max-w-3xl flex-col gap-3 sm:flex-row">
-            <Input value={draftTitle} onChange={setDraftTitle} onEnter={() => openNewPrompt(draftTitle.trim())} placeholder="Dê um título ao novo prompt…" className="py-4" />
-            <button type="button" onClick={() => openNewPrompt(draftTitle.trim())} className="rounded-xl border border-white/15 px-5 py-3 text-sm text-white/80 hover:bg-white/5">Começar</button>
+            <div className="w-full max-w-3xl">
+              <Input
+                value={draftTitle}
+                onChange={setDraftTitle}
+                onEnter={() => openNewPrompt(draftTitle.trim())}
+                placeholder="Start with a prompt title..."
+                className="py-4"
+              />
+              <div className="mt-4 flex justify-center">
+                <button onClick={() => openNewPrompt(draftTitle.trim())} className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90">
+                  + New prompt
+                </button>
+              </div>
+            </div>
           </div>
 
           {(pageError || notice) && (
@@ -249,7 +250,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {!supabaseConfigured && <p role="alert" className="mb-5 rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-100">Configure o Supabase para carregar seu conteúdo.</p>}
+            {!supabaseConfigured && <p role="alert" className="mb-5 rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-100">Seu conteúdo está temporariamente indisponível. Tente novamente em instantes.</p>}
 
             {loading ? (
               <p className="py-12 text-center text-sm text-white/45">Carregando publicações…</p>

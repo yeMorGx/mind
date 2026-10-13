@@ -48,13 +48,13 @@ export default function Sidebar({
       <nav className="px-4" aria-label="Navegação principal">
         <SidebarItem
           icon={<Home size={18} />}
-          label="Minhas publicações"
+          label="All prompts"
           active={activeView === "all"}
           onClick={() => { onViewChange("all"); onMobileClose(); }}
         />
         <SidebarItem
           icon={<Star size={18} />}
-          label="Favoritos"
+          label="Favorites"
           active={activeView === "favorites"}
           onClick={() => { onViewChange("favorites"); onMobileClose(); }}
         />
@@ -63,10 +63,10 @@ export default function Sidebar({
       <div className="mx-4 my-6 border-t border-white/10" />
 
       <div className="px-4">
-        <p className="mb-3 text-xs uppercase tracking-widest text-white/40">Perfil do criador</p>
+        <p className="mb-3 text-xs uppercase tracking-widest text-white/40">Workspace</p>
         <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-3 py-2.5 text-sm text-white/70">
           <span aria-hidden="true">{creatorIcon}</span>
-          <span className="truncate">{creatorName || "Meu perfil"}</span>
+          <span className="truncate">{creatorName || "Meu workspace"}</span>
         </div>
       </div>
 
@@ -77,7 +77,7 @@ export default function Sidebar({
           </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{userName || "Mind user"}</p>
-            <p className="text-xs text-white/50">Acesso gratuito</p>
+            <p className="text-xs text-white/50">Free plan</p>
           </div>
         </div>
         <button
@@ -86,7 +86,7 @@ export default function Sidebar({
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/55 transition hover:bg-white/5 hover:text-white"
         >
           <LogOut size={18} />
-          Sair
+          Sign out
         </button>
       </div>
       </aside>
