@@ -15,6 +15,7 @@ import {
   type Timestamp,
 } from "firebase/firestore";
 import { requireFirebaseServices } from "./client";
+import { emptyPromptDetails, readPromptDetails, validatePromptDetails, type PromptDetails } from "@/lib/prompt-media";
 
 export type OnboardingData = {
   name: string;
@@ -31,7 +32,7 @@ export type OnboardingData = {
   onboardingComplete: boolean;
 };
 
-export type Prompt = {
+export type Prompt = PromptDetails & {
   id: string;
   title: string;
   content: string;
@@ -144,6 +145,7 @@ export function subscribeToPrompts(
             isFavorite: Boolean(prompt.isFavorite),
             createdAt: (prompt.createdAt as Timestamp | undefined)?.toMillis() ?? null,
             updatedAt: (prompt.updatedAt as Timestamp | undefined)?.toMillis() ?? null,
+            ...readPromptDetails(prompt),
           };
         }),
       );
@@ -164,6 +166,7 @@ export async function getPrompt(workspaceId: string, promptId: string): Promise<
     isFavorite: Boolean(prompt.isFavorite),
     createdAt: (prompt.createdAt as Timestamp | undefined)?.toMillis() ?? null,
     updatedAt: (prompt.updatedAt as Timestamp | undefined)?.toMillis() ?? null,
+    ...readPromptDetails(prompt),
   };
 }
 
@@ -172,6 +175,7 @@ export async function createPrompt(
   userId: string,
   title: string,
   content: string,
+  details: PromptDetails = emptyPromptDetails,
 ) {
   const { db } = requireFirebaseServices();
   const trimmedTitle = title.trim();
@@ -179,15 +183,18 @@ export async function createPrompt(
   if (!trimmedTitle || !trimmedContent) {
     throw new Error("Preencha o título e o conteúdo do prompt.");
   }
+  validatePromptDetails(trimmedTitle, trimmedContent, details);
 
-  await addDoc(collection(db, "workspaces", workspaceId, "prompts"), {
+  const created = await addDoc(collection(db, "workspaces", workspaceId, "prompts"), {
     title: trimmedTitle,
     content: trimmedContent,
+    ...details,
     createdBy: userId,
     isFavorite: false,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  return created.id;
 }
 
 export async function setPromptFavorite(
@@ -207,6 +214,7 @@ export async function updatePrompt(
   promptId: string,
   title: string,
   content: string,
+  details?: PromptDetails,
 ) {
   const { db } = requireFirebaseServices();
   const trimmedTitle = title.trim();
@@ -214,10 +222,12 @@ export async function updatePrompt(
   if (!trimmedTitle || !trimmedContent) {
     throw new Error("Preencha o título e o conteúdo do prompt.");
   }
+  validatePromptDetails(trimmedTitle, trimmedContent, details ?? emptyPromptDetails);
 
   await updateDoc(doc(db, "workspaces", workspaceId, "prompts", promptId), {
     title: trimmedTitle,
     content: trimmedContent,
+    ...(details ?? {}),
     updatedAt: serverTimestamp(),
   });
 }

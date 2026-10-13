@@ -110,3 +110,39 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .cmp-knob { transition: none; }
 }
+
+/* Bencho Action node and Upload dropzone (MIT), adapted for Mind.
+   Tokens are local to these components so the rest of the site stays unchanged. */
+.mind-node, .mind-upload {
+  --card: var(--input-background);
+  --fill-on: var(--foreground);
+  --fill-slab: #111;
+  --pane-edge: rgba(255, 255, 255, .12);
+  color: var(--fill-on);
+  font-family: inherit;
+}
+.mind-node { position: relative; margin: 72px 64px 28px 0; }
+.mind-node-card { position: relative; z-index: 2; padding: 18px 48px 18px 18px; border-radius: 20px; border: 1px solid var(--pane-edge); background: var(--fill-slab); }
+.mind-node-top { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
+.mind-node-top > svg { color: rgba(255,255,255,.5); }
+.mind-node-card p { margin-top: 10px; font-size: 12px; line-height: 1.6; color: rgba(255,255,255,.5); }
+.mind-node-trigger { position: absolute; right: 12px; top: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--card); cursor: pointer; }
+/* Anchored on the card's own top-right corner. The fan overflows
+   instead of shrinking the card's usable surface. */
+.mind-node-fan { position: absolute; top: 0; right: 0; z-index: 1; }
+.mind-node-reach { position: absolute; left: -140px; top: -72px; width: 200px; height: 170px; }
+.mind-node-action { position: absolute; top: 0; left: 0; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--pane-edge); background: var(--card); color: var(--fill-on); cursor: pointer; }
+.mind-node-action:hover { background: #303030; }
+.mind-node-action:disabled { opacity: .4 !important; cursor: wait; }
+.mind-node-action:focus-visible, .mind-node-trigger:focus-visible, .mind-upload-zone:focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
+.mind-upload { width: 100%; }
+.mind-upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 176px; padding: 16px; border: 1px solid var(--pane-edge); border-radius: 16px; background: var(--fill-slab); cursor: pointer; transition: scale 420ms cubic-bezier(.3,1.35,.4,1), background-color 200ms ease; }
+/* A file over it and it grows, with a bounce; the arrow lifts
+   toward the hand before the file is let go. */
+.mind-upload-zone[data-over] { scale: 1.02; background: #1b1b1b; }
+.mind-upload-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: color-mix(in srgb, var(--fill-on) 6%, var(--fill-slab)); transition: translate 320ms cubic-bezier(.3,1.5,.4,1); }
+.mind-upload-zone[data-over] .mind-upload-icon { translate: 0 -4px; }
+.mind-upload-zone strong { font-size: 13px; font-weight: 500; text-align: center; }
+.mind-upload-zone > span:last-child { font-size: 12px; text-align: center; color: rgba(255,255,255,.45); }
+.mind-upload-zone:disabled { cursor: default; opacity: .55; }
+@media (prefers-reduced-motion: reduce) { .mind-upload-zone, .mind-upload-icon { transition: none; } }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, Share2, Sparkles } from "lucide-react";
 import { ImageCompare } from "@/components/ui/ImageCompare";
@@ -10,11 +10,12 @@ import type { Prompt } from "@/lib/supabase/types";
 
 /* eslint-disable @next/next/no-img-element -- Supabase returns short-lived signed image URLs. */
 
-export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [], visibility = "public" }: {
+export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [], visibility = "public", actions }: {
   prompt: Prompt;
   creatorPrompts?: Prompt[];
   relatedPrompts?: Prompt[];
   visibility?: "public" | "private";
+  actions?: ReactNode;
 }) {
   const isPrivate = visibility === "private";
   const backHref = isPrivate ? "/home" : "/";
@@ -85,6 +86,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             <span>{isPrivate ? "Privado · sua biblioteca" : "Grátis para experimentar"}</span>
           </div>
 
+          {actions}
           {displayedImages.length > 0 ? (
             <div className="mt-9">
               <div className="mb-3 flex items-center justify-between gap-3">

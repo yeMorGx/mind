@@ -14,6 +14,7 @@ import { Spotlight } from "@/components/ui/spotlight";
 import PromptDialog from "@/components/prompts/PromptDialog";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { getFirebaseServices } from "@/lib/firebase/client";
+import type { PromptDetails } from "@/lib/prompt-media";
 import {
   createPrompt,
   getWorkspace,
@@ -121,15 +122,15 @@ export default function HomePage() {
     setDialogOpen(true);
   }
 
-  async function savePrompt(title: string, content: string) {
+  async function savePrompt(title: string, content: string, details: PromptDetails) {
     if (!user || !data.primaryWorkspaceId) return;
     setSavingPrompt(true);
     setDialogError("");
     try {
       if (selectedPrompt) {
-        await updatePrompt(data.primaryWorkspaceId, selectedPrompt.id, title, content);
+        await updatePrompt(data.primaryWorkspaceId, selectedPrompt.id, title, content, details);
       } else {
-        await createPrompt(data.primaryWorkspaceId, user.uid, title, content);
+        await createPrompt(data.primaryWorkspaceId, user.uid, title, content, details);
         setDraftTitle("");
       }
       setDialogOpen(false);
@@ -312,7 +313,7 @@ export default function HomePage() {
         pending={savingPrompt}
         error={dialogError}
         onClose={() => setDialogOpen(false)}
-        onSave={(title, content) => void savePrompt(title, content)}
+        onSave={(title, content, details) => void savePrompt(title, content, details)}
       />
     </div>
   );

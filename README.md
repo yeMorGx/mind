@@ -9,6 +9,8 @@ Biblioteca de prompts com Next.js, React, TypeScript, Tailwind CSS e Firebase. O
 - Criação, edição, busca, exclusão e favoritos na biblioteca privada do proprietário.
 - Clique no card para abrir a página individual em `/home/prompts/<id>`, com o texto completo, autor e datas. O botão de lápis mantém a edição disponível. Essa página usa o Firebase e exige a conta do proprietário.
 - Modal de login compacto com o visual original e imagem lateral.
+- Action node na página do prompt com ações reais de editar, copiar, favoritar e duplicar.
+- Upload dropzone no editor para até 8 imagens, com legenda e função (resultado, referência, antes ou depois). Arquivos de até 5 MB são otimizados para a galeria e salvos no próprio documento privado do Firestore ao salvar o prompt; os arquivos originais não são armazenados.
 
 Para rodar localmente, instale as dependências com `npm install`, configure as variáveis Firebase seguindo [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) e execute `npm run dev`.
 

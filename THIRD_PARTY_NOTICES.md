@@ -1,5 +1,16 @@
 # Third-party components
 
+## Bencho Action node and Upload dropzone
+
+`components/ui/ActionNode.tsx`, `components/ui/UploadDropzone.tsx` and their
+scoped `.mind-node` / `.mind-upload` styles in `app/globals.css` are adapted
+from the MIT-licensed source supplied by the user: https://bencho.dev/licence.
+Relevant original comments and the Action node's corner-path geometry are retained.
+The Action node uses real prompt actions and omits the demo's avatars and crew.
+The dropzone uses real files and image preparation instead of simulated upload
+progress. Both support keyboard interaction and reduced motion. The MIT notice
+below applies to these components as well.
+
 ## Bencho Image compare
 
 `components/ui/ImageCompare.tsx` and the `.cmp` styles in `app/globals.css`
