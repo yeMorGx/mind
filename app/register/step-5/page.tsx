@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import type { User } from "firebase/auth";
+import type { User } from "@supabase/supabase-js";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
-import { saveOnboardingProgress } from "@/lib/firebase/data";
+import { saveOnboardingProgress } from "@/lib/supabase/data";
 
 export default function Step5Page() {
   const { user, ready } = useOnboardingGuard();
@@ -18,7 +18,7 @@ export default function Step5Page() {
 
   return (
     <Step5Form
-      key={user.uid}
+      key={user.id}
       user={user}
       initialTeamName={data.teamName}
       initialTeamSize={data.teamSize || "2-5 pessoas"}
@@ -117,7 +117,7 @@ function Step5Form({
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-xl">👥</div>
                 <div>
                   <h3 className="font-medium">{teamName || "Nome da equipe"}</h3>
-                  <p className="text-sm text-white/50">Workspace colaborativo · {teamSize}</p>
+                  <p className="text-sm text-white/50">Perfil de criador · {teamSize}</p>
                 </div>
               </div>
             </div>

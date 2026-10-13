@@ -5,7 +5,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
-import { saveOnboardingProgress } from "@/lib/firebase/data";
+import { saveOnboardingProgress } from "@/lib/supabase/data";
 
 const sources = [
   {

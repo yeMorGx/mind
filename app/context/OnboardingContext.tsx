@@ -10,10 +10,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { getFirebaseServices, isFirebaseConfigured } from "@/lib/firebase/client";
-import type { OnboardingData } from "@/lib/firebase/data";
+import type { User } from "@supabase/supabase-js";
+import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { ensureUserProfile } from "@/lib/supabase/auth";
+import { onboardingDataFromProfile } from "@/lib/supabase/data";
+import type { OnboardingData } from "@/lib/supabase/types";
 
 type ContextType = {
   data: OnboardingData;
@@ -21,7 +22,7 @@ type ContextType = {
   user: User | null;
   authReady: boolean;
   profileLoading: boolean;
-  firebaseConfigured: boolean;
+  supabaseConfigured: boolean;
 };
 
 const initialData: OnboardingData = {
@@ -33,9 +34,9 @@ const initialData: OnboardingData = {
   teamName: "",
   teamSize: "",
   invitedEmails: [],
-  workspaceName: "",
-  workspaceIcon: "🧠",
-  primaryWorkspaceId: "",
+  creatorName: "",
+  creatorIcon: "🧠",
+  creatorSlug: "",
   onboardingComplete: false,
 };
 
@@ -44,55 +45,48 @@ const OnboardingContext = createContext<ContextType | null>(null);
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<OnboardingData>(initialData);
   const [user, setUser] = useState<User | null>(null);
-  const [authReady, setAuthReady] = useState(!isFirebaseConfigured);
+  const [authReady, setAuthReady] = useState(!isSupabaseConfigured);
   const [profileLoading, setProfileLoading] = useState(false);
   const profileRequest = useRef(0);
 
   useEffect(() => {
-    const services = getFirebaseServices();
-    if (!services) return;
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
 
-    return onAuthStateChanged(services.auth, async (nextUser) => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       const requestId = ++profileRequest.current;
+      const nextUser = session?.user ?? null;
       setUser(nextUser);
+      setAuthReady(true);
 
       if (!nextUser) {
-        setAuthReady(true);
         setData(initialData);
         setProfileLoading(false);
         return;
       }
 
       setProfileLoading(true);
-      setAuthReady(true);
-      try {
-        const profileSnapshot = await getDoc(
-          doc(services.db, "users", nextUser.uid),
-        );
-        const profile: Partial<OnboardingData> = profileSnapshot.exists()
-          ? (profileSnapshot.data() as Partial<OnboardingData>)
-          : {};
-        if (profileRequest.current !== requestId) return;
-        setData({
-          ...initialData,
-          ...profile,
-          name: String(profile.name ?? nextUser.displayName ?? ""),
-          email: String(profile.email ?? nextUser.email ?? ""),
-          invitedEmails: Array.isArray(profile.invitedEmails)
-            ? profile.invitedEmails.map(String)
-            : [],
-        });
-      } catch {
-        if (profileRequest.current !== requestId) return;
-        setData({
-          ...initialData,
-          name: nextUser.displayName ?? "",
-          email: nextUser.email ?? "",
-        });
-      } finally {
-        if (profileRequest.current === requestId) setProfileLoading(false);
-      }
+      queueMicrotask(() => {
+        void (async () => {
+          try {
+            const profile = await ensureUserProfile(nextUser);
+            if (profileRequest.current !== requestId) return;
+            setData(onboardingDataFromProfile(profile as Record<string, unknown>, nextUser));
+          } catch {
+            if (profileRequest.current !== requestId) return;
+            setData({
+              ...initialData,
+              name: String(nextUser.user_metadata?.full_name ?? nextUser.user_metadata?.name ?? ""),
+              email: nextUser.email ?? "",
+            });
+          } finally {
+            if (profileRequest.current === requestId) setProfileLoading(false);
+          }
+        })();
+      });
     });
+
+    return () => authListener.subscription.unsubscribe();
   }, []);
 
   const updateData = useCallback((values: Partial<OnboardingData>) => {
@@ -106,7 +100,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       user,
       authReady,
       profileLoading,
-      firebaseConfigured: isFirebaseConfigured,
+      supabaseConfigured: isSupabaseConfigured,
     }),
     [data, updateData, user, authReady, profileLoading],
   );
@@ -120,9 +114,6 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
 export function useOnboarding() {
   const context = useContext(OnboardingContext);
-  if (!context) {
-    throw new Error("useOnboarding must be used inside OnboardingProvider");
-  }
-
+  if (!context) throw new Error("useOnboarding must be used inside OnboardingProvider");
   return context;
 }

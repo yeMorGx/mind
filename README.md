@@ -1,23 +1,25 @@
 # Mind
 
-Biblioteca pessoal de prompts feita com Next.js, React, TypeScript, Tailwind CSS e Firebase.
+Marketplace gratuito de prompts visuais para criadores de conteúdo com IA. Cada publicação reúne o prompt, referências e imagens de resultado em uma página que o criador pode compartilhar com seus seguidores.
 
-## O que já funciona
+## O que já está implementado
 
-- Cadastro por e-mail e senha com onboarding salvo no Cloud Firestore.
-- Login por e-mail/senha e Google, recuperação de senha e provedor Discord OIDC opcional.
-- Criação de workspace pessoal ou de equipe.
-- Criação, edição, busca, exclusão e favoritar prompts no workspace.
-- Comparação de imagens antes/depois no dashboard, com seleção local e divisória interativa.
-- Regras do Firestore que limitam cada perfil e workspace ao proprietário.
+- Galeria pública com busca e filtro por categoria; visitantes não precisam criar conta.
+- Cadastro e login por e-mail e senha, Google e Discord via Supabase Auth.
+- Onboarding de perfis individuais ou de equipe.
+- Painel do criador com rascunhos, favoritos, edição, exclusão e publicação.
+- Editor para o prompt, descrição, categoria, ferramenta usada, referência, carrossel de até 8 resultados e par opcional antes/depois.
+- Página pública por prompt com metadados para compartilhamento, carrossel, comparador interativo e botão para copiar o texto.
+- Imagens no Supabase Storage privado; links de leitura assinados e de duração limitada.
+- Row Level Security no Postgres para separar perfis, rascunhos, publicações e arquivos.
 
 ## Rodar localmente
 
 1. Instale as dependências com `npm install`.
-2. Configure o Firebase seguindo [FIREBASE_SETUP.md](./FIREBASE_SETUP.md).
-3. Inicie o servidor com `npm run dev` e abra [http://localhost:3000](http://localhost:3000).
+2. Crie um projeto Supabase e siga [SUPABASE_SETUP.md](./SUPABASE_SETUP.md).
+3. Inicie `npm run dev` e abra [http://localhost:3000](http://localhost:3000).
 
-Rotas principais: `/` (landing/login), `/register` (onboarding) e `/home` (biblioteca de prompts).
+Rotas principais: `/` (galeria), `/register` (cadastro), `/home` (painel do criador), `/p/<slug>` (publicação compartilhável).
 
 ## Scripts
 
@@ -25,8 +27,14 @@ Rotas principais: `/` (landing/login), `/register` (onboarding) e `/home` (bibli
 - `npm run build` gera a versão de produção.
 - `npm run lint` executa ESLint.
 
-## Limites atuais
+## Limites desta versão
 
-Convites ficam salvos como pendentes, sem envio de e-mail. O workspace ainda é privado ao proprietário; colaboração exige um fluxo de convite e regras de acesso adicionais. O Discord precisa de configuração OIDC no Firebase Console.
+- Os prompts são gratuitos; não há pagamento nem geração de imagens integrada. O criador envia exemplos que já gerou em outra ferramenta.
+- Os e-mails de equipe ficam salvos como convites pendentes; esta versão ainda não envia convites.
+- Cada imagem pode ter até 20 MB e o carrossel aceita até 8 resultados.
+- O plano grátis do Supabase tem limites de espaço e transferência; páginas públicas com muitas imagens podem consumir a cota de banda.
+- O projeto Firebase configurado antes da migração não é alterado por este código. Usuários, prompts e senhas existentes não são transferidos automaticamente; mantenha o projeto Firebase até decidir o que fazer com os dados antigos.
 
-A comparação de imagens não gera nem salva imagens: selecione o original e o resultado no navegador. O componente `ImageCompare` recebe `beforeSrc` e `afterSrc`, pronto para integrar o resultado de um gerador futuramente. A licença e atribuição Bencho estão em [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
+## Licença de componentes
+
+O comparador de imagens foi adaptado do componente Image Compare da Bencho, sob licença MIT. A licença e a atribuição estão em [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).

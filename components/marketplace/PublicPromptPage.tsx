@@ -1,0 +1,203 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, Share2, Sparkles } from "lucide-react";
+import { ImageCompare } from "@/components/ui/ImageCompare";
+import PromptCard from "@/components/marketplace/PromptCard";
+import Logo from "@/components/ui/logo";
+import type { Prompt } from "@/lib/supabase/types";
+
+/* eslint-disable @next/next/no-img-element -- Supabase returns short-lived signed image URLs. */
+
+export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [] }: {
+  prompt: Prompt;
+  creatorPrompts?: Prompt[];
+  relatedPrompts?: Prompt[];
+}) {
+  const [activeImage, setActiveImage] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const [shareMessage, setShareMessage] = useState("");
+  const displayedImages = useMemo(() => prompt.images.filter((image) => image.role === "gallery" || image.role === "after"), [prompt.images]);
+  const before = prompt.images.find((image) => image.role === "before");
+  const after = prompt.images.find((image) => image.role === "after");
+  const references = prompt.images.filter((image) => image.role === "reference");
+  const creatorName = prompt.creatorName || "Criador Mind";
+  const formatDate = (timestamp: number) => Number.isFinite(timestamp)
+    ? new Intl.DateTimeFormat("pt-BR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(timestamp)
+    : "Não informada";
+
+  async function copyPrompt() {
+    try {
+      await navigator.clipboard.writeText(prompt.content);
+      setShareMessage("");
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setShareMessage("Não foi possível copiar automaticamente. Selecione o texto do prompt para copiar.");
+    }
+  }
+
+  async function sharePage() {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: prompt.title, text: `Prompt: ${prompt.title}`, url });
+        setShareMessage("Página compartilhada.");
+      }
+      else {
+        await navigator.clipboard.writeText(url);
+        setShareMessage("Link copiado para compartilhar.");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") return;
+      setShareMessage("Não foi possível copiar o link.");
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
+        <Link href="/" aria-label="Mind — página inicial"><Logo /></Link>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => void sharePage()} className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white sm:px-4">
+            <Share2 size={16} /> <span className="hidden sm:inline">Compartilhar</span>
+          </button>
+          <Link href="/" className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:bg-white/90">Explorar prompts</Link>
+        </div>
+      </header>
+
+      <article className="mx-auto grid w-full max-w-7xl gap-10 px-5 pb-20 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,.95fr)] lg:gap-16 lg:pt-12">
+        <section>
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white"><ArrowLeft size={15} /> Todos os prompts</Link>
+          <div className="mt-8 flex flex-wrap gap-2">
+            {prompt.category && <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70">{prompt.category}</span>}
+            {prompt.model && <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/50">{prompt.model}</span>}
+          </div>
+          <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{prompt.title}</h1>
+          {prompt.description && <p className="mt-5 whitespace-pre-wrap text-base leading-7 text-white/55">{prompt.description}</p>}
+          <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-white/45">
+            <a href="#creator" className="hover:text-white">por <strong className="font-medium text-white/75">{creatorName}</strong></a>
+            <span aria-hidden="true">·</span>
+            <span>Grátis para experimentar</span>
+          </div>
+
+          {displayedImages.length > 0 ? (
+            <div className="mt-9">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h2 className="text-sm font-medium text-white/75">Resultados do prompt</h2>
+                <span className="text-xs text-white/40">{displayedImages.length} {displayedImages.length === 1 ? "imagem" : "imagens"}</span>
+              </div>
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+                <img src={displayedImages[activeImage]?.url} alt={displayedImages[activeImage]?.label || `Resultado ${activeImage + 1} de ${prompt.title}`} className="aspect-[4/3] w-full object-contain" />
+                {displayedImages.length > 1 && <>
+                  <button type="button" aria-label="Imagem anterior" onClick={() => setActiveImage((index) => (index - 1 + displayedImages.length) % displayedImages.length)} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/65 p-2.5 text-white backdrop-blur hover:bg-black"><ArrowLeft size={17} /></button>
+                  <button type="button" aria-label="Próxima imagem" onClick={() => setActiveImage((index) => (index + 1) % displayedImages.length)} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/65 p-2.5 text-white backdrop-blur hover:bg-black"><ArrowRight size={17} /></button>
+                  <span className="absolute bottom-3 right-3 rounded-full bg-black/65 px-3 py-1.5 text-xs text-white/80 backdrop-blur">{activeImage + 1} / {displayedImages.length}</span>
+                </>}
+              </div>
+              {displayedImages[activeImage]?.label && <p className="mt-3 text-sm text-white/50">{displayedImages[activeImage].label}</p>}
+              {displayedImages.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                {displayedImages.map((image, index) => <button key={image.id} type="button" aria-label={`Ver imagem ${index + 1}`} aria-pressed={activeImage === index} onClick={() => setActiveImage(index)} className={`h-16 w-20 shrink-0 overflow-hidden rounded-lg border ${activeImage === index ? "border-white/70" : "border-white/10 opacity-55"}`}><img src={image.url} alt="" className="h-full w-full object-cover" /></button>)}
+              </div>}
+            </div>
+          ) : (
+            <div className="mt-9 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-white/15 text-sm text-white/35">Nenhum exemplo visual nesta publicação.</div>
+          )}
+
+          {references.length > 0 && <section className="mt-8">
+            <h2 className="mb-3 text-lg font-medium">{references.length === 1 ? "Imagem de referência" : "Imagens de referência"}</h2>
+            <p className="mb-4 text-sm leading-6 text-white/45">Referências compartilhadas pelo criador para reproduzir o resultado.</p>
+            <div className="grid gap-4">
+              {references.map((reference) => <figure key={reference.id}>
+                <img src={reference.url} alt={reference.label || "Referência usada na publicação"} loading="lazy" className="max-h-[480px] w-full rounded-2xl border border-white/10 bg-white/[0.03] object-contain" />
+                {reference.label && <figcaption className="mt-2 text-sm text-white/50">{reference.label}</figcaption>}
+              </figure>)}
+            </div>
+          </section>}
+
+          {before && after && <section className="mt-10">
+            <div className="mb-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/35">O efeito do prompt</p>
+              <h2 className="mt-2 text-2xl font-medium">Antes e depois</h2>
+              <p className="mt-2 text-sm leading-6 text-white/45">Arraste a divisória para comparar a referência com o resultado.</p>
+            </div>
+            <ImageCompare beforeSrc={before.url} afterSrc={after.url} beforeAlt={before.label || "Antes"} afterAlt={after.label || "Depois"} aspectRatio={4 / 3} />
+          </section>}
+          {before && !after && <section className="mt-8">
+            <h2 className="mb-3 text-lg font-medium">Imagem original</h2>
+            <img src={before.url} alt={before.label || "Imagem antes de aplicar o prompt"} loading="lazy" className="max-h-[480px] w-full rounded-2xl border border-white/10 object-contain" />
+            {before.label && <p className="mt-2 text-sm text-white/50">{before.label}</p>}
+          </section>}
+        </section>
+
+        <aside className="lg:pt-16">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:p-7">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.17em] text-white/35">Prompt completo</p>
+                <p className="mt-2 text-sm text-white/55">Copie e experimente na sua ferramenta.</p>
+              </div>
+              <button type="button" onClick={() => void copyPrompt()} className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90">
+                {copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Copiado" : "Copiar prompt"}
+              </button>
+            </div>
+            <pre className="mt-6 max-h-[520px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-white/[0.07] bg-black/40 p-4 font-mono text-sm leading-6 text-white/75">{prompt.content}</pre>
+            {shareMessage && <p role="status" className="mt-3 text-sm text-white/60">{shareMessage}</p>}
+            <p role="status" className="sr-only">{copied ? "Prompt copiado para a área de transferência." : ""}</p>
+            <button type="button" onClick={() => void sharePage()} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-3 text-sm text-white/70 hover:bg-white/5 hover:text-white"><ExternalLink size={15} /> Compartilhar esta página</button>
+            <p className="mt-4 text-center text-xs leading-5 text-white/35">Sem pagamento e sem cadastro para visualizar ou copiar.</p>
+          </div>
+
+          <section id="creator" aria-labelledby="creator-heading" className="mt-5 scroll-mt-8 rounded-2xl border border-white/10 p-5 sm:p-7">
+            <h2 id="creator-heading" className="text-xs uppercase tracking-[0.17em] text-white/40">Conheça o criador</h2>
+            <div className="mt-5 flex items-center gap-4">
+              <span aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.08] text-xl font-semibold">{Array.from(creatorName.trim())[0]?.toUpperCase() || "M"}</span>
+              <div className="min-w-0">
+                <p className="break-words text-lg font-medium">{creatorName}</p>
+                {prompt.creatorSlug && <p className="mt-1 break-words text-sm text-white/40">@{prompt.creatorSlug}</p>}
+              </div>
+            </div>
+            <p className="mt-4 text-sm leading-6 text-white/50">Compartilhou este prompt e seus exemplos de resultado com a comunidade Mind.</p>
+            {creatorPrompts.length > 0 && <a href="#creator-prompts" className="mt-4 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">Mais prompts deste criador <ArrowRight size={15} /></a>}
+          </section>
+
+          <section aria-labelledby="details-heading" className="mt-5 rounded-2xl border border-white/10 p-5 sm:p-7">
+            <h2 id="details-heading" className="text-lg font-medium">Sobre este prompt</h2>
+            <dl className="mt-5 space-y-4 text-sm">
+              {[
+                ["Ferramenta / modelo", prompt.model || "Não informado"],
+                ["Categoria", prompt.category || "Não informada"],
+                ["Acesso", "Gratuito"],
+                ["Criado em", formatDate(prompt.createdAt)],
+                ...(prompt.updatedAt > prompt.createdAt ? [["Atualizado em", formatDate(prompt.updatedAt)]] : []),
+              ].map(([label, value]) => <div key={label} className="flex items-start justify-between gap-5"><dt className="text-white/40">{label}</dt><dd className="max-w-[60%] break-words text-right text-white/75">{value}</dd></div>)}
+            </dl>
+          </section>
+
+          <section aria-labelledby="how-to-heading" className="mt-5 rounded-2xl border border-white/10 p-5 sm:p-7">
+            <h2 id="how-to-heading" className="flex items-center gap-2 text-lg font-medium"><Sparkles size={18} className="text-white/60" /> Como usar</h2>
+            <ol className="mt-5 list-decimal space-y-3 pl-5 text-sm leading-6 text-white/55 marker:text-white/30">
+              <li>Copie o texto completo do prompt.</li>
+              <li>Abra {prompt.model || "a ferramenta de IA de sua preferência"} e cole o texto.{references.length > 0 || before ? " Adicione a imagem de referência, se a ferramenta permitir." : ""}</li>
+              <li>Adapte os detalhes ao seu objetivo e gere o resultado.</li>
+            </ol>
+            <p className="mt-4 text-xs leading-5 text-white/35">Os resultados podem variar conforme o modelo, a versão e as configurações da ferramenta.</p>
+          </section>
+        </aside>
+      </article>
+
+      {(creatorPrompts.length > 0 || relatedPrompts.length > 0) && <div className="mx-auto max-w-7xl space-y-14 px-5 pb-20 sm:px-8">
+        {creatorPrompts.length > 0 && <section id="creator-prompts" className="scroll-mt-8 border-t border-white/10 pt-10">
+          <p className="text-xs uppercase tracking-[0.17em] text-white/35">Continue explorando</p>
+          <h2 className="mt-3 text-2xl font-medium">Mais de {creatorName}</h2>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{creatorPrompts.map((item) => <PromptCard key={item.id} prompt={item} />)}</div>
+        </section>}
+        {relatedPrompts.length > 0 && <section className="border-t border-white/10 pt-10">
+          <h2 className="text-2xl font-medium">Explore outros prompts de {prompt.category}</h2>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{relatedPrompts.map((item) => <PromptCard key={item.id} prompt={item} />)}</div>
+        </section>}
+      </div>}
+    </main>
+  );
+}

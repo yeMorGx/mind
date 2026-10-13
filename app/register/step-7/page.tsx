@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import type { User } from "firebase/auth";
+import type { User } from "@supabase/supabase-js";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
-import { createWorkspaceForUser, type OnboardingData } from "@/lib/firebase/data";
+import { createCreatorProfile } from "@/lib/supabase/data";
+import type { OnboardingData } from "@/lib/supabase/types";
 
 const icons = ["🧠", "🚀", "💻", "📚", "⚡", "🔥", "🎯", "✨"];
 
@@ -19,10 +20,10 @@ export default function Step7Page() {
 
   return (
     <Step7Form
-      key={user.uid}
+      key={user.id}
       user={user}
-      initialWorkspaceName={data.workspaceName}
-      initialWorkspaceIcon={data.workspaceIcon || "🧠"}
+      initialCreatorName={data.creatorName}
+      initialCreatorIcon={data.creatorIcon || "🧠"}
       updateData={updateData}
     />
   );
@@ -30,23 +31,23 @@ export default function Step7Page() {
 
 function Step7Form({
   user,
-  initialWorkspaceName,
-  initialWorkspaceIcon,
+  initialCreatorName,
+  initialCreatorIcon,
   updateData,
 }: {
   user: User;
-  initialWorkspaceName: string;
-  initialWorkspaceIcon: string;
+  initialCreatorName: string;
+  initialCreatorIcon: string;
   updateData: (values: Partial<OnboardingData>) => void;
 }) {
   const router = useRouter();
-  const [workspace, setWorkspace] = useState(initialWorkspaceName);
-  const [selectedIcon, setSelectedIcon] = useState(initialWorkspaceIcon);
+  const [creator, setCreator] = useState(initialCreatorName);
+  const [selectedIcon, setSelectedIcon] = useState(initialCreatorIcon);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const { data } = useOnboarding();
 
-  const slug = workspace
+  const slug = creator
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
@@ -54,10 +55,10 @@ function Step7Form({
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-  async function finishWorkspace() {
+  async function finishProfile() {
     if (!user) return;
-    if (!workspace.trim()) {
-      setError("Digite um nome para o workspace.");
+    if (!creator.trim()) {
+      setError("Digite o nome público do seu perfil.");
       return;
     }
 
@@ -65,16 +66,16 @@ function Step7Form({
     setError("");
     const values = {
       ...data,
-      workspaceName: workspace.trim(),
-      workspaceIcon: selectedIcon,
+      creatorName: creator.trim(),
+      creatorIcon: selectedIcon,
     };
 
     try {
-      const workspaceId = await createWorkspaceForUser(user, values);
-      updateData({ ...values, primaryWorkspaceId: workspaceId, onboardingComplete: true });
+      const creatorSlug = await createCreatorProfile(user, values);
+      updateData({ ...values, creatorSlug, onboardingComplete: true });
       router.push("/register/finish");
-    } catch (workspaceError) {
-      setError(workspaceError instanceof Error ? workspaceError.message : "Não foi possível criar seu workspace. Tente novamente.");
+    } catch (creatorError) {
+      setError(creatorError instanceof Error ? creatorError.message : "Não foi possível criar seu perfil. Tente novamente.");
     } finally {
       setPending(false);
     }
@@ -91,28 +92,28 @@ function Step7Form({
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-4xl font-bold">Crie seu Workspace</h1>
+          <h1 className="text-4xl font-bold">Crie seu perfil de criador</h1>
           <p className="mt-3 text-white/60">
-            Esse será o espaço onde seus prompts e coleções ficarão organizados.
+            Seu nome aparecerá junto aos prompts que você publicar.
           </p>
 
           <div className="mt-8">
-            <label htmlFor="workspace-name" className="mb-2 block text-sm text-white/50">
-              Nome do Workspace
+            <label htmlFor="creator-name" className="mb-2 block text-sm text-white/50">
+              Nome público
             </label>
             <input
-              id="workspace-name"
+              id="creator-name"
               required
-              value={workspace}
-              onChange={(event) => setWorkspace(event.target.value)}
-              placeholder="Prompt Vault"
+              value={creator}
+              onChange={(event) => setCreator(event.target.value)}
+              placeholder="Ex.: Ana IA"
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-4 outline-none transition focus:border-white/30"
             />
           </div>
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <p className="text-sm text-white/50">Endereço sugerido</p>
-            <p className="mt-2 font-medium">mind.app/{slug || "workspace"}</p>
+            <p className="text-sm text-white/50">Nome de exibição</p>
+            <p className="mt-2 font-medium">Seu perfil terá o nome “{slug || "seu-nome"}”.</p>
           </div>
 
           <div className="mt-8">
@@ -140,8 +141,8 @@ function Step7Form({
                 {selectedIcon}
               </div>
               <div>
-                <h3 className="font-medium">{workspace.trim() || "Meu Workspace"}</h3>
-                <p className="text-sm text-white/50">mind.app/{slug || "workspace"}</p>
+                <h3 className="font-medium">{creator.trim() || "Seu nome público"}</h3>
+                <p className="text-sm text-white/50">Esse nome aparecerá nas páginas compartilhadas.</p>
               </div>
             </div>
           </div>
@@ -153,11 +154,11 @@ function Step7Form({
               Voltar
             </button>
             <button
-              disabled={pending || !workspace.trim()}
-              onClick={() => void finishWorkspace()}
+              disabled={pending || !creator.trim()}
+              onClick={() => void finishProfile()}
               className="rounded-xl bg-white px-6 py-3 font-semibold text-black disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {pending ? "Criando..." : "Criar Workspace →"}
+              {pending ? "Salvando..." : "Criar perfil →"}
             </button>
           </div>
         </motion.div>

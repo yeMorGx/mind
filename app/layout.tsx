@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { OnboardingProvider } from "./context/OnboardingContext";
 
 export const metadata = {
-  title: "Mind — sua biblioteca de prompts",
-  description: "Salve, organize e encontre seus prompts em um só lugar.",
+  title: "Mind — prompts para criadores de IA",
+  description: "Descubra prompts, veja os resultados e compartilhe suas criações com um link gratuito.",
 };
 
 const geist = Geist({
