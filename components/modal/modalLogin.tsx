@@ -1,25 +1,33 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import { FaDiscord } from "react-icons/fa";
-import type { Provider } from "@supabase/supabase-js";
+import {
+  GoogleAuthProvider,
+  OAuthProvider,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  type UserCredential,
+} from "firebase/auth";
+
 import Logo from "@/components/ui/logo";
-import { getSupabaseClient } from "@/lib/supabase/client";
-import { ensureUserProfile, getAuthDestination, getSupabaseAuthMessage } from "@/lib/supabase/auth";
+import { getFirebaseServices } from "@/lib/firebase/client";
+import { ensureUserProfile, getAuthDestination, getFirebaseAuthMessage } from "@/lib/firebase/auth";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const redirectUrl = (path: string) =>
-  `${window.location.origin}/auth/callback?next=${encodeURIComponent(path)}`;
-
-export default function LoginModal({ isOpen, onClose }: Props) {
+export default function LoginModal({
+  isOpen,
+  onClose,
+}: Props) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,80 +35,77 @@ export default function LoginModal({ isOpen, onClose }: Props) {
   const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
 
-  async function handleEmailSignIn(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const supabase = getSupabaseClient();
+  async function finishSignIn(action: () => Promise<UserCredential>) {
+    setPending(true);
     setError("");
     setNotice("");
-    if (!supabase) {
-      setError("O login está temporariamente indisponível. Tente novamente em instantes.");
-      return;
-    }
-
-    setPending(true);
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-      if (signInError) throw signInError;
-      if (!data.user) throw new Error("Não foi possível confirmar a conta.");
-      await ensureUserProfile(data.user);
-      const destination = await getAuthDestination(data.user);
+      const credential = await action();
+      await ensureUserProfile(credential.user);
+      const destination = await getAuthDestination(credential.user);
       onClose();
       router.push(destination);
     } catch (signInError) {
-      setError(getSupabaseAuthMessage(signInError));
+      setError(getFirebaseAuthMessage(signInError));
     } finally {
       setPending(false);
     }
   }
 
-  async function handleOAuth(provider: Extract<Provider, "google" | "discord">) {
-    const supabase = getSupabaseClient();
-    setError("");
-    setNotice("");
-    if (!supabase) {
-      setError("O login está temporariamente indisponível. Tente novamente em instantes.");
-      return;
-    }
+  function handleEmailSignIn() {
+    return finishSignIn(() => {
+      const services = getFirebaseServices();
+      if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
+      return signInWithEmailAndPassword(services.auth, email.trim(), password);
+    });
+  }
 
-    setPending(true);
-    try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { redirectTo: redirectUrl("/home") },
-      });
-      if (oauthError) throw oauthError;
-    } catch (oauthError) {
-      setError(getSupabaseAuthMessage(oauthError));
-      setPending(false);
-    }
+  function handleGoogleSignIn() {
+    return finishSignIn(() => {
+      const services = getFirebaseServices();
+      if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      return signInWithPopup(services.auth, provider);
+    });
+  }
+
+  function handleDiscordSignIn() {
+    return finishSignIn(() => {
+      const services = getFirebaseServices();
+      if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
+      return signInWithPopup(services.auth, new OAuthProvider("oidc.discord"));
+    });
   }
 
   async function handlePasswordReset() {
-    const supabase = getSupabaseClient();
     setError("");
     setNotice("");
     if (!email.trim()) {
       setError("Digite seu e-mail para receber o link de redefinição.");
       return;
     }
-    if (!supabase) {
-      setError("O login está temporariamente indisponível. Tente novamente em instantes.");
+
+    const services = getFirebaseServices();
+    if (!services) {
+      setError("Configure o Firebase no arquivo .env.local.");
       return;
     }
 
     setPending(true);
     try {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-        email.trim(),
-        { redirectTo: redirectUrl("/auth/reset-password") },
-      );
-      if (resetError) throw resetError;
+      await sendPasswordResetEmail(services.auth, email.trim());
       setNotice("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha.");
     } catch (resetError) {
-      setError(getSupabaseAuthMessage(resetError));
+      const code =
+        typeof resetError === "object" && resetError !== null && "code" in resetError
+          ? String(resetError.code)
+          : "";
+      if (code === "auth/user-not-found") {
+        setNotice("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha.");
+      } else {
+        setError(getFirebaseAuthMessage(resetError));
+      }
     } finally {
       setPending(false);
     }
@@ -147,7 +152,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
               className="
                 relative
                 w-full
-                max-w-6xl
+                max-w-4xl
                 max-h-[calc(100vh-2rem)]
                 overflow-y-auto
                 rounded-[32px]
@@ -157,26 +162,26 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                 shadow-2xl
               "
             >
-              <div className="grid md:min-h-[680px] md:grid-cols-[1fr_1.1fr]">
+              <div className="grid md:min-h-[560px] md:grid-cols-[1fr_1.1fr]">
                 {/* LEFT */}
-                <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-16">
-                  <div className="mb-4 inline-flex w-fit rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/60">
+                <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-8">
+                  <div className="mb-3 inline-flex w-fit rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/60">
                     ✨ Organize seus prompts em um único lugar
                   </div>
 
-                  <h1 id="login-modal-title" className="mb-3 text-5xl font-semibold text-white">
+                  <h1 id="login-modal-title" className="mb-2 text-3xl sm:text-4xl font-semibold text-white">
                     Bem-vindo ao Mind.
                   </h1>
 
-                  <p className="mb-8 text-white/50">
+                  <p className="mb-5 text-sm text-white/50">
                     Salve, organize e encontre seus prompts em segundos.
                   </p>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <button
                       type="button"
                       disabled={pending}
-                      onClick={() => void handleOAuth("google")}
+                      onClick={() => void handleGoogleSignIn()}
                       className="
                         flex
                         w-full
@@ -185,7 +190,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                         gap-3
                         rounded-xl
                         bg-white
-                        py-3.5
+                        py-2.5
                         font-medium
                         text-black
                         transition-all
@@ -199,7 +204,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                     <button
                       type="button"
                       disabled={pending}
-                      onClick={() => void handleOAuth("discord")}
+                      onClick={() => void handleDiscordSignIn()}
                       className="
                         flex
                         w-full
@@ -208,7 +213,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                         gap-3
                         rounded-xl
                         bg-[#5865F2]
-                        py-3.5
+                        py-2.5
                         font-medium
                         text-white
                         transition-all
@@ -219,7 +224,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                       Continuar com Discord
                     </button>
 
-                    <div className="flex items-center gap-4 py-3">
+                    <div className="flex items-center gap-4 py-2">
                       <div className="h-px flex-1 bg-white/10" />
                       <span className="text-sm text-white/40">
                         ou
@@ -230,9 +235,9 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                     <form
                       onSubmit={(event) => {
                         event.preventDefault();
-                        void handleEmailSignIn(event);
+                        void handleEmailSignIn();
                       }}
-                      className="space-y-3"
+                      className="space-y-2"
                     >
                     <input
                       required
@@ -248,7 +253,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                         border-white/10
                         bg-white/[0.03]
                         px-4
-                        py-3.5
+                        py-2.5
                         text-white
                         outline-none
                         transition-all
@@ -271,7 +276,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                         border-white/10
                         bg-white/[0.03]
                         px-4
-                        py-3.5
+                        py-2.5
                         text-white
                         outline-none
                         transition-all
@@ -296,7 +301,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                         w-full
                         rounded-xl
                         bg-white
-                        py-3.5
+                        py-2.5
                         font-semibold
                         text-black
                         transition-all
@@ -335,8 +340,8 @@ export default function LoginModal({ isOpen, onClose }: Props) {
 
                   <div className="absolute inset-0 bg-gradient-to-r from-black via-black/30 to-transparent" />
 
-                  <div className="absolute bottom-8 left-8 max-w-sm">
-                    <h2 className="text-3xl font-semibold text-white">
+                  <div className="absolute bottom-6 left-6 max-w-sm">
+                    <h2 className="text-2xl font-semibold text-white">
                       Nunca mais perca um prompt.
                     </h2>
 
@@ -345,7 +350,7 @@ export default function LoginModal({ isOpen, onClose }: Props) {
                     </p>
                   </div>
 
-                  <div className="absolute bottom-8 right-8">
+                  <div className="absolute bottom-6 right-6">
                     <Logo />
                   </div>
                 </div>

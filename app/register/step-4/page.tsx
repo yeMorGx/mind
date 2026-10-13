@@ -5,7 +5,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
-import { saveOnboardingProgress } from "@/lib/supabase/data";
+import { saveOnboardingProgress } from "@/lib/firebase/data";
 
 export default function Step4Page() {
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function Step4Page() {
           </h1>
 
           <p className="mt-3 text-white/60">
-            Isso ajuda a ajustar seu perfil para publicar sozinho ou com sua equipe.
+            Isso ajuda a configurar seu workspace.
           </p>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -127,7 +127,7 @@ export default function Step4Page() {
               </h3>
 
               <p className="mt-2 text-sm text-white/50">
-                Prepare o perfil da sua equipe e salve os convites para uma próxima etapa.
+                Configure um workspace para sua equipe e prepare os convites.
               </p>
             </button>
 

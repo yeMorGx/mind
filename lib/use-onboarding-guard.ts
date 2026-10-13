@@ -6,7 +6,7 @@ import { useOnboarding } from "@/app/context/OnboardingContext";
 
 export function useOnboardingGuard() {
   const router = useRouter();
-  const { user, authReady, profileLoading, supabaseConfigured } = useOnboarding();
+  const { user, authReady, profileLoading, firebaseConfigured } = useOnboarding();
 
   useEffect(() => {
     if (authReady && !user) router.replace("/register");
@@ -15,6 +15,6 @@ export function useOnboardingGuard() {
   return {
     user,
     ready: authReady && !profileLoading && Boolean(user),
-    supabaseConfigured,
+    firebaseConfigured,
   };
 }

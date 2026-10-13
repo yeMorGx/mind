@@ -4,16 +4,15 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
 import { useOnboarding } from "@/app/context/OnboardingContext";
-import { createEmailPasswordAccount, getSupabaseAuthMessage } from "@/lib/supabase/auth";
+import { createEmailPasswordAccount, getFirebaseAuthMessage } from "@/lib/firebase/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { data, updateData, user, authReady, profileLoading, supabaseConfigured } = useOnboarding();
+  const { data, updateData, user, authReady, profileLoading, firebaseConfigured } = useOnboarding();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
@@ -28,7 +27,6 @@ export default function RegisterPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setNotice("");
     if (!name.trim()) {
       setError("Digite seu nome.");
       return;
@@ -36,16 +34,11 @@ export default function RegisterPage() {
     setPending(true);
 
     try {
-      const result = await createEmailPasswordAccount(name, email, password);
-      if (result.requiresEmailConfirmation) {
-        setNotice("Enviamos um link para confirmar seu e-mail. Abra a mensagem para continuar o cadastro.");
-        return;
-      }
-      if (!result.user) throw new Error("Não foi possível criar sua conta.");
-      updateData({ name: name.trim(), email: result.user.email ?? email.trim() });
+      const user = await createEmailPasswordAccount(name, email, password);
+      updateData({ name: name.trim(), email: user.email ?? email.trim() });
       router.push("/register/step-2");
     } catch (submitError) {
-      setError(getSupabaseAuthMessage(submitError));
+      setError(getFirebaseAuthMessage(submitError));
     } finally {
       setPending(false);
     }
@@ -87,12 +80,11 @@ export default function RegisterPage() {
           className="w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none focus:border-white/30"
         />
 
-        {!supabaseConfigured && (
+        {!firebaseConfigured && (
           <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-100/80">
-            O cadastro está temporariamente indisponível. Tente novamente em instantes.
+            Configure as variáveis Firebase no arquivo .env.local para habilitar o cadastro.
           </p>
         )}
-        {notice && <p role="status" className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-4 text-sm text-emerald-100">{notice}</p>}
         {error && (
           <p role="alert" className="rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-200">
             {error}
@@ -100,7 +92,7 @@ export default function RegisterPage() {
         )}
 
         <button
-          disabled={pending || !supabaseConfigured}
+          disabled={pending || !firebaseConfigured}
           className="mt-4 w-full rounded-xl bg-white py-4 font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? "Criando conta..." : "Continuar"}

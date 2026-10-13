@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import type { User } from "@supabase/supabase-js";
+import type { User } from "firebase/auth";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
-import { saveOnboardingProgress } from "@/lib/supabase/data";
+import { saveOnboardingProgress } from "@/lib/firebase/data";
 
 export default function Step6Page() {
   const { user, ready } = useOnboardingGuard();
@@ -18,7 +18,7 @@ export default function Step6Page() {
 
   return (
     <Step6Form
-      key={user.id}
+      key={user.uid}
       user={user}
       initialEmails={data.invitedEmails}
     />
@@ -38,7 +38,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
     setEmails((current) => current.map((email, itemIndex) => itemIndex === index ? value : email));
   }
 
-  async function continueToProfile(values = emails) {
+  async function continueToWorkspace(values = emails) {
     if (!user) return;
     const normalizedEmails = [...new Set(values.map((email) => email.trim().toLowerCase()).filter(Boolean))];
     const invalidEmail = normalizedEmails.find((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
@@ -73,7 +73,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-4xl font-bold">Prepare os convites</h1>
           <p className="mt-3 text-white/60">
-            Salve os e-mails das pessoas que podem colaborar com sua equipe depois.
+            Salve os e-mails de quem deverá colaborar no workspace.
           </p>
 
           <div className="mt-8 space-y-4">
@@ -116,7 +116,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
               <button
                 type="button"
                 disabled={pending}
-                onClick={() => { setEmails([]); void continueToProfile([]); }}
+                onClick={() => { setEmails([]); void continueToWorkspace([]); }}
                 className="rounded-xl border border-white/10 px-6 py-3 disabled:opacity-50"
               >
                 Pular
@@ -124,7 +124,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
               <button
                 type="button"
                 disabled={pending}
-                onClick={() => void continueToProfile()}
+                onClick={() => void continueToWorkspace()}
                 className="rounded-xl bg-white px-6 py-3 font-semibold text-black disabled:opacity-50"
               >
                 {pending ? "Salvando..." : "Continuar →"}

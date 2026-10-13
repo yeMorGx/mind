@@ -16,7 +16,7 @@ export default function FinishPage() {
   }, [data.onboardingComplete, ready, router]);
 
   if (!ready || !data.onboardingComplete) {
-    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando seu perfil...</main>;
+    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando seu workspace...</main>;
   }
 
   return (
@@ -52,7 +52,7 @@ export default function FinishPage() {
             </h1>
 
             <p className="mt-4 text-white/60">
-              Seu perfil de criador está pronto.
+              Seu workspace foi configurado com sucesso.
             </p>
 
           </div>
@@ -81,11 +81,12 @@ export default function FinishPage() {
 
             <div className="flex items-center justify-between rounded-xl border border-white/10 p-4">
               <span className="text-white/60">
-                Perfil de criador
+                Workspace
               </span>
 
               <span>
-                {data.creatorName}
+                {data.workspaceIcon}{" "}
+                {data.workspaceName}
               </span>
             </div>
 
@@ -109,10 +110,10 @@ export default function FinishPage() {
             </h3>
 
             <ul className="mt-3 space-y-2 text-sm text-white/60">
-              <li>✓ Seu perfil de criador foi criado</li>
+              <li>✓ Seu workspace foi criado</li>
               <li>✓ Sua conta está pronta</li>
-              <li>✓ Você pode preparar seus primeiros prompts</li>
-              <li>✓ Você pode publicar prompts e compartilhar os links</li>
+              <li>✓ Você pode começar a salvar prompts</li>
+              <li>✓ Seus prompts ficam salvos no workspace</li>
             </ul>
           </div>
 
@@ -132,7 +133,7 @@ export default function FinishPage() {
               hover:scale-[1.02]
             "
           >
-            Abrir painel de criador →
+            Entrar no Dashboard →
           </button>
 
         </motion.div>

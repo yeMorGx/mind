@@ -1,40 +1,28 @@
 # Mind
 
-Marketplace gratuito de prompts visuais para criadores de conteúdo com IA. Cada publicação reúne o prompt, referências e imagens de resultado em uma página que o criador pode compartilhar com seus seguidores.
+Biblioteca de prompts com Next.js, React, TypeScript, Tailwind CSS e Firebase. O login, o onboarding e o acesso aos workspaces em produção usam a integração Firebase existente.
 
-## O que já está implementado
+## Integração ativa
 
-- Galeria pública com busca e filtro por categoria; visitantes não precisam criar conta.
-- Cadastro e login por e-mail e senha, Google e Discord via Supabase Auth.
-- Onboarding de perfis individuais ou de equipe.
-- Painel do criador com rascunhos, favoritos, edição, exclusão e publicação.
-- Editor para o prompt, descrição, categoria, ferramenta usada, referência, carrossel de até 8 resultados e par opcional antes/depois.
-- Página pública por prompt com metadados para compartilhamento, carrossel, comparador interativo e botão para copiar o texto.
-- Imagens no Supabase Storage privado; links de leitura assinados e de duração limitada.
-- Row Level Security no Postgres para separar perfis, rascunhos, publicações e arquivos.
+- Login por Google e e-mail/senha; recuperação de senha e Discord OIDC opcional.
+- Onboarding e contas existentes no Firebase Auth e no Firestore.
+- Criação, edição, busca, exclusão e favoritos na biblioteca privada do proprietário.
+- Modal de login compacto com o visual original e imagem lateral.
 
-## Rodar localmente
+Para rodar localmente, instale as dependências com `npm install`, configure as variáveis Firebase seguindo [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) e execute `npm run dev`.
 
-1. Instale as dependências com `npm install`.
-2. Crie um projeto Supabase e siga [SUPABASE_SETUP.md](./SUPABASE_SETUP.md).
-3. Inicie `npm run dev` e abra [http://localhost:3000](http://localhost:3000).
+## Marketplace e migração em preparação
 
-Rotas principais: `/` (galeria), `/register` (cadastro), `/home` (painel do criador), `/p/<slug>` (publicação compartilhável).
+A página individual `/p/<slug>` e os componentes de galeria, referência, antes/depois, criador e prompts relacionados estão implementados. Atualmente, essas páginas consultam apenas publicações explícitas do Supabase; elas não tornam os prompts privados do Firebase públicos.
+
+O editor de publicações está preservado em `components/prompts/MarketplacePromptDialog.tsx`. O esquema e as instruções de preparação estão em [SUPABASE_SETUP.md](./SUPABASE_SETUP.md). A configuração do Supabase e a migração das contas e dos dados existentes precisam ser concluídas e verificadas antes de substituir o backend ativo. As senhas dos usuários não são transferidas automaticamente entre os provedores.
 
 ## Scripts
 
-- `npm run dev` inicia o servidor local.
-- `npm run build` gera a versão de produção.
-- `npm run lint` executa ESLint.
+- `npm run dev`: servidor local.
+- `npm run build`: build de produção e verificação TypeScript.
+- `npm run lint`: ESLint.
 
-## Limites desta versão
+O proprietário autorizou commit, push e publicação automática na Vercel após as verificações. Preserve o visual existente ao adicionar funcionalidades.
 
-- Os prompts são gratuitos; não há pagamento nem geração de imagens integrada. O criador envia exemplos que já gerou em outra ferramenta.
-- Os e-mails de equipe ficam salvos como convites pendentes; esta versão ainda não envia convites.
-- Cada imagem pode ter até 20 MB e o carrossel aceita até 8 resultados.
-- O plano grátis do Supabase tem limites de espaço e transferência; páginas públicas com muitas imagens podem consumir a cota de banda.
-- O projeto Firebase configurado antes da migração não é alterado por este código. Usuários, prompts e senhas existentes não são transferidos automaticamente; mantenha o projeto Firebase até decidir o que fazer com os dados antigos.
-
-## Licença de componentes
-
-O comparador de imagens foi adaptado do componente Image Compare da Bencho, sob licença MIT. A licença e a atribuição estão em [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
+O comparador de imagens foi adaptado do Image Compare da Bencho, sob licença MIT. A licença e a atribuição estão em [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).

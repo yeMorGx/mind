@@ -8,8 +8,8 @@ export type PromptView = "all" | "favorites";
 
 type SidebarProps = {
   activeView: PromptView;
-  creatorName: string;
-  creatorIcon: string;
+  workspaceName: string;
+  workspaceIcon: string;
   userName: string;
   onViewChange: (view: PromptView) => void;
   onSignOut: () => void;
@@ -19,8 +19,8 @@ type SidebarProps = {
 
 export default function Sidebar({
   activeView,
-  creatorName,
-  creatorIcon,
+  workspaceName,
+  workspaceIcon,
   userName,
   onViewChange,
   onSignOut,
@@ -65,8 +65,8 @@ export default function Sidebar({
       <div className="px-4">
         <p className="mb-3 text-xs uppercase tracking-widest text-white/40">Workspace</p>
         <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] px-3 py-2.5 text-sm text-white/70">
-          <span aria-hidden="true">{creatorIcon}</span>
-          <span className="truncate">{creatorName || "Meu workspace"}</span>
+          <span aria-hidden="true">{workspaceIcon}</span>
+          <span className="truncate">{workspaceName || "Meu workspace"}</span>
         </div>
       </div>
 

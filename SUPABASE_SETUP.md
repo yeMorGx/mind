@@ -1,5 +1,7 @@
 # Configurar o Supabase
 
+Status: o login, o onboarding e a biblioteca em produção continuam usando Firebase. Este guia prepara a migração futura e as páginas públicas do marketplace. A troca do backend ativo depende de configuração e validação prévias, incluindo o acesso às contas e aos dados existentes.
+
 O Mind usa Supabase Auth, Postgres com Row Level Security e Storage privado. O esquema do marketplace está em `SUPABASE_SETUP.sql`.
 
 ## 1. Conectar o app ao projeto
