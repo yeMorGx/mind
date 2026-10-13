@@ -11,6 +11,7 @@ import Header from "@/components/layout/Header";
 import Input from "@/components/ui/input";
 import { Spotlight } from "@/components/ui/spotlight";
 import PromptDialog from "@/components/prompts/PromptDialog";
+import ImageComparisonPanel from "@/components/images/ImageComparisonPanel";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { getFirebaseServices } from "@/lib/firebase/client";
 import {
@@ -228,6 +229,8 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+
+          <ImageComparisonPanel />
 
           <section className="pb-12">
             <div className="mb-6 flex items-center justify-between">

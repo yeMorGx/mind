@@ -8,6 +8,7 @@ Biblioteca pessoal de prompts feita com Next.js, React, TypeScript, Tailwind CSS
 - Login por e-mail/senha e Google, recuperação de senha e provedor Discord OIDC opcional.
 - Criação de workspace pessoal ou de equipe.
 - Criação, edição, busca, exclusão e favoritar prompts no workspace.
+- Comparação de imagens antes/depois no dashboard, com seleção local e divisória interativa.
 - Regras do Firestore que limitam cada perfil e workspace ao proprietário.
 
 ## Rodar localmente
@@ -27,3 +28,5 @@ Rotas principais: `/` (landing/login), `/register` (onboarding) e `/home` (bibli
 ## Limites atuais
 
 Convites ficam salvos como pendentes, sem envio de e-mail. O workspace ainda é privado ao proprietário; colaboração exige um fluxo de convite e regras de acesso adicionais. O Discord precisa de configuração OIDC no Firebase Console.
+
+A comparação de imagens não gera nem salva imagens: selecione o original e o resultado no navegador. O componente `ImageCompare` recebe `beforeSrc` e `afterSrc`, pronto para integrar o resultado de um gerador futuramente. A licença e atribuição Bencho estão em [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
