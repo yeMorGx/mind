@@ -111,3 +111,7 @@ Editor em diálogo nativo de tela inteira, sem rolagem externa: cabeçalho e rod
 ## Comunidade na landing
 
 Alteração diretamente autorizada em 14/10/2026: seção clara (#fafbfc), texto azul escuro (#102a43), título Instrument Serif e capas 4:3 com metadados fora da imagem. Estilos isolados em `.landing-page .landing-community`; não usar os componentes sociais internos nesta seção. A galeria circular continua automática, sem botão de pausa; mantém a suspensão durante o login e o respeito à preferência de movimento reduzido.
+
+## Hierarquia da página do prompt
+
+Resultados e texto completo formam uma área principal em duas colunas no desktop; até 900 px, resultados, texto e comparação ficam em sequência. Autoria no topo usa foto, nome, @ e emblemas compactos reais. Crachá, instruções e metadados ficam abaixo. As recomendações de “Continue explorando” mostram foto e emblemas do perfil administrativo, com links separados para prompt e criador. Referências pesquisadas e decisões estão em `docs/design/prompt-detail.md`.

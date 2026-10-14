@@ -23,14 +23,14 @@ export default function PublicCreator({ creatorId, promptId }: { creatorId: stri
         const prompt = promptId ? await getSharedPrompt(resolvedId, promptId, profile) : undefined;
         if (promptId && !prompt) throw new Error();
         let promptsError = false;
-        const prompts = promptId ? [] : await getCreatorPrompts(resolvedId, profile).catch(() => { promptsError = true; return []; });
+        const prompts = await getCreatorPrompts(resolvedId, profile).catch(() => { promptsError = true; return []; });
         if (alive) setResult({ key: requestKey, resolvedId, profile, prompts, prompt: prompt ?? undefined, promptsError });
       } catch { if (alive) setError({ key: requestKey, message: promptId ? "Este prompt não está disponível. Ele pode estar privado ou ter sido removido." : "Não foi possível carregar este perfil. Confira o endereço e tente novamente." }); }
     }
     void load(); return () => { alive = false; };
   }, [creatorId, promptId, requestKey, revision]);
   const current = result?.key === requestKey ? result : null;
-  if (current?.prompt) return <PublicPromptPage prompt={current.prompt} creatorHref={creatorProfileHref(current.resolvedId,current.profile.username)} creatorProfile={current.profile} />;
+  if (current?.prompt) return <PublicPromptPage prompt={current.prompt} creatorHref={creatorProfileHref(current.resolvedId,current.profile.username)} creatorProfile={current.profile} creatorPrompts={current.prompts.filter(item=>item.id!==current.prompt?.id).slice(0,3)} />;
   if (current) return <CreatorProfileView profile={current.profile} prompts={current.prompts} creatorId={current.resolvedId} promptsError={current.promptsError} />;
   return <main className="min-h-[calc(100dvh-4.5rem)] bg-background px-5 py-10 text-foreground"><div className="mx-auto mt-14 max-w-5xl">
     <p role="status" className="text-center text-muted">{error?.key === requestKey ? error.message : promptId ? "Carregando prompt…" : "Carregando perfil…"}</p>

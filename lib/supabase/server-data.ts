@@ -58,11 +58,19 @@ export async function getPublicCreatorProfile(uid:string):Promise<CreatorProfile
 }
 export async function getPromptRecommendations(prompt:Prompt):Promise<{creatorPrompts:Prompt[];relatedPrompts:Prompt[]}> {
   const client=publicClient();if(!client)return {creatorPrompts:[],relatedPrompts:[]};
-  const [creator,related]=await Promise.all([
+  const [creator,legacyCreator,related,legacyRelated]=await Promise.all([
     client.from("mind_public_prompts").select(selection).eq("creator_id",prompt.creatorId).neq("prompt_id",prompt.id).limit(3),
+    client.from("mind_directory_prompts").select(directorySelection).eq("creator_id",prompt.creatorId).neq("prompt_id",prompt.id).limit(3),
     prompt.category?client.from("mind_public_prompts").select(selection).eq("document->>category",prompt.category).neq("creator_id",prompt.creatorId).limit(3):Promise.resolve({data:[],error:null}),
+    prompt.category?client.from("mind_directory_prompts").select(directorySelection).eq("document->>category",prompt.category).neq("creator_id",prompt.creatorId).limit(3):Promise.resolve({data:[],error:null}),
   ]);
-  return {creatorPrompts:creator.error?[]:((creator.data??[]) as unknown as Row[]).map(mapRow),relatedPrompts:related.error?[]:((related.data??[]) as unknown as Row[]).map(mapRow)};
+  const choose=(rows:Row[])=>{const unique=new Map<string,Prompt>();for(const row of rows){const value=mapRow(row);if(!unique.has(value.slug))unique.set(value.slug,value);}return [...unique.values()].sort((a,b)=>b.createdAt-a.createdAt).slice(0,3);};
+  const creatorPrompts=choose([...(creator.error?[]:(creator.data??[]) as unknown as Row[]),...(legacyCreator.error?[]:((legacyCreator.data??[]) as unknown as DirectoryRow[]).map(directoryRow))]);
+  const relatedPrompts=choose([...(related.error?[]:(related.data??[]) as unknown as Row[]),...(legacyRelated.error?[]:((legacyRelated.data??[]) as unknown as DirectoryRow[]).map(directoryRow))]);
+  // Identity and verification come from public profiles and administrative badges, never prompt content.
+  const identities=new Map(await Promise.all([...new Set([...creatorPrompts,...relatedPrompts].map(item=>item.creatorId))].map(async id=>[id,await getPublicCreatorProfile(id).catch(()=>null)] as const)));
+  const enrich=(items:Prompt[])=>items.map(item=>{const profile=identities.get(item.creatorId);return {...item,creatorName:profile?.name||item.creatorName,creatorSlug:profile?.username||item.creatorSlug,creatorAvatarUrl:profile?.avatarUrl||"",creatorBadges:profile?.badges??[]};});
+  return {creatorPrompts:enrich(creatorPrompts),relatedPrompts:enrich(relatedPrompts)};
 }
 
 export async function getPublicUsernames(ids: string[]): Promise<Record<string,string>> {

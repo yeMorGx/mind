@@ -1,3 +1,4 @@
+import type { BadgeKind } from "@/lib/firebase/badges";
 export type OnboardingData = {
   name: string;
   email: string;
@@ -43,6 +44,7 @@ export type Prompt = {
   creatorName: string;
   creatorSlug: string;
   creatorAvatarUrl?: string;
+  creatorBadges?: BadgeKind[];
   title: string;
   content: string;
   description: string;
