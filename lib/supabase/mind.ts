@@ -116,7 +116,10 @@ export async function saveNativeProfile(profile: CreatorProfile) {
 export async function getNativeBadges(uid: string): Promise<NonNullable<CreatorProfile["badges"]>> {
   const { data,error } = await requireSupabaseClient().from("mind_badges").select("badges").eq("public_id",uid).maybeSingle();
   if (error) throw error;
-  return data?.badges ?? [];
+  if (data) return data.badges;
+  const directory = await requireSupabaseClient().from("mind_creator_directory").select("badges").eq("public_id",uid).maybeSingle();
+  if (directory.error) throw directory.error;
+  return directory.data?.badges ?? [];
 }
 export async function assignNativeBadges(uid: string,badges: string[]) {
   const { error } = await requireSupabaseClient().from("mind_badges").upsert({ public_id:uid,badges });
@@ -125,7 +128,10 @@ export async function assignNativeBadges(uid: string,badges: string[]) {
 export async function getNativePublicCreator(uid: string): Promise<CreatorProfile|null> {
   const { data,error } = await requireSupabaseClient().from("mind_creators").select("profile").eq("public_id",uid).maybeSingle();
   if (error) throw error;
-  return data ? {...data.profile,backend:"supabase",badges:await getNativeBadges(uid)} : null;
+  if (data) return {...data.profile,backend:"supabase",badges:await getNativeBadges(uid)};
+  const directory = await requireSupabaseClient().from("mind_creator_directory").select("profile,badges").eq("public_id",uid).maybeSingle();
+  if (directory.error) throw directory.error;
+  return directory.data ? {...directory.data.profile,backend:"directory",badges:directory.data.badges} : null;
 }
 export async function getNativePublicPrompts(uid: string,profile: CreatorProfile,id?: string) {
   let query = requireSupabaseClient().from("mind_public_prompts").select("prompt_id,document").eq("creator_id",uid);

@@ -1,13 +1,13 @@
-import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where, writeBatch } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where, writeBatch } from "firebase/firestore";
 import { usingSupabase, type MindUser as User } from "@/lib/backend";
 import * as native from "@/lib/supabase/mind";
-import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { isSupabaseConfigured, requireSupabaseClient } from "@/lib/supabase/client";
 import { requireFirebaseServices } from "./client";
 import { getPrompt, type Prompt } from "./data";
 import type { Prompt as PublicPrompt } from "@/lib/supabase/types";
 import { getAccountBadges, type BadgeKind } from "./badges";
 
-export type CreatorProfile = { name: string; bio: string; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[]; backend?: "supabase" };
+export type CreatorProfile = { name: string; bio: string; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[]; backend?: "supabase" | "directory" };
 function imageValue(value: unknown) {
   return typeof value === "string" && value.length <= 80000 && /^(https:\/\/|data:image\/(jpeg|png|webp);base64,)/.test(value) ? value : "";
 }
@@ -30,6 +30,7 @@ export function profileSaveErrorMessage(error: unknown): string {
   if (code === "unavailable" || code === "deadline-exceeded") return "Não foi possível conectar ao serviço. Confira sua conexão e tente novamente.";
   if (code === "resource-exhausted") return "O serviço está temporariamente sem capacidade para salvar. Tente novamente mais tarde.";
   if (cause instanceof Error && cause.message.startsWith("Informe")) return cause.message;
+  if (cause instanceof Error && (cause.message.startsWith("Sua conta já foi migrada") || cause.message.startsWith("Não foi possível atualizar") || cause.message.startsWith("Entre novamente"))) return cause.message;
   return "Não foi possível salvar o perfil. Tente novamente.";
 }
 export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
@@ -39,6 +40,11 @@ export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
   const { db } = requireFirebaseServices();
   const values = { name, bio, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
   const userRef = doc(db, "users", uid);
+  if (isSupabaseConfigured) {
+    await syncLegacyProfile(uid, values);
+    await setDoc(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
+    return;
+  }
   const batch = writeBatch(db);
   // Keep the legacy flag true for compatibility with the deployed Firestore rules.
   batch.set(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
@@ -47,6 +53,11 @@ export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
 }
 export async function ensureCreatorProfile(user: User) {
   if (usingSupabase()) { await native.bootstrapAccount(); return; }
+  if (isSupabaseConfigured) {
+    const profile = await getOwnProfile(user.uid);
+    await syncLegacyProfile(user.uid, profile ?? { name: user.displayName || "Criador Mind", bio: "", avatarUrl: user.photoURL || "" }, true);
+    return;
+  }
   const { db } = requireFirebaseServices();
   const userRef = doc(db, "users", user.uid);
   const publicRef = doc(db, "creatorProfiles", user.uid);
@@ -62,6 +73,21 @@ export async function ensureCreatorProfile(user: User) {
     transaction.set(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
     transaction.set(publicRef, { ...values, published: true, creatorId: user.uid, updatedAt: serverTimestamp() });
   });
+}
+async function syncLegacyProfile(uid: string, profile: CreatorProfile, ensure = false) {
+  const user = requireFirebaseServices().auth.currentUser;
+  if (!user || user.uid !== uid) throw new Error("Entre novamente na sua conta.");
+  const { error } = await requireSupabaseClient().functions.invoke("sync-creator-profile", {
+    headers: { Authorization: `Bearer ${await user.getIdToken()}` }, body: { profile, ensure },
+  });
+  if (error) {
+    const response = "context" in error ? error.context : null;
+    if (response instanceof Response) {
+      const body = await response.json().catch(() => null);
+      if (body?.error) throw new Error(body.error);
+    }
+    throw new Error("Não foi possível atualizar o perfil público. Tente novamente.");
+  }
 }
 export async function setPromptPublication(workspaceId: string, uid: string, promptId: string, published: boolean) {
   if (usingSupabase()) return native.publishNativePrompt(workspaceId, promptId, published);
@@ -105,6 +131,13 @@ function asPublicPrompt(record: Record<string, unknown>, profile: CreatorProfile
 export async function getCreatorPrompts(uid: string, profile: CreatorProfile) {
   if (profile.backend === "supabase") return native.getNativePublicPrompts(uid, profile);
   const { db } = requireFirebaseServices();
+  if (profile.backend === "directory") {
+    const legacy = await getDoc(doc(db, "creatorProfiles", uid)).catch(error => {
+      if (error.code === "permission-denied") return null;
+      throw error;
+    });
+    if (!legacy?.exists() || legacy.data().published !== true) return [];
+  }
   const result = await getDocs(query(collection(db, "publicPrompts"), where("creatorId", "==", uid), where("published", "==", true)));
   return result.docs.map(snapshot => asPublicPrompt(snapshot.data(), profile));
 }

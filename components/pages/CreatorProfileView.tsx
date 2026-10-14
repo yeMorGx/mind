@@ -8,7 +8,7 @@ import type { CreatorProfile } from "@/lib/firebase/publication";
 import type { Prompt } from "@/lib/supabase/types";
 
 /* eslint-disable @next/next/no-img-element -- Optimized profile and prompt uploads are data URLs. */
-export default function CreatorProfileView({ profile, prompts, creatorId }: { profile: CreatorProfile; prompts: Prompt[]; creatorId: string }) {
+export default function CreatorProfileView({ profile, prompts, creatorId, promptsError = false }: { profile: CreatorProfile; prompts: Prompt[]; creatorId: string; promptsError?: boolean }) {
   const [copied, setCopied] = useState(false);
   const [notice, setNotice] = useState("");
   async function share() {
@@ -41,8 +41,8 @@ export default function CreatorProfileView({ profile, prompts, creatorId }: { pr
         {notice && <p role="status" className="mt-3 text-sm text-[#50505a]">{notice}</p>}
       </section>
       <section className="mt-10">
-        <div className="flex items-center gap-2 border-b border-[#17181a]/10 pb-4"><h2 className="text-sm font-semibold">Prompts publicados</h2><span className="rounded-full bg-[#ececf1] px-2 py-0.5 text-xs text-[#53535e]">{prompts.length}</span></div>
-        {prompts.length > 0 ? <div className="mt-7 grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">{prompts.map(prompt => {
+        <div className="flex items-center gap-2 border-b border-[#17181a]/10 pb-4"><h2 className="text-sm font-semibold">Prompts publicados</h2>{!promptsError && <span className="rounded-full bg-[#ececf1] px-2 py-0.5 text-xs text-[#53535e]">{prompts.length}</span>}</div>
+        {promptsError ? <div className="py-16 text-center"><p className="text-sm text-[#62626d]">Não foi possível carregar os prompts deste criador.</p><button type="button" onClick={() => window.location.reload()} className="mt-4 rounded-full border border-[#17181a]/15 px-4 py-2 text-sm">Tentar novamente</button></div> : prompts.length > 0 ? <div className="mt-7 grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">{prompts.map(prompt => {
           const image = prompt.images.find(image => image.role === "gallery" || image.role === "after");
           return <Link key={prompt.id} href={`/share/${creatorId}/${prompt.id}`} className="group min-w-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#17181a]">
             <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-[#ebebf0]">

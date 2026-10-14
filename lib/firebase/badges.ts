@@ -2,6 +2,7 @@ import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { requireFirebaseServices } from "./client";
 import { usingSupabase } from "@/lib/backend";
 import { assignNativeBadges, getNativeBadges } from "@/lib/supabase/mind";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const badgeKinds = ["owner", "verified", "moderator", "creator", "partner"] as const;
 export type BadgeKind = typeof badgeKinds[number];
@@ -14,6 +15,10 @@ export const badgeInfo: Record<BadgeKind, { label: string; icon: string; color: 
 };
 export async function getAccountBadges(uid: string): Promise<BadgeKind[]> {
   if (usingSupabase()) return (await getNativeBadges(uid)) ?? [];
+  if (isSupabaseConfigured) {
+    const published = await getNativeBadges(uid);
+    if (published.length) return published;
+  }
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "accountBadges", uid));
   const values = snapshot.data()?.badges;

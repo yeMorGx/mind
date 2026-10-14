@@ -1,5 +1,11 @@
 # Ativar perfis e prompts públicos
 
+## Perfis na integração atual
+
+O perfil público agora é provisionado no diretório Supabase por uma Edge Function que valida o ID token Firebase. Ele não exige publicar `creatorProfiles` no Firestore nem concluir a migração da biblioteca. Contas nativas usam `mind_creators`. Consulte `docs/migration-supabase.md` para o fluxo atual, os controles de acesso e a publicação da função.
+
+As instruções Firebase abaixo permanecem como referência para os prompts legados. A afirmação de gravação atômica do perfil refere-se à implementação Firestore anterior; o fluxo legado atual usa dois serviços e o fluxo nativo usa transação SQL.
+
 A aplicação continua usando Firebase. A biblioteca e os documentos `users` permanecem privados. Os perfis são sempre públicos: nome, apresentação, bio, foto e capa ficam em `creatorProfiles`; somente os prompts escolhidos ficam em `publicPrompts`. E-mail, convites e informações da equipe não são publicados.
 
 ## Ativação no projeto `mind-a9499`

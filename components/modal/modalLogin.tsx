@@ -43,7 +43,8 @@ export default function LoginModal({
     setNotice("");
     try {
       const credential = await action();
-      if (isSupabaseConfigured && await getNativePublicCreator(credential.user.uid)) {
+      const migrated = isSupabaseConfigured ? await getNativePublicCreator(credential.user.uid) : null;
+      if (migrated?.backend === "supabase") {
         await startAccountMigration(credential.user);
         return;
       }

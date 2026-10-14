@@ -78,6 +78,20 @@ O cadastro de novas contas e o primeiro login de contas sem backup continuam no 
 
 A configuração dos endereços de retorno e o primeiro login Google real precisam ser concluídos pelo proprietário. Compilação, lint, grants, RLS e advisors foram conferidos; a conta ainda não foi vinculada sem esse login. Não afirmar que o login completo ou a biblioteca autenticada foram validados apenas com uma resposta de configurações.
 
+## Perfis públicos antes da migração
+
+O perfil público não depende da liberação da biblioteca. `mind_creator_directory` mantém somente nome, bio, apresentação, foto e capa, além de emblemas administrados. O perfil do proprietário foi inicializado a partir do backup autorizado. Os demais são provisionados no login Firebase ou ao abrir o editor.
+
+A Edge Function `sync-creator-profile` verifica a assinatura RS256 do ID token Firebase, issuer `https://securetoken.google.com/mind-a9499`, audience `mind-a9499`, subject e expiração. O UID é extraído do token validado; o corpo não pode escolher o proprietário ou os emblemas. Nenhum e-mail, convite, dado de equipe ou prompt privado é copiado para o diretório. Clientes recebem apenas SELECT; gravações ficam no servidor.
+
+O gateway Supabase usa `verify_jwt: false` nesta função porque ela aceita JWT Firebase; a verificação de autenticação está obrigatoriamente no corpo da função antes de qualquer gravação. A implantação é feita pelo MCP com essa opção, não pelo padrão que exige JWT Supabase. Tokens ausentes ou inválidos recebem 401. A service role é usada somente no ambiente da função, nunca no navegador.
+
+Perfis nativos em `mind_creators` têm prioridade sobre o diretório. Um token Firebase não pode editar por esta função um perfil que já migrou: o servidor exige voltar ao login Google nativo. Salvar perfil legado atualiza o diretório e depois a cópia privada no Firebase; essas gravações são em serviços distintos. Perfis nativos continuam usando a transação SQL para atualizar as duas cópias.
+
+A primeira vinculação nativa prefere o perfil atual do diretório ao perfil antigo do backup, preservando edições públicas feitas nesse intervalo. Isso não modifica a aprovação de identidade nem os emblemas administrativos.
+
+O crachá 3D fica dentro de “Conheça o criador”, sem faixa fixa à esquerda. A página pública não é ocultada quando apenas a consulta dos prompts falha; nesse caso, ela informa que a lista não pôde ser carregada.
+
 ## Acesso pendente
 
 A conexão administrativa Supabase via MCP está disponível. O acesso aos dados Firebase ainda deve vir de uma exportação administrativa ou de sessões autenticadas dos próprios usuários. Não compartilhar credenciais de serviço em mensagens ou em arquivos do repositório.

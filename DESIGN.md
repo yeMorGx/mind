@@ -144,7 +144,7 @@ The library's icon sidebar is fixed and 80px wide from the medium breakpoint. It
 
 The profile uses a centered 1280px container with 20px mobile and 32px larger gutters. The cover grows from 176px to 240px and then 288px. The avatar grows from 112px to 176px and overlaps the cover by 56px/80px. The publication grid moves from one to two to three columns at the small and large breakpoints; media retains a 4:3 ratio.
 
-Prompt content uses a centered 1152px container. When a creator is available, desktop content reserves 256px at the extra-large breakpoint for a fixed 224px lanyard shell at left 16px and top 90px. Below that breakpoint, the creator becomes an inline row with a 124×160px scene. Results and prompt text precede the creator, details, and usage sections.
+Prompt content uses a centered 1152px container. The creator lanyard sits inside the “Conheça o criador” card beneath the results and prompt text, with a shell capped at 224px wide and a 260px scene. It stays in the document flow on desktop and mobile, with no reserved sidebar space. Creator, details, and usage cards follow the main content.
 
 ## Elevation & Depth
 

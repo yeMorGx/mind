@@ -65,13 +65,12 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
   }
 
   return (
-    <main className={`min-h-screen bg-background text-foreground ${creatorProfile && creatorHref ? "xl:pl-64" : ""}`}>
+    <main className="min-h-screen bg-background text-foreground">
       <header className="mx-auto grid w-full max-w-6xl grid-cols-3 items-center px-5 py-5 sm:px-8">
         <Link href={backHref} aria-label={isPrivate ? "Voltar à biblioteca" : "Voltar ao início"} className="justify-self-start rounded-lg p-2 text-white/60 hover:bg-white/5 hover:text-white"><ArrowLeft size={20} /></Link>
         <Link href={backHref} aria-label="Mind — página inicial" className="justify-self-center"><Logo /></Link>
         {!isPrivate && <button type="button" onClick={() => void sharePage()} aria-label="Compartilhar prompt" className="justify-self-end rounded-lg p-2 text-white/70 hover:bg-white/5"><Share2 size={18} /></button>}
       </header>
-      {creatorProfile && creatorHref && <CreatorLanyard profile={creatorProfile} href={creatorHref} />}
 
       <article className="mx-auto w-full max-w-6xl space-y-10 px-5 pb-20 pt-6 sm:px-8 lg:pt-10">
         <section className="min-w-0">
@@ -141,7 +140,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
         <div className="grid gap-5 md:grid-cols-3">
           <section id="creator" aria-labelledby="creator-heading" className="scroll-mt-8 rounded-2xl border border-white/10 p-5 sm:p-7">
             <h2 id="creator-heading" className="text-xs uppercase tracking-[0.17em] text-white/40">Conheça o criador</h2>
-            <div className="mt-5 flex items-center gap-4">
+            {creatorProfile && creatorHref ? <CreatorLanyard profile={creatorProfile} href={creatorHref} /> : <div className="mt-5 flex items-center gap-4">
               <span aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.08] text-xl font-semibold">{Array.from(creatorName.trim())[0]?.toUpperCase() || "M"}</span>
               <div className="min-w-0">
                 <p className="break-words text-lg font-medium">{creatorName}</p>
@@ -149,7 +148,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
                 {creatorHref && <Link href={creatorHref} className="mt-1 block text-sm text-white/60 underline">Ver perfil público</Link>}
                 {prompt.creatorSlug && <p className="mt-1 break-words text-sm text-white/40">@{prompt.creatorSlug}</p>}
               </div>
-            </div>
+            </div>}
             <p className="mt-4 text-sm leading-6 text-white/50">{isPrivate ? "Autor deste prompt na sua biblioteca." : "Compartilhou este prompt e seus exemplos de resultado com a comunidade Mind."}</p>
             {creatorPrompts.length > 0 && <a href="#creator-prompts" className="mt-4 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">Mais prompts deste criador <ArrowRight size={15} /></a>}
           </section>
