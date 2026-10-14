@@ -182,3 +182,5 @@ Fields and common library buttons use the xl radius; media and content panels us
 - **Don't** treat illustrative review fixtures as shipped creator content.
 
 A edição do perfil abre em uma seção na própria página pública, apenas para o dono, pelo botão “Editar perfil”. `/home/profile` encaminha para o perfil canônico. O crachá usa uma cena de até 300 × 310 px dentro do card, com o nome apenas na arte do crachá, emblemas agrupados e link abaixo.
+
+Resultados de prompts usam uma galeria horizontal manual, sem avanço automático nem cópias de imagens. Arrastar com mouse, deslizar no celular e usar setas com a galeria em foco percorre os resultados. Um clique sem arrasto continua abrindo a imagem.

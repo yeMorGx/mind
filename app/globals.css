@@ -147,24 +147,22 @@ body {
 .mind-upload-zone:disabled { cursor: default; opacity: .55; }
 @media (prefers-reduced-motion: reduce) { .mind-upload-zone, .mind-upload-icon { transition: none; } }
 
-/* Prompt results: two equally sized groups make one continuous, quiet loop. */
+/* Prompt results: manual scrolling with mouse dragging and native touch gestures. */
 .results-marquee { min-width: 0; max-width: 100%; }
-.results-marquee-viewport { overflow: hidden; border-radius: 16px; padding-block: 2px; }
-.results-marquee-track { display: flex; width: max-content; animation: results-drift var(--results-duration, 30s) linear infinite; }
-.results-marquee-group { display: flex; flex: none; justify-content: space-around; align-items: flex-start; gap: 6px; min-width: var(--results-width, 0px); padding-right: 6px; }
-.results-marquee-card { flex: none; width: clamp(180px, 42vw, 240px); min-width: 0; text-align: left; cursor: zoom-in; }
+.results-marquee-viewport { overflow-x: auto; overscroll-behavior-x: contain; border-radius: 16px; padding-block: 2px; scrollbar-width: thin; scrollbar-color: #454545 #101010; cursor: grab; user-select: none; }
+.results-marquee-viewport:focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
+.results-marquee-viewport[data-dragging], .results-marquee-viewport[data-dragging] * { cursor: grabbing; }
+.results-marquee-track { display: flex; width: max-content; min-width: 100%; }
+.results-marquee-group { display: flex; flex: none; justify-content: flex-start; align-items: flex-start; gap: 6px; }
+.results-marquee-card { flex: none; width: clamp(180px, 42vw, 240px); min-width: 0; text-align: left; cursor: grab; }
 .results-marquee-media { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 16px; }
 .results-marquee-media img { display: block; width: 100%; height: auto; }
 .results-marquee-error { padding: 20px; font-size: 13px; color: rgba(255,255,255,.65); }
 .results-marquee-card:focus-visible .results-marquee-media { outline: 2px solid var(--foreground); outline-offset: -3px; }
-.results-marquee[data-single] .results-marquee-track { animation: none; width: 100%; }
+.results-marquee[data-single] .results-marquee-track { width: 100%; }
+.results-marquee[data-single] .results-marquee-viewport { cursor: default; }
+.results-marquee[data-single] .results-marquee-card { cursor: zoom-in; }
 .results-marquee[data-single] .results-marquee-group { width: 100%; padding-right: 0; justify-content: center; }
-/* Keyboard browsing uses the original images in a native scrolling row. */
-.results-marquee-viewport:focus-within { overflow-x: auto; scrollbar-width: thin; scrollbar-color: #454545 #101010; }
-.results-marquee-viewport:focus-within .results-marquee-track { animation: none; transform: none; }
-.results-marquee-viewport:focus-within .results-marquee-copy { display: none; }
-.results-marquee-viewport:focus-within .results-marquee-group { min-width: 0; justify-content: flex-start; }
-@keyframes results-drift { to { transform: translateX(-50%); } }
 .results-lightbox { width: min(94vw, 1100px); max-height: 94dvh; margin: auto; padding: 16px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; color: var(--foreground); background: #080808; }
 .results-lightbox[open] { display: flex; flex-direction: column; gap: 12px; }
 .results-lightbox::backdrop { background: rgba(0,0,0,.88); }
@@ -177,12 +175,7 @@ body {
 .results-lightbox-image img { width: auto; max-width: 100%; max-height: calc(94dvh - 140px); object-fit: contain; }
 .results-lightbox-image p { max-width: 360px; padding: 30px; font-size: 14px; text-align: center; }
 .results-lightbox-footer { display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 12px; color: rgba(255,255,255,.65); }
-@media (prefers-reduced-motion: reduce) {
-  .results-marquee-track { animation: none; transform: none; }
-  .results-marquee-copy { display: none; }
-  .results-marquee-viewport { overflow-x: auto; scrollbar-width: thin; scrollbar-color: #454545 #101010; }
-  .results-marquee-group { min-width: 0; justify-content: flex-start; }
-}
+
 
 /* The library card is the action node itself; the fan belongs to its corner. */
 .mind-node-library { margin: 56px 40px 0 0; }

@@ -1,58 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 
 type ResultImage = { id: string; url: string; label: string };
 
-function subscribeToVisibility(listener: () => void) {
-  document.addEventListener("visibilitychange", listener);
-  return () => document.removeEventListener("visibilitychange", listener);
-}
-
-function ResultTile({ image, index, duplicate, onOpen }: {
-  image: ResultImage; index: number; duplicate: boolean; onOpen: () => void;
+function ResultTile({ image, index, onOpen }: {
+  image: ResultImage; index: number; onOpen: () => void;
 }) {
   const [failed, setFailed] = useState(false);
-  return <button type="button" className="results-marquee-card" tabIndex={duplicate ? -1 : 0}
+  return <button type="button" className="results-marquee-card"
     aria-label={`Ampliar resultado ${index + 1}${image.label ? `: ${image.label}` : ""}`}
-    onMouseDown={duplicate ? (event) => event.preventDefault() : undefined} onClick={onOpen}>
+    onClick={onOpen}>
     <span className="results-marquee-media">
       {/* eslint-disable-next-line @next/next/no-img-element -- Real optimized data URLs and signed image URLs. */}
-      {failed ? <span className="results-marquee-error">Imagem indisponível</span> : <img src={image.url} alt={duplicate ? "" : image.label || `Resultado ${index + 1}`} loading={index === 0 ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)} />}
+      {failed ? <span className="results-marquee-error">Imagem indisponível</span> : <img src={image.url} alt={image.label || `Resultado ${index + 1}`} draggable={false} loading={index === 0 ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)} />}
     </span>
   </button>;
 }
 
 export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
-  const [hovered, setHovered] = useState(false);
-  const [inView, setInView] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const gesture = useRef<{ id: number; x: number; scrollLeft: number; moved: boolean } | null>(null);
+  const suppressClick = useRef(false);
   const [active, setActive] = useState<number | null>(null);
   const [failedImage, setFailedImage] = useState<string | null>(null);
-  const viewport = useRef<HTMLDivElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const pageVisible = useSyncExternalStore(subscribeToVisibility, () => document.visibilityState === "visible", () => true);
   const multiple = images.length > 1;
   const selected = active === null ? null : images[active];
   const opened = active !== null;
-  const running = multiple && inView && pageVisible && !hovered && !opened;
-
-  useEffect(() => {
-    const element = viewport.current;
-    if (!element) return;
-    const intersection = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting));
-    intersection.observe(element);
-    // Each copy must fill at least the visible width: a short gallery must
-    // not leave a gap as the second identical group takes over the loop.
-    const resize = new ResizeObserver(([entry]) => {
-      element.style.setProperty("--results-width", `${entry.contentRect.width}px`);
-      const group = element.querySelector<HTMLElement>(".results-marquee-group");
-      element.style.setProperty("--results-duration", `${Math.max(20, (group?.offsetWidth ?? entry.contentRect.width) / 28)}s`);
-    });
-    resize.observe(element);
-    return () => { intersection.disconnect(); resize.disconnect(); };
-  }, [images.length]);
-
   useEffect(() => {
     const element = dialog.current;
     if (!element) return;
@@ -75,14 +51,50 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
     <div className="mb-3 flex items-center justify-between gap-3">
       <h2 id="prompt-results-heading" className="text-sm font-medium text-white/75">Resultados do prompt</h2>
     </div>
-    <div ref={viewport} className="results-marquee-viewport" onPointerEnter={(event) => { if (event.pointerType !== "touch") setHovered(true); }} onPointerLeave={() => setHovered(false)}>
-      <div className="results-marquee-track" style={{ animationPlayState: running ? "running" : "paused" } as CSSProperties}>
-        {[false, ...(multiple ? [true] : [])].map((duplicate) => <div key={String(duplicate)} className={`results-marquee-group${duplicate ? " results-marquee-copy" : ""}`} aria-hidden={duplicate || undefined}>
-          {images.map((image, index) => <ResultTile key={image.id} image={image} index={index} duplicate={duplicate} onOpen={() => setActive(index)} />)}
-        </div>)}
+    <div className="results-marquee-viewport" data-dragging={dragging || undefined}
+      role="region" aria-label="Galeria de resultados do prompt" tabIndex={multiple ? 0 : undefined}
+      onPointerDown={event => {
+        suppressClick.current = false;
+        if (event.pointerType === "touch" || event.button !== 0 || !multiple) return;
+        gesture.current = { id: event.pointerId, x: event.clientX, scrollLeft: event.currentTarget.scrollLeft, moved: false };
+      }}
+      onPointerMove={event => {
+        const current = gesture.current;
+        if (!current || current.id !== event.pointerId) return;
+        if (event.buttons !== 1) { gesture.current = null; setDragging(false); return; }
+        const distance = event.clientX - current.x;
+        if (!current.moved && Math.abs(distance) < 6) return;
+        if (!current.moved) {
+          current.moved = true; suppressClick.current = true; setDragging(true);
+          event.currentTarget.setPointerCapture(event.pointerId);
+        }
+        event.preventDefault();
+        event.currentTarget.scrollLeft = current.scrollLeft - distance;
+      }}
+      onPointerUp={event => {
+        if (gesture.current?.id !== event.pointerId) return;
+        gesture.current = null; setDragging(false);
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+      }}
+      onPointerLeave={() => { if (!gesture.current?.moved) gesture.current = null; }}
+      onPointerCancel={() => { gesture.current = null; setDragging(false); }}
+      onLostPointerCapture={() => { gesture.current = null; setDragging(false); }}
+      onClickCapture={event => {
+        if (suppressClick.current && event.detail > 0) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; }
+      }}
+      onDragStart={event => event.preventDefault()}
+      onKeyDown={event => {
+        if (event.target !== event.currentTarget || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+        event.preventDefault();
+        event.currentTarget.scrollBy({ left: event.currentTarget.clientWidth * (event.key === "ArrowLeft" ? -0.8 : 0.8) });
+      }}>
+      <div className="results-marquee-track">
+        <div className="results-marquee-group">
+          {images.map((image, index) => <ResultTile key={image.id} image={image} index={index} onOpen={() => setActive(index)} />)}
+        </div>
       </div>
     </div>
-    <p className="mt-3 text-xs text-white/50">Clique em uma imagem para ver o resultado completo.</p>
+    <p className="mt-3 text-xs text-white/50">{multiple ? "Arraste para explorar. Clique em uma imagem para ver o resultado completo." : "Clique na imagem para ver o resultado completo."}</p>
 
     <dialog ref={dialog} className="results-lightbox" aria-labelledby="result-viewer-title" onCancel={(event) => { event.preventDefault(); setActive(null); }} onClose={() => setActive(null)}
       onClick={(event) => {
