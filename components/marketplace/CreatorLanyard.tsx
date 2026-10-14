@@ -46,13 +46,12 @@ export default function CreatorLanyard({ profile, href }: { profile: CreatorProf
         {/* eslint-disable-next-line @next/next/no-img-element -- Profile photo fallback when WebGL is unavailable. */}
         {profile.avatarUrl ? <img src={profile.avatarUrl} alt="" /> : <span>{Array.from(profile.name)[0]?.toUpperCase()}</span>}
       </div>
-      <Lanyard frontImage={texture || undefined} backImage={texture || undefined} size={0.52} strapLength={0.25} breeze={0.18} damping={0.7} intro={false}
+      <Lanyard frontImage={texture || undefined} backImage={texture || undefined} size={0.78} strapLength={0.12} breeze={0.18} damping={0.7} intro={false}
         metal={owner ? "gold" : "silver"} strapColor={owner ? "#4e3b18" : "#25232f"} onCardClick={() => router.push(href)} />
     </div>
-    <Link href={href} className="mx-3 block rounded-xl px-3 py-3 text-center focus-visible:outline-2 focus-visible:outline-white">
-      <span className="block text-sm font-medium">{profile.name}</span>
-      <span className="mt-2 flex justify-center"><CreatorBadges badges={profile.badges} /></span>
-      <span className="mt-2 inline-flex items-center gap-1 text-xs text-white/60">Ver perfil do criador <ArrowUpRight size={13} /></span>
+    <Link href={href} aria-label={`Ver perfil de ${profile.name}`} className="block rounded-xl px-1 py-2 text-center focus-visible:outline-2 focus-visible:outline-white">
+      <span className="mt-1 flex justify-center [&>span]:justify-center"><CreatorBadges badges={profile.badges} /></span>
+      <span className="mt-4 inline-flex items-center gap-1 text-sm text-white/70">Ver perfil do criador <ArrowUpRight size={13} /></span>
     </Link>
   </aside>;
 }

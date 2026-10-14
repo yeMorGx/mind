@@ -64,3 +64,15 @@ Se preferir atribuir apenas a coroa e a verificação pelo Firebase Console: enc
 ## Origem dos componentes visuais
 
 Crachá: componente Lanyard fornecido pelo proprietário, de React Bits, adaptado para a foto do criador e navegação ao perfil. Símbolos: Google Material Symbols Rounded, Apache-2.0, arquivos e licença em `public/badges`.
+
+## Publicação de prompts de contas Firebase
+
+`sync-prompt-publication` verifica o JWT Firebase (RS256, emissor, público, validade), lê o workspace e o prompt pela API Firestore usando esse mesmo token e confere `ownerId` e `createdBy`. O cliente envia somente os IDs e a intenção de publicar. A função não aceita um snapshot fornecido pelo cliente.
+
+Somente os campos públicos selecionados são copiados para `mind_directory_prompts`. RLS permite SELECT público; apenas `service_role`, restrito à função, grava. A biblioteca privada permanece no Firebase. As imagens continuam otimizadas e embutidas.
+
+A marca privada é atualizada com precondição de versão antes de criar a cópia pública; se o Supabase falhar, a função tenta restaurar a marca sem sobrescrever edições posteriores. Ao tornar privado, remove primeiro o snapshot público e depois atualiza a marca privada. Não há transação distribuída: falhas podem exigir repetir a ação. Edição de prompt publicado sincroniza a cópia; exclusão remove a publicação antes de apagar o original.
+
+A confirmação futura de migração transfere os snapshots atuais para as tabelas nativas e remove as cópias da ponte na mesma transação, preservando a publicação e a possibilidade de tornar privado. Não publica automaticamente os prompts do backup.
+
+Deploy: `sync-prompt-publication` usa `verify_jwt=false` no gateway porque a assinatura é Firebase. A verificação obrigatória ocorre dentro da função antes de qualquer acesso ao banco; não remova essa etapa.

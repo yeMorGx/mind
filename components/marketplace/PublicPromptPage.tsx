@@ -137,9 +137,9 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
           </section>}
         </section>
 
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid items-start gap-5 md:grid-cols-3">
           <section id="creator" aria-labelledby="creator-heading" className="scroll-mt-8 rounded-2xl border border-white/10 p-5 sm:p-7">
-            <h2 id="creator-heading" className="text-xs uppercase tracking-[0.17em] text-white/40">Conheça o criador</h2>
+            <h2 id="creator-heading" className="text-lg font-medium">Conheça o criador</h2>
             {creatorProfile && creatorHref ? <CreatorLanyard profile={creatorProfile} href={creatorHref} /> : <div className="mt-5 flex items-center gap-4">
               <span aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.08] text-xl font-semibold">{Array.from(creatorName.trim())[0]?.toUpperCase() || "M"}</span>
               <div className="min-w-0">

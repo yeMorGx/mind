@@ -2,15 +2,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Copy, Check, ImageIcon } from "lucide-react";
+import { useOnboarding } from "@/app/context/OnboardingContext";
+import CreatorProfileEditor from "./CreatorProfileEditor";
 import Logo from "@/components/ui/logo";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import type { CreatorProfile } from "@/lib/firebase/publication";
 import type { Prompt } from "@/lib/supabase/types";
 
 /* eslint-disable @next/next/no-img-element -- Optimized profile and prompt uploads are data URLs. */
-export default function CreatorProfileView({ profile, prompts, creatorId, promptsError = false }: { profile: CreatorProfile; prompts: Prompt[]; creatorId: string; promptsError?: boolean }) {
+export default function CreatorProfileView({ profile: initialProfile, prompts, creatorId, promptsError = false }: { profile: CreatorProfile; prompts: Prompt[]; creatorId: string; promptsError?: boolean }) {
+  const { user } = useOnboarding();
+  const owner = user?.uid === creatorId;
+  const [editing, setEditing] = useState(false);
+  const [updatedProfile, setUpdatedProfile] = useState<CreatorProfile | null>(null);
+  const profile = updatedProfile ?? initialProfile;
+  function editProfile() { setEditing(true); window.setTimeout(() => { document.getElementById("edit-profile-heading")?.focus(); document.getElementById("editar-perfil")?.scrollIntoView({ behavior: "instant", block: "start" }); }, 0); }
   const [copied, setCopied] = useState(false);
   const [notice, setNotice] = useState("");
+  function closeEditor() { setEditing(false); window.setTimeout(() => document.getElementById("edit-profile-button")?.focus(), 0); }
   async function share() {
     try { await navigator.clipboard.writeText(`${window.location.origin}/u/${creatorId}`); setCopied(true); setNotice("Link do perfil copiado."); window.setTimeout(() => setCopied(false), 2000); }
     catch { setNotice("Não foi possível copiar o link. Copie o endereço na barra do navegador."); }
@@ -18,7 +27,7 @@ export default function CreatorProfileView({ profile, prompts, creatorId, prompt
   return <main className="min-h-screen bg-[#fafafa] text-[#17181a] selection:bg-[#dce7ff]">
     <header className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
       <Link href="/" aria-label="Mind — início" className="flex items-center gap-2 [&_svg]:size-16 [&_path]:fill-[#17181a]"><Logo /></Link>
-      <Link href="/home/profile" className="rounded-full border border-[#17181a]/15 px-4 py-2 text-sm font-medium hover:bg-[#17181a]/5">Meu perfil</Link>
+      <Link href={owner ? "/home" : user ? `/u/${user.uid}` : "/home/profile"} className="rounded-full border border-[#17181a]/15 px-4 py-2 text-sm font-medium hover:bg-[#17181a]/5">{owner ? "Minha biblioteca" : "Meu perfil"}</Link>
     </header>
     <div className="mx-auto max-w-7xl px-5 pb-16 sm:px-8">
       <div className="h-44 overflow-hidden rounded-2xl bg-[#e9e7f3] sm:h-60 lg:h-72">
@@ -35,11 +44,12 @@ export default function CreatorProfileView({ profile, prompts, creatorId, prompt
               {profile.headline && <p className="mt-2 text-sm font-medium text-[#4d4d57]">{profile.headline}</p>}
             </div>
           </div>
-          <button type="button" onClick={() => void share()} className="inline-flex w-fit items-center gap-2 rounded-full bg-[#17181a] px-5 py-3 text-sm font-medium text-white hover:bg-[#34343d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#17181a]">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Link copiado" : "Compartilhar perfil"}</button>
+          <div className="flex shrink-0 flex-wrap gap-2">{owner && <button id="edit-profile-button" type="button" aria-expanded={editing} aria-controls="editar-perfil" onClick={editProfile} className="rounded-full border border-[#17181a]/25 px-5 py-3 text-sm font-medium hover:bg-black/5">Editar perfil</button>}<button type="button" onClick={() => void share()} className="inline-flex w-fit items-center gap-2 rounded-full bg-[#17181a] px-5 py-3 text-sm font-medium text-white hover:bg-[#34343d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#17181a]">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Link copiado" : "Compartilhar perfil"}</button></div>
         </div>
         {profile.bio && <p className="mt-6 max-w-3xl whitespace-pre-wrap text-sm leading-7 text-[#50505a] sm:text-base">{profile.bio}</p>}
         {notice && <p role="status" className="mt-3 text-sm text-[#50505a]">{notice}</p>}
       </section>
+      {owner && editing && <CreatorProfileEditor onClose={closeEditor} onSaved={value => { setUpdatedProfile({ ...profile, ...value }); closeEditor(); setNotice("Perfil atualizado."); }} />}
       <section className="mt-10">
         <div className="flex items-center gap-2 border-b border-[#17181a]/10 pb-4"><h2 className="text-sm font-semibold">Prompts publicados</h2>{!promptsError && <span className="rounded-full bg-[#ececf1] px-2 py-0.5 text-xs text-[#53535e]">{prompts.length}</span>}</div>
         {promptsError ? <div className="py-16 text-center"><p className="text-sm text-[#62626d]">Não foi possível carregar os prompts deste criador.</p><button type="button" onClick={() => window.location.reload()} className="mt-4 rounded-full border border-[#17181a]/15 px-4 py-2 text-sm">Tentar novamente</button></div> : prompts.length > 0 ? <div className="mt-7 grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">{prompts.map(prompt => {
@@ -51,7 +61,7 @@ export default function CreatorProfileView({ profile, prompts, creatorId, prompt
             <div className="mt-3 flex items-start justify-between gap-3"><h3 className="truncate text-sm font-semibold">{prompt.title}</h3><ArrowUpRight size={16} className="shrink-0 text-[#747480]" /></div>
             <p className="mt-1 text-xs text-[#62626d]">{[prompt.category, prompt.model].filter(Boolean).join(" · ") || "Prompt de IA"}</p>
           </Link>;
-        })}</div> : <div className="py-20 text-center"><h3 className="text-lg font-medium">Os próximos prompts vêm aí.</h3><p className="mt-2 text-sm text-[#62626d]">Este criador ainda não publicou prompts.</p></div>}
+        })}</div> : <div className="py-20 text-center"><h3 className="text-lg font-medium">Os próximos prompts vêm aí.</h3><p className="mt-2 text-sm text-[#62626d]">{owner ? "Publique os prompts da sua biblioteca para mostrá-los aqui." : "Este criador ainda não publicou prompts."}</p>{owner && <Link href="/home" className="mt-5 inline-block rounded-full border border-black/20 px-4 py-2 text-sm font-medium hover:bg-black/5">Ir à biblioteca</Link>}</div>}
       </section>
     </div>
   </main>;

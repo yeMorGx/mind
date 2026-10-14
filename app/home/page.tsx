@@ -172,7 +172,7 @@ export default function HomePage() {
     if (!user || publishingId) return;
     setPublishingId(prompt.id); setPageError("");
     try { await setPromptPublication(data.primaryWorkspaceId, user.uid, prompt.id, !prompt.isPublished); }
-    catch (error) { setPageError(error instanceof Error && error.message.startsWith("Publique") ? error.message : "Não foi possível alterar a publicação do prompt."); }
+    catch (error) { setPageError(error instanceof Error ? error.message : "Não foi possível alterar a publicação do prompt."); }
     finally { setPublishingId(""); }
   }
 

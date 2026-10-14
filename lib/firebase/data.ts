@@ -1,3 +1,5 @@
+import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { syncLegacyPrompt } from "./public-prompt-sync";
 import { usingSupabase, type MindUser as User } from "@/lib/backend";
 import * as native from "@/lib/supabase/mind";
 import {
@@ -244,22 +246,24 @@ export async function updatePrompt(
   };
   const batch = writeBatch(db);
   batch.update(doc(db, "workspaces", workspaceId, "prompts", promptId), values);
-  if (existing?.isPublished) {
+  if (existing?.isPublished && !isSupabaseConfigured) {
     const workspace = await getWorkspace(workspaceId);
     batch.update(doc(db, "publicPrompts", `${workspace?.ownerId}_${promptId}`), {
       title: trimmedTitle, content: trimmedContent, ...(details ?? {}), updatedAt: Date.now(),
     });
   }
   await batch.commit();
+  if (existing?.isPublished && isSupabaseConfigured) await syncLegacyPrompt(workspaceId, promptId, true);
 }
 
 export async function removePrompt(workspaceId: string, promptId: string) {
   if (usingSupabase()) return native.removeNativePrompt(workspaceId, promptId);
   const { db } = requireFirebaseServices();
   const existing = await getPrompt(workspaceId, promptId);
+  if (isSupabaseConfigured) await syncLegacyPrompt(workspaceId, promptId, false);
   const batch = writeBatch(db);
   batch.delete(doc(db, "workspaces", workspaceId, "prompts", promptId));
-  if (existing?.isPublished) {
+  if (existing?.isPublished && !isSupabaseConfigured) {
     const workspace = await getWorkspace(workspaceId);
     batch.delete(doc(db, "publicPrompts", `${workspace?.ownerId}_${promptId}`));
   }

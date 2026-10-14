@@ -180,3 +180,5 @@ Fields and common library buttons use the xl radius; media and content panels us
 - **Don't** add invented follower, like, or sales metrics to creator identity.
 - **Don't** offer self-assigned verification or founder badges.
 - **Don't** treat illustrative review fixtures as shipped creator content.
+
+A edição do perfil abre em uma seção na própria página pública, apenas para o dono, pelo botão “Editar perfil”. `/home/profile` encaminha para o perfil canônico. O crachá usa uma cena de até 300 × 310 px dentro do card, com o nome apenas na arte do crachá, emblemas agrupados e link abaixo.

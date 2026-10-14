@@ -18,3 +18,5 @@ Mind é um lugar gratuito para criadores e influenciadores de IA publicarem prom
 - Biblioteca: barra lateral compacta com ícones, header fixo, lista sem hero.
 - Perfil público: capa, avatar sobreposto, identificação e grade visual dos prompts, conforme as referências enviadas pelo proprietário.
 - Prompt: resultados e texto principal; informações complementares abaixo. Crachá 3D dentro do card “Conheça o criador”, com acesso ao perfil.
+
+O dono edita o perfil na própria página pública, pelo botão “Editar perfil”; a antiga rota de configurações redireciona para ela. Backup e migração continuam na seção de edição. Publicações de contas Firebase usam cópias públicas no Supabase, com seleção individual e verificação da propriedade na origem.
