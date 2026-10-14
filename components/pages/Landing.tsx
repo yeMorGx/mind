@@ -46,9 +46,7 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
     <main>
     <div className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <CloudShader className="h-full w-full" speed={0.4} />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.5)_45%,rgba(0,0,0,0.5)_65%,rgba(0,0,0,0.3))]" />
+        <CloudShader className="h-full w-full" speed={0.4} skyTopColor="#6ca8da" skyBottomColor="#b9ddf3" />
       </div>
 
       {/* DARK OVERLAY */}
@@ -73,26 +71,26 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
           initial={{ opacity: 0, filter: "blur(10px)", y: 15 }}
           animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           transition={{ duration: 1 }}
-          className={`${instrumentSerif.className} text-4xl font-bold mb-8 text-center`}
+          className={`${instrumentSerif.className} text-4xl font-bold mb-8 text-center text-[#102a43]`}
         >
           {headline}
         </motion.h1>
 
-        <p className="max-w-lg px-6 text-center text-sm text-white/55">
+        <p className="max-w-lg px-6 text-center text-sm text-[#102a43]">
           Salve, organize e encontre seus melhores prompts em um só lugar.
         </p>
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
           <button
             type="button"
             onClick={() => router.push("/register")}
-            className="rounded-xl bg-white px-6 py-3 font-semibold text-black transition hover:scale-[1.02]"
+            className="rounded-xl bg-[#102a43] px-6 py-3 font-semibold text-white transition hover:bg-[#183d5d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#102a43]"
           >
             Começar grátis
           </button>
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="rounded-xl border border-white/15 px-6 py-3 text-white/75 transition hover:bg-white/5 hover:text-white"
+            className="rounded-xl border border-white/80 bg-white/80 px-6 py-3 text-[#102a43] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#102a43]"
           >
             Já tenho uma conta
           </button>
