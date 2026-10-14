@@ -15,3 +15,5 @@ Após concluir mudanças neste projeto e passar nas verificações relevantes, f
 Confira o resultado do deploy automático da Vercel para o commit enviado. Se houver um bloqueio de credenciais, configuração ou deploy, informe o estado real e o que falta. Não publique arquivos de segredos nem use force push.
 
 A landing (`/`) deve manter sua apresentação original, sem o header ou a sidebar das páginas internas. Não alterar seu layout, cores, textos ou comportamento sem solicitação explícita do proprietário.
+
+A autorização precisa mencionar diretamente a landing. Pedidos gerais para ajustar o site inteiro, temas, header ou sidebar não autorizam mudanças nela, inclusive alterações indiretas por componentes ou estilos compartilhados.
