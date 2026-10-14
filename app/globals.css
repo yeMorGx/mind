@@ -283,3 +283,42 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
 
 .site-app .username-required-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 28px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 16px; background: var(--surface); color: var(--foreground); }
 .site-app .username-required-dialog::backdrop { background: rgb(23 24 26 / 55%); }
+
+/* Dribbble-inspired internal navigation and image-led catalog. */
+.site-app .showcase-header { height: 128px; border-bottom: 1px solid var(--border-color); }
+.site-app .showcase-header-inner { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0 12px; width: 100%; max-width: 1800px; height: 100%; margin-inline: auto; padding: 8px 20px 12px; }
+.site-app .showcase-brand { display: flex; align-items: center; gap: 4px; font-size: 20px; font-weight: 650; letter-spacing: -.025em; }
+.site-app .showcase-brand > span:last-child { display: none; }
+.site-app .showcase-nav { display: flex; align-items: center; justify-content: center; gap: 14px; white-space: nowrap; }
+.site-app .showcase-nav > * { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); font-size: 12px; font-weight: 550; cursor: pointer; }
+.site-app .showcase-nav > *:hover, .site-app .showcase-nav > [aria-current="page"] { color: var(--foreground); text-decoration: underline; text-underline-offset: 7px; }
+.site-app .showcase-account-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+.site-app .showcase-search { grid-column: 1 / -1; grid-row: 2; min-width: 0; }
+.site-app .showcase-search input { background: var(--surface-hover); }
+.site-app .catalog-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 32px 28px; columns: auto; }
+.site-app .catalog-public-card { display: block; min-width: 0; margin: 0; border: 0; border-radius: 0; background: transparent; }
+.site-app .catalog-card-cover { border-radius: 14px; aspect-ratio: 4 / 3; }
+.site-app .catalog-card-cover img { width: 100%; height: 100%; max-height: none; object-fit: cover; transition: transform 240ms ease-out; }
+.site-app .catalog-card-cover:hover img { transform: scale(1.025); }
+.site-app .catalog-public-card > div { padding: 14px 0 0; }
+.site-app .catalog-public-card h2 { font-size: 15px; }
+.site-app .catalog-public-card > div > button { width: auto; min-height: 36px; margin-top: 12px; padding-inline: 12px; border-radius: 999px; background: var(--surface); font-size: 12px; }
+.site-app .catalog-text-preview { min-height: 100%; }
+.site-app .catalog-library-grid { padding-top: 28px; padding-right: 20px; }
+.site-app .catalog-library-card { margin-bottom: 0; }
+.site-app .catalog-library-card .catalog-card-cover { border-radius: 14px 14px 0 0; }
+.site-app .showcase-header :is(a,button,summary,input):focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
+@media (min-width: 640px) { .site-app .catalog-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (min-width: 768px) {
+  .site-app .showcase-header { height: 72px; }
+  .site-app .showcase-header-inner { display: flex; gap: 24px; padding: 0 32px; }
+  .site-app .showcase-brand > span:last-child { display: inline; }
+  .site-app .showcase-nav { gap: 20px; }
+  .site-app .showcase-nav > * { font-size: 13px; }
+  .site-app .showcase-search { flex: 1; margin-left: auto; max-width: 480px; }
+}
+@media (min-width: 1100px) { .site-app .catalog-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media (min-width: 1600px) { .site-app .catalog-grid { grid-template-columns: repeat(4,minmax(0,1fr)); } }
+@media (max-width: 370px) { .site-app .showcase-header-inner { gap: 0 8px; padding-inline: 12px; } .site-app .showcase-nav { gap: 10px; } .site-app .showcase-account-actions { gap: 6px; } }
+@media (prefers-reduced-motion: reduce) { .site-app .catalog-card-cover img { transition: none; } }
+@media (max-width: 370px) { .site-app .showcase-brand .catalog-logo { width: 32px; } .site-app .showcase-nav > * { font-size: 11px; } }

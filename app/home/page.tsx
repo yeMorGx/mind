@@ -148,7 +148,7 @@ export default function HomePage() {
     <div className="relative min-h-[calc(100dvh-4.5rem)] overflow-hidden bg-background text-foreground">
 
       <main className="flex min-h-[calc(100dvh-4.5rem)] flex-col pt-7">
-        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-5 sm:px-8">
+        <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col px-5 sm:px-8">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <div><h1 className="text-2xl font-semibold tracking-tight">{activeView === "favorites" ? "Favoritos" : "Meus prompts"}</h1><p className="mt-2 text-sm text-muted">Crie, organize e escolha o que compartilhar.</p></div>
           </div>

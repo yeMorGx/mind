@@ -15,7 +15,7 @@ Mind é um lugar gratuito para criadores e influenciadores de IA publicarem prom
 ## Superfícies
 
 - Landing: céu claro e galeria circular sem títulos; preservar a direção aceita pelo proprietário.
-- Navegação global: header fixo e sidebar compacta compartilhados entre as páginas internas; menu móvel acessível.
+- Navegação global: header fixo com navegação horizontal compartilhado entre as páginas internas, sem sidebar.
 - Biblioteca: lista sem hero, busca e favoritos integrados à navegação compartilhada.
 - Perfil público: capa, avatar sobreposto, identificação e grade visual dos prompts, conforme as referências enviadas pelo proprietário.
 - Prompt: resultados e texto principal; informações complementares abaixo. Crachá 3D dentro do card “Conheça o criador”, com acesso ao perfil.
@@ -26,7 +26,7 @@ O dono edita o perfil na própria página pública, pelo botão “Editar perfil
 
 O proprietário escolheu somente o tema claro. Todas as páginas internas, incluindo login, cadastro, editores e estados de erro, compartilham cores semânticas e o layout de navegação raiz. Perfis e prompts públicos continuam acessíveis sem login; biblioteca e favoritos solicitam autenticação. A landing conserva sua apresentação e seu comportamento originais, sem header/sidebar globais. Não alterar essa página sem uma solicitação explícita.
 
-A referência de catálogo orienta apenas as páginas internas: header com busca e criação de rascunhos, sidebar com rótulos no desktop e cards com capa. `/explore` lista e filtra os prompts públicos reais sem depender da landing. As ações da biblioteca e a escolha individual de publicação continuam preservadas.
+A referência de catálogo orienta apenas as páginas internas: header com busca e criação de rascunhos, navegação horizontal e cards com capa. `/explore` lista e filtra os prompts públicos reais sem depender da landing. As ações da biblioteca e a escolha individual de publicação continuam preservadas.
 
 ## Identificação de criadores
 

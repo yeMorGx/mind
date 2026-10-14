@@ -1,28 +1,44 @@
 "use client";
 import Link from "next/link";
-import { Menu, Plus, Search, ChevronDown } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { Plus, Search, LogOut, UserRound } from "lucide-react";
 import Logo from "@/components/ui/logo";
 type HeaderProps = {
-  searchValue: string; onSearchChange: (value: string) => void; onSearch: () => void; onMenuClick: () => void; mobileOpen: boolean;
+  searchValue: string; onSearchChange: (value: string) => void; onSearch: () => void;
   profileHref?: string; userName: string; onLogin: () => void; authReady: boolean; onCreate: () => void;
-  models: string[]; model: string; onModelChange: (value: string) => void;
+  library: boolean; favorites: boolean; onLibrary: (favorites: boolean) => void; onExplore: () => void; onSignOut: () => void;
 };
-export default function Header({ searchValue, onSearchChange, onSearch, onMenuClick, mobileOpen, profileHref, userName, onLogin, authReady, onCreate, models, model, onModelChange }: HeaderProps) {
+export default function Header({ searchValue, onSearchChange, onSearch, profileHref, userName, onLogin, authReady, onCreate, library, favorites, onLibrary, onExplore, onSignOut }: HeaderProps) {
+  const pathname = usePathname();
+  const account = useRef<HTMLDetailsElement>(null);
+  useEffect(() => { account.current?.removeAttribute("open"); },[pathname]);
+  useEffect(() => {
+    function close(event: PointerEvent) { if (event.target instanceof Node && !account.current?.contains(event.target)) account.current?.removeAttribute("open"); }
+    document.addEventListener("pointerdown",close);
+    return () => document.removeEventListener("pointerdown",close);
+  },[]);
   const initials = userName.trim().split(/\s+/).slice(0,2).map(part => Array.from(part)[0]).join("").toUpperCase();
-  return <header className="site-header catalog-header fixed inset-x-0 top-0 z-40 flex h-18 items-center border-b border-border bg-surface">
-    <Link href={profileHref ? "/home" : "/explore"} aria-label="Mind — início" className="catalog-brand hidden h-full shrink-0 items-center gap-2 text-xl font-semibold tracking-tight md:flex">
-      <span className="catalog-logo"><Logo /></span><span className="hidden lg:inline">Mind</span>
-    </Link>
-    <div className="flex min-w-0 flex-1 items-center gap-2 px-4 md:gap-4 md:px-6 lg:px-8">
-      <div className="md:hidden"><button type="button" onClick={onMenuClick} aria-label="Abrir navegação" aria-expanded={mobileOpen} aria-controls="mobile-navigation" className="site-icon-button"><Menu size={20} /></button></div>
-      <form role="search" onSubmit={event => { event.preventDefault(); onSearch(); }} className="min-w-0 flex-1">
-        <label className="relative block"><Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-subtle" /><span className="sr-only">Buscar prompts, modelos ou criadores</span>
-          <input type="search" value={searchValue} onChange={event => onSearchChange(event.target.value)} placeholder="Buscar prompts, modelos, criadores…" className="h-11 w-full rounded-xl border border-transparent bg-background pl-11 pr-3 text-sm outline-none placeholder:text-subtle focus:border-foreground" />
+  return <header className="site-header showcase-header fixed inset-x-0 top-0 z-40 bg-surface">
+    <div className="showcase-header-inner">
+      <Link href={profileHref ? "/home" : "/explore"} aria-label="Mind — início" className="showcase-brand"><span className="catalog-logo"><Logo /></span><span>Mind</span></Link>
+      <nav aria-label="Navegação principal" className="showcase-nav">
+        <Link href="/explore" onClick={onExplore} aria-current={pathname === "/explore" ? "page" : undefined}>Explorar</Link>
+        <button type="button" onClick={() => onLibrary(false)} aria-current={library && !favorites ? "page" : undefined}>Biblioteca</button>
+        <button type="button" onClick={() => onLibrary(true)} aria-current={library && favorites ? "page" : undefined}>Favoritos</button>
+      </nav>
+      <form role="search" onSubmit={event => { event.preventDefault(); onSearch(); }} className="showcase-search">
+        <label className="relative block"><Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-subtle" /><span className="sr-only">Buscar prompts, modelos ou criadores</span>
+          <input type="search" value={searchValue} onChange={event => onSearchChange(event.target.value)} placeholder="O que você quer criar?" className="h-11 w-full rounded-full border border-transparent bg-background pl-11 pr-4 text-sm outline-none placeholder:text-subtle focus:border-foreground" />
         </label>
       </form>
-      {models.length > 0 && <label className="relative hidden shrink-0 xl:block"><span className="sr-only">Filtrar por modelo</span><select value={model} onChange={event => onModelChange(event.target.value)} className="h-11 max-w-44 appearance-none rounded-xl border border-border bg-surface py-2 pl-4 pr-9 text-sm"><option value="">Todos os modelos</option>{models.map(value => <option key={value} value={value}>{value}</option>)}</select><ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted" /></label>}
-      <button type="button" onClick={onCreate} disabled={!authReady} aria-label="Novo prompt" className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50 lg:px-4"><Plus size={18} /><span className="hidden lg:inline">Novo prompt</span></button>
-      {profileHref ? <Link href={profileHref} title="Meu perfil" aria-label="Meu perfil" className="grid size-10 shrink-0 place-items-center rounded-full bg-media text-sm font-semibold text-foreground">{initials || "M"}</Link> : <button type="button" disabled={!authReady} onClick={onLogin} className="h-11 shrink-0 rounded-xl border border-border px-3 text-sm font-medium hover:bg-surface-hover disabled:opacity-50">Entrar</button>}
+      <div className="showcase-account-actions">
+        <button type="button" onClick={onCreate} disabled={!authReady} aria-label="Novo prompt" className={`${profileHref ? "flex" : "hidden sm:flex"} h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50 lg:px-5`}><Plus size={17} /><span className="hidden lg:inline">Novo prompt</span></button>
+        {profileHref ? <details ref={account} className="relative" onKeyDown={event => { if (event.key === "Escape") { account.current?.removeAttribute("open"); account.current?.querySelector("summary")?.focus(); } }}>
+          <summary aria-label="Menu da conta" className="grid size-10 cursor-pointer list-none place-items-center rounded-full bg-media text-sm font-semibold text-foreground [&::-webkit-details-marker]:hidden">{initials || "M"}</summary>
+          <div className="absolute right-0 top-13 w-56 rounded-2xl border border-border bg-surface p-2"><p className="truncate px-3 py-2 text-xs text-muted">{userName}</p><Link href={profileHref} className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><UserRound size={16} />Meu perfil</Link><button type="button" onClick={onSignOut} className="flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm hover:bg-surface-hover"><LogOut size={16} />Sair da conta</button></div>
+        </details> : <button type="button" disabled={!authReady} onClick={onLogin} className="h-10 shrink-0 rounded-full border border-border px-4 text-sm font-medium hover:bg-surface-hover disabled:opacity-50">Entrar</button>}
+      </div>
     </div>
   </header>;
 }

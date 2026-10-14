@@ -16,7 +16,7 @@ export default function ExploreCatalog({ prompts, loadFailed = false }: { prompt
   const [sort, setSort] = useState("recent");
   const visible = useMemo(() => prompts.filter(prompt => matchesCatalog(prompt, searchValue, category, model, prompt.creatorName) && (kind === "all" || (kind === "images" ? prompt.images.length > 0 : prompt.images.length === 0)))
     .sort((a,b) => sort === "title" ? a.title.localeCompare(b.title,"pt-BR") : b.createdAt-a.createdAt), [prompts, searchValue, category, model, kind, sort]);
-  return <main className="mx-auto min-h-[calc(100dvh-4.5rem)] max-w-7xl px-5 py-7 sm:px-8">
+  return <main className="mx-auto min-h-[calc(100dvh-4.5rem)] max-w-[1600px] px-5 py-7 sm:px-8">
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div><h1 className="text-2xl font-semibold tracking-tight">Explorar</h1><p className="mt-2 text-sm text-muted">O prompt, as referências e o resultado. Tudo em um só lugar.</p></div></div>
     <div className="mb-6 flex gap-2" aria-label="Tipo de busca">{[["prompts","Prompts"],["people","Pessoas"]].map(([value,label]) => <button key={value} type="button" aria-pressed={people === (value === "people")} className={`catalog-filter-chip ${people === (value === "people") ? "is-active" : ""}`} onClick={() => { setView(value); if (value === "prompts" && searchValue.trim().startsWith("@")) setSearchValue(""); }}>{label}</button>)}</div>
     <CreatorSearch query={searchValue} compact={!people} />
