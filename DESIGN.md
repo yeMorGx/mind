@@ -89,3 +89,7 @@ Resultados de prompts usam uma galeria horizontal manual, sem avanço automátic
 Cada pessoa escolhe um @ obrigatório e exclusivo, de 3 a 24 caracteres (letras minúsculas, números e _, começando por letra). Contas sem @ devem escolhê-lo na área interna antes de continuar; nunca gerar identificadores automaticamente. A exclusividade é garantida no banco, compartilhada por contas Firebase e Supabase. O perfil permite alterar o @. Explorar oferece busca de pessoas por nome ou @; links /u/@nome resolvem o perfil, preservando os antigos links por UID. A landing permanece protegida.
 
 A referência Dribbble orienta a navegação horizontal, a busca arredondada e a grade de imagens nas páginas internas. A grade ocupa até 1600 px, com 1–4 colunas. Categorias e modelos continuam disponíveis acima do catálogo; ações privadas da biblioteca são preservadas.
+
+## Busca do header
+
+Campo com sugestões em painel ancorado, espera de 250 ms e cancelamento de consultas antigas. Permite Ctrl/Cmd + K, setas, Enter, Escape e Tab; carregamento, falha parcial e resultado vazio são explícitos. Resultados mostram título/modelo/criador ou nome/@, com links diretos. Enter sem seleção abre `/explore?q=...`; a grade mantém a relevância retornada pelo banco e permite outras ordenações. A landing continua sem o header interno.

@@ -63,7 +63,11 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     setNewPromptVersion(value => value + 1); setNewPromptOpen(true);
     if (!library) router.push("/home");
   }
-  function search() { if ((!library || searchValue.trim().startsWith("@")) && pathname !== "/explore") { setCategory(""); setModel(""); router.push("/explore"); } }
+  function search(query = searchValue) {
+    const term = query.trim().slice(0,80);
+    setSearchValue(term); setCategory(""); setModel("");
+    router.push(term ? `/explore?q=${encodeURIComponent(term)}` : "/explore");
+  }
   async function logout() {
     try {
       const supabase = getSupabaseClient();

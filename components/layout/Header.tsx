@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { Plus, Search, LogOut, UserRound } from "lucide-react";
+import { Plus, LogOut, UserRound } from "lucide-react";
+import HeaderSearch from "@/components/search/HeaderSearch";
 import Logo from "@/components/ui/logo";
 type HeaderProps = {
-  searchValue: string; onSearchChange: (value: string) => void; onSearch: () => void;
+  searchValue: string; onSearchChange: (value: string) => void; onSearch: (query?: string) => void;
   profileHref?: string; userName: string; onLogin: () => void; authReady: boolean; onCreate: () => void;
   library: boolean; favorites: boolean; onLibrary: (favorites: boolean) => void; onExplore: () => void; onSignOut: () => void;
 };
@@ -27,11 +28,7 @@ export default function Header({ searchValue, onSearchChange, onSearch, profileH
         <button type="button" onClick={() => onLibrary(false)} aria-current={library && !favorites ? "page" : undefined}>Biblioteca</button>
         <button type="button" onClick={() => onLibrary(true)} aria-current={library && favorites ? "page" : undefined}>Favoritos</button>
       </nav>
-      <form role="search" onSubmit={event => { event.preventDefault(); onSearch(); }} className="showcase-search">
-        <label className="relative block"><Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-subtle" /><span className="sr-only">Buscar prompts, modelos ou criadores</span>
-          <input type="search" value={searchValue} onChange={event => onSearchChange(event.target.value)} placeholder="O que você quer criar?" className="h-11 w-full rounded-full border border-transparent bg-background pl-11 pr-4 text-sm outline-none placeholder:text-subtle focus:border-foreground" />
-        </label>
-      </form>
+      <HeaderSearch value={searchValue} onChange={onSearchChange} onSearch={onSearch} />
       <div className="showcase-account-actions">
         <button type="button" onClick={onCreate} disabled={!authReady} aria-label="Novo prompt" className={`${profileHref ? "flex" : "hidden sm:flex"} h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50 lg:px-5`}><Plus size={17} /><span className="hidden lg:inline">Novo prompt</span></button>
         {profileHref ? <details ref={account} className="relative" onKeyDown={event => { if (event.key === "Escape") { account.current?.removeAttribute("open"); account.current?.querySelector("summary")?.focus(); } }}>

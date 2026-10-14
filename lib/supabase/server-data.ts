@@ -84,3 +84,21 @@ export async function getCatalogCreatorAvatars(ids: string[]): Promise<Record<st
   if (directory.error) throw directory.error;
   return Object.fromEntries([...(directory.data ?? []),...(native.data ?? [])].map(row => [row.public_id, typeof row.avatar_url === "string" ? row.avatar_url : ""]));
 }
+
+export async function getSearchedPublicPrompts(term: string): Promise<Prompt[]> {
+  const client = publicClient(); if (!client || term.startsWith("@")) return [];
+  const {data,error} = await client.rpc("mind_search_prompts",{search_term:term,result_limit:24});
+  if (error) throw error;
+  const matches = (data ?? []) as {creator_id:string;prompt_id:string}[];
+  if (!matches.length) return [];
+  if (matches.some(row => !/^[A-Za-z0-9_-]{1,128}$/.test(row.creator_id) || !/^[A-Za-z0-9_-]{1,128}$/.test(row.prompt_id))) throw new Error("Identificador de publicação inválido.");
+  const filter = matches.map(row => `and(creator_id.eq.${row.creator_id},prompt_id.eq.${row.prompt_id})`).join(",");
+  const [native,directory] = await Promise.all([
+    client.from("mind_public_prompts").select(selection).or(filter),
+    client.from("mind_directory_prompts").select(directorySelection).or(filter),
+  ]);
+  if (native.error) throw native.error; if (directory.error) throw directory.error;
+  const rows = [...((native.data ?? []) as unknown as Row[]),...((directory.data ?? []) as unknown as DirectoryRow[]).map(directoryRow)];
+  const byId = new Map(rows.map(row => [`${row.creator_id}~${row.prompt_id}`,mapRow(row)]));
+  return matches.flatMap(row => { const prompt = byId.get(`${row.creator_id}~${row.prompt_id}`); return prompt ? [prompt] : []; });
+}

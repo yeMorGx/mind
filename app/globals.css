@@ -322,3 +322,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
 @media (max-width: 370px) { .site-app .showcase-header-inner { gap: 0 8px; padding-inline: 12px; } .site-app .showcase-nav { gap: 10px; } .site-app .showcase-account-actions { gap: 6px; } }
 @media (prefers-reduced-motion: reduce) { .site-app .catalog-card-cover img { transition: none; } }
 @media (max-width: 370px) { .site-app .showcase-brand .catalog-logo { width: 32px; } .site-app .showcase-nav > * { font-size: 11px; } }
+
+.site-app .header-search-panel { position: absolute; inset: calc(100% + 10px) 0 auto; overflow: hidden; border: 1px solid var(--border-color); border-radius: 16px; background: var(--surface); color: var(--foreground); }
+.site-app .header-search-options { max-height: min(480px, calc(100dvh - 260px)); overflow-y: auto; overscroll-behavior: contain; padding: 6px; }
+.site-app .header-search-option { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px; border-radius: 10px; }
+.site-app .header-search-option:hover, .site-app .header-search-option.is-selected { background: var(--surface-hover); }
+.site-app .header-search-panel :is(a,button):focus-visible { outline: 2px solid var(--foreground); outline-offset: -3px; }
