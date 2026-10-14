@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
+    <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background px-6 text-foreground">
       <form onSubmit={(event) => void savePassword(event)} className="w-full max-w-md rounded-3xl border border-border bg-foreground/[0.03] p-8">
         <p className="text-sm text-subtle">Mind · segurança da conta</p>
         <h1 className="mt-3 text-3xl font-semibold">Crie uma nova senha</h1>

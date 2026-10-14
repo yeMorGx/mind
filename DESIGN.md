@@ -30,10 +30,10 @@ rounded:
   2xl: "16px"
 components:
   sidebar:
-    width: "80px"
+    width: "240px"
     backgroundColor: "{colors.surface}"
   header:
-    height: "64px"
+    height: "72px"
     backgroundColor: "{colors.surface}"
   primary-button:
     backgroundColor: "{colors.primary}"
@@ -52,11 +52,16 @@ O conteúdo conduz a página: imagens e texto do prompt primeiro; identidade, de
 
 `components/layout/SiteLayout.tsx`, aplicado no layout raiz, é o único responsável por montar `Header` e `Sidebar`. As páginas internas não repetem esses componentes nem reservam offsets próprios para eles. Na rota `/`, o layout raiz entrega a landing sem esse chrome nem seus offsets.
 
-- Header fixo de 64 px, fundo branco e borda inferior. Título contextual, busca na biblioteca e acesso ao perfil ou login.
-- Sidebar fixa de 80 px a partir de 768 px, somente com o logo e ícones: explorar, biblioteca, favoritos e perfil. O estado ativo e o foco são visíveis.
-- Em telas menores, o mesmo menu abre em um dialog nativo com backdrop, foco contido, Escape e botão de fechar. A página continua com largura total quando o menu está fechado.
-- A raiz reserva 64 px no topo e, no desktop, 80 px à esquerda. Os containers principais têm até 1152 px, com gutters de 20 px no celular e 32 px a partir do breakpoint pequeno.
-- Links de retorno e ações específicas ficam no conteúdo; não criam outro header. A landing conserva seu comportamento original de encaminhar contas já configuradas à biblioteca.
+- Header fixo de 72 px, fundo branco e borda inferior, com logo, busca, seletor de modelos quando houver dados, criação de prompt e avatar da conta. O botão cria um rascunho privado; a publicação continua sendo uma decisão separada.
+- Sidebar com rótulos de 240 px em telas a partir de 1024 px. Entre 768 e 1023 px, vira uma barra de ícones de 80 px. Em telas menores, abre em um dialog nativo com backdrop, foco contido e Escape.
+- Os menus levam a Meus prompts, Explorar, Favoritos e Meu perfil. Categorias e modelos derivam dos registros reais e filtram o catálogo atual; não há links de recursos indisponíveis, métricas fictícias ou ordenação “em alta” sem dados.
+- A raiz reserva 72 px no topo e a largura efetiva da sidebar à esquerda. A busca funciona na biblioteca e no catálogo; ao enviar de outra página, abre o catálogo público.
+- `/explore` é o catálogo público interno, independente da landing protegida. Usuários sem conta podem abrir e copiar prompts publicados. O acesso a funções privadas pede login.
+- A landing mantém seus arquivos, seu comportamento e seus estilos anteriores. As novas regras de CSS são restritas a `.site-app`.
+
+### Catálogo inspirado na referência
+
+O catálogo usa colunas responsivas, capas reais com alturas naturais e cards claros com título, autor ou status, modelo quando informado e ação de copiar. A biblioteca conserva as ações animadas de editar, copiar, favoritar e duplicar, além de publicar/tornar privado e excluir. Não há contadores de visualizações ou curtidas inventados. Os estados vazios e falhas de carregamento permanecem explícitos.
 
 ## Cores e componentes
 

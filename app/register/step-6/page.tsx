@@ -13,7 +13,7 @@ export default function Step6Page() {
   const { data } = useOnboarding();
 
   if (!ready || !user) {
-    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
+    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
   }
 
   return (
@@ -61,7 +61,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
   }
 
   return (
-    <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
+    <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-2xl">
         <div className="mb-10">
           <p className="text-sm text-muted">Passo 6 de 7</p>

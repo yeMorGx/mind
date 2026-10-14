@@ -1,6 +1,6 @@
 export default function PromptLoading() {
   return (
-    <main className="min-h-[calc(100dvh-4rem)] bg-background px-5 py-12 text-foreground sm:px-8" aria-busy="true" aria-label="Carregando página do prompt">
+    <main className="min-h-[calc(100dvh-4.5rem)] bg-background px-5 py-12 text-foreground sm:px-8" aria-busy="true" aria-label="Carregando página do prompt">
       <p role="status" className="sr-only">Carregando o prompt e suas imagens.</p>
       <div aria-hidden="true" className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
         <div className="space-y-6">

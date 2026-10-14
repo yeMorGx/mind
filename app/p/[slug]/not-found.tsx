@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function PromptNotFound() {
   return (
-    <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
+    <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="max-w-md text-center">
         <p className="text-sm text-subtle">Mind · Prompts da comunidade</p>
         <h1 className="mt-4 text-3xl font-semibold">Este prompt não está disponível</h1>

@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Copy, Files, Pencil, Star, Trash2 } from "lucide-react";
-import { useSiteLayout } from "@/components/layout/SiteLayout";
-import { ActionNode } from "@/components/ui/ActionNode";
+import { X } from "lucide-react";
+import LibraryPromptCard from "@/components/catalog/LibraryPromptCard";
+import { matchesCatalog } from "@/lib/catalog";
+import { useCatalogOptions, useSiteLayout } from "@/components/layout/SiteLayout";
 import PromptDialog from "@/components/prompts/PromptDialog";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { setPromptPublication } from "@/lib/firebase/publication";
@@ -23,7 +23,7 @@ import {
 export default function HomePage() {
   const router = useRouter();
   const { user, authReady, profileLoading, data } = useOnboarding();
-  const { searchValue, activeView } = useSiteLayout();
+  const { searchValue, activeView, category, model, setCategory, setModel, newPromptOpen, newPromptVersion, openNewPrompt: requestNewPrompt, closeNewPrompt } = useSiteLayout();
   const [promptState, setPromptState] = useState<{
     workspaceId: string;
     prompts: Prompt[];
@@ -32,7 +32,6 @@ export default function HomePage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
-  const [draftTitle, setDraftTitle] = useState("");
   const [savingPrompt, setSavingPrompt] = useState(false);
   const [dialogError, setDialogError] = useState("");
   const [pageError, setPageError] = useState("");
@@ -67,25 +66,11 @@ export default function HomePage() {
     promptState.workspaceId !== data.primaryWorkspaceId ||
     promptState.loading;
 
-  const visiblePrompts = useMemo(() => {
-    const prompts = promptState.workspaceId === data.primaryWorkspaceId
-      ? promptState.prompts
-      : [];
-    const search = searchValue.trim().toLocaleLowerCase();
-    return prompts.filter((prompt) => {
-      const matchesView = activeView === "all" || prompt.isFavorite;
-      const matchesSearch = !search || `${prompt.title} ${prompt.content}`.toLocaleLowerCase().includes(search);
-      return matchesView && matchesSearch;
-    });
-  }, [activeView, data.primaryWorkspaceId, promptState, searchValue]);
-
-  function openNewPrompt(title = "") {
-    setDialogKey((key) => key + 1);
-    setSelectedPrompt(null);
-    setDraftTitle(title);
-    setDialogError("");
-    setDialogOpen(true);
-  }
+  const allPrompts = useMemo(() => promptState.workspaceId === data.primaryWorkspaceId ? promptState.prompts : [], [promptState, data.primaryWorkspaceId]);
+  useCatalogOptions(allPrompts);
+  const visiblePrompts = useMemo(() => allPrompts.filter(prompt => (activeView !== "favorites" || prompt.isFavorite) && matchesCatalog(prompt, searchValue, category, model, data.name || user?.displayName || "")), [allPrompts, activeView, searchValue, category, model, data.name, user?.displayName]);
+  function openNewPrompt() { setSelectedPrompt(null); setDialogError(""); requestNewPrompt(); }
+  function closeDialog() { setDialogOpen(false); closeNewPrompt(); setSelectedPrompt(null); setDialogError(""); }
 
   function openPrompt(prompt: Prompt) {
     setDialogKey((key) => key + 1);
@@ -99,14 +84,12 @@ export default function HomePage() {
     setSavingPrompt(true);
     setDialogError("");
     try {
-      if (selectedPrompt) {
+      if (selectedPrompt && !newPromptOpen) {
         await updatePrompt(data.primaryWorkspaceId, selectedPrompt.id, title, content, details);
       } else {
         await createPrompt(data.primaryWorkspaceId, user.uid, title, content, details);
-        setDraftTitle("");
       }
-      setDialogOpen(false);
-      setSelectedPrompt(null);
+      closeDialog();
     } catch (saveError) {
       setDialogError(saveError instanceof Error ? saveError.message : "Não foi possível salvar o prompt.");
     } finally {
@@ -158,61 +141,37 @@ export default function HomePage() {
   }
 
   if (!authReady || profileLoading || !user || !data.onboardingComplete) {
-    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted">Carregando seu espaço...</main>;
+    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">Carregando seu espaço...</main>;
   }
 
   return (
-    <div className="relative min-h-[calc(100dvh-4rem)] overflow-hidden bg-background text-foreground">
+    <div className="relative min-h-[calc(100dvh-4.5rem)] overflow-hidden bg-background text-foreground">
 
-      <main className="flex min-h-[calc(100dvh-4rem)] flex-col pt-8">
-        <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-5 sm:px-8">
+      <main className="flex min-h-[calc(100dvh-4.5rem)] flex-col pt-7">
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-5 sm:px-8">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <div><h1 className="text-3xl font-semibold">Sua biblioteca</h1><p className="mt-2 text-sm text-muted">Crie, organize e escolha o que compartilhar.</p></div>
-            <button type="button" onClick={() => openNewPrompt()} className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-hover">+ Novo prompt</button>
+            <div><h1 className="text-2xl font-semibold tracking-tight">{activeView === "favorites" ? "Favoritos" : "Meus prompts"}</h1><p className="mt-2 text-sm text-muted">Crie, organize e escolha o que compartilhar.</p></div>
           </div>
           <section className="pb-12">
-            <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border p-4">
-              <p className="text-sm text-muted">Seu perfil é público. Escolha os prompts que quer compartilhar.</p>
-              <Link href="/home/profile" className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Meu perfil de criador</Link>
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap gap-2">{[["", "Tudo"], ...[...new Set(allPrompts.map(prompt => prompt.category || (prompt.images.length ? "Imagem" : "Texto")))].map(value => [value,value])].map(([value,label]) => <button key={value} type="button" onClick={() => setCategory(value)} aria-pressed={category === value} className={`catalog-filter-chip ${category === value ? "is-active" : ""}`}>{label}</button>)}</div>
+              <span className="text-xs text-subtle">{visiblePrompts.length} {visiblePrompts.length === 1 ? "prompt" : "prompts"}</span>
             </div>
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-medium">
-                {activeView === "favorites" ? "Favoritos" : "Seus prompts"}
-              </h2>
-              <span className="text-sm text-subtle">{visiblePrompts.length} salvos</span>
-            </div>
-
+            {model && <button type="button" onClick={() => setModel("")} className="catalog-filter-chip mb-5 inline-flex items-center gap-2" aria-label={`Remover modelo ${model}`}>{model}<X size={14} /></button>}
             {pageError && <p role="alert" className="mb-4 rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-700">{pageError}</p>}
 
             {promptsLoading ? (
               <p className="py-12 text-center text-sm text-subtle">Carregando prompts…</p>
             ) : visiblePrompts.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-border p-10 text-center">
-                <p className="font-medium">{activeView === "favorites" ? "Nenhum favorito ainda" : "Sua biblioteca está vazia"}</p>
-                <p className="mt-2 text-sm text-subtle">{activeView === "favorites" ? "Favorite um prompt para encontrá-lo aqui." : "Crie seu primeiro prompt para começar."}</p>
+                <p className="font-medium">{searchValue || category || model ? "Nenhum prompt com esses filtros" : activeView === "favorites" ? "Nenhum favorito ainda" : "Sua biblioteca está vazia"}</p>
+                <p className="mt-2 text-sm text-subtle">{searchValue || category || model ? "Tente outra busca ou remova um filtro." : activeView === "favorites" ? "Favorite um prompt para encontrá-lo aqui." : "Crie seu primeiro prompt para começar."}</p>
                 {activeView === "all" && <button onClick={() => openNewPrompt()} className="mt-5 rounded-xl border border-border px-4 py-2 text-sm hover:bg-foreground/5">Criar meu primeiro prompt</button>}
               </div>
             ) : (
-              <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-                {visiblePrompts.map((prompt) => (
-                  <ActionNode key={prompt.id} title={prompt.title} description="" className="mind-node-library" actions={[
-                    { id: "edit", label: `Editar ${prompt.title}`, icon: Pencil, onClick: () => openPrompt(prompt) },
-                    { id: "copy", label: `Copiar ${prompt.title}`, icon: Copy, onClick: () => void copyPrompt(prompt) },
-                    { id: "favorite", label: prompt.isFavorite ? "Remover dos favoritos" : "Favoritar prompt", icon: Star, onClick: () => void toggleFavorite(prompt) },
-                    { id: "duplicate", label: `Duplicar ${prompt.title}`, icon: Files, onClick: () => void duplicatePrompt(prompt) },
-                  ]}>
-                    <Link href={`/home/prompts/${encodeURIComponent(prompt.id)}`} aria-label={`Abrir página do prompt ${prompt.title}`} className="block min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-foreground">
-                      <h3 className="truncate pr-5 font-medium">{prompt.title}</h3>
-                      <p className="mt-2 line-clamp-4 whitespace-pre-wrap text-sm text-muted">{prompt.content}</p>
-                    </Link>
-                    <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-xs text-subtle">
-                      <span>{copiedPromptId === prompt.id ? "Prompt copiado" : prompt.updatedAt ? `Atualizado ${new Date(prompt.updatedAt).toLocaleDateString("pt-BR")}` : "Salvo recentemente"}</span>
-                      <button type="button" disabled={Boolean(publishingId)} onClick={() => void togglePublication(prompt)} className="rounded-md px-2 py-1 hover:bg-foreground/10 disabled:opacity-40">{publishingId === prompt.id ? "Salvando…" : prompt.isPublished ? "Tornar privado" : "Publicar"}</button>
-                      <button type="button" aria-label={`Excluir ${prompt.title}`} onClick={() => void deletePrompt(prompt)} className="rounded-md p-1.5 hover:bg-red-400/10 hover:text-red-700"><Trash2 size={15} /></button>
-                    </div>
-                    {prompt.isPublished && <Link href={`/share/${user.uid}/${prompt.id}`} className="mt-3 block text-xs text-muted underline">Abrir link público</Link>}
-                  </ActionNode>
-                ))}
+              <div className="catalog-grid catalog-library-grid">
+                {visiblePrompts.map(prompt => <LibraryPromptCard key={prompt.id} prompt={prompt} creatorId={user.uid} copied={copiedPromptId === prompt.id} publishing={publishingId === prompt.id} publicationPending={Boolean(publishingId)}
+                  onEdit={() => openPrompt(prompt)} onCopy={() => void copyPrompt(prompt)} onFavorite={() => void toggleFavorite(prompt)} onDuplicate={() => void duplicatePrompt(prompt)} onPublication={() => void togglePublication(prompt)} onDelete={() => void deletePrompt(prompt)} />)}
               </div>
             )}
           </section>
@@ -220,13 +179,12 @@ export default function HomePage() {
       </main>
 
       <PromptDialog
-        key={dialogKey}
-        isOpen={dialogOpen}
-        prompt={selectedPrompt}
-        initialTitle={draftTitle}
+        key={newPromptOpen ? `new:${newPromptVersion}` : `edit:${dialogKey}`}
+        isOpen={dialogOpen || newPromptOpen}
+        prompt={newPromptOpen ? null : selectedPrompt}
         pending={savingPrompt}
         error={dialogError}
-        onClose={() => setDialogOpen(false)}
+        onClose={closeDialog}
         onSave={(title, content, details) => void savePrompt(title, content, details)}
       />
     </div>

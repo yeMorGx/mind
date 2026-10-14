@@ -80,11 +80,11 @@ export default function Step3Page() {
   }
 
   if (!ready) {
-    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
+    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
   }
 
   return (
-    <main className="min-h-[calc(100dvh-4rem)] bg-background text-foreground flex items-center justify-center px-6">
+    <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground flex items-center justify-center px-6">
       <div className="w-full max-w-3xl">
 
         <div className="mb-10">

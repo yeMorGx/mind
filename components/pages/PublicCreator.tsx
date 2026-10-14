@@ -26,7 +26,7 @@ export default function PublicCreator({ creatorId, promptId }: { creatorId: stri
   const current = result?.key === requestKey ? result : null;
   if (current?.prompt) return <PublicPromptPage prompt={current.prompt} creatorHref={`/u/${creatorId}`} creatorProfile={current.profile} />;
   if (current) return <CreatorProfileView profile={current.profile} prompts={current.prompts} creatorId={creatorId} promptsError={current.promptsError} />;
-  return <main className="min-h-[calc(100dvh-4rem)] bg-background px-5 py-10 text-foreground"><div className="mx-auto mt-14 max-w-5xl">
+  return <main className="min-h-[calc(100dvh-4.5rem)] bg-background px-5 py-10 text-foreground"><div className="mx-auto mt-14 max-w-5xl">
     <p role="status" className="text-center text-muted">{error?.key === requestKey ? error.message : promptId ? "Carregando prompt…" : "Carregando perfil…"}</p>
   </div></main>;
 }

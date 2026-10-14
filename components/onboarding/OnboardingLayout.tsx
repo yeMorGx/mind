@@ -14,7 +14,7 @@ export default function OnboardingLayout({
   const percentage = (step / 7) * 100;
 
   return (
-    <main className="min-h-[calc(100dvh-4rem)] bg-background text-foreground flex items-center justify-center">
+    <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground flex items-center justify-center">
       <div className="w-full max-w-2xl px-8">
 
         <div className="mb-8">

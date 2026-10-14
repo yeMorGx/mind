@@ -23,7 +23,7 @@ export default function CreatorProfileView({ profile: initialProfile, prompts, c
     try { await navigator.clipboard.writeText(`${window.location.origin}/u/${creatorId}`); setCopied(true); setNotice("Link do perfil copiado."); window.setTimeout(() => setCopied(false), 2000); }
     catch { setNotice("Não foi possível copiar o link. Copie o endereço na barra do navegador."); }
   }
-  return <main className="min-h-[calc(100dvh-4rem)] bg-background text-foreground selection:bg-[#dce7ff]">
+  return <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground selection:bg-[#dce7ff]">
     <div className="mx-auto max-w-6xl px-5 pb-16 pt-8 sm:px-8">
       <div className="h-44 overflow-hidden rounded-2xl bg-media sm:h-60 lg:h-72">
         {profile.bannerUrl && <img src={profile.bannerUrl} alt="Capa do perfil" className="size-full object-cover" />}

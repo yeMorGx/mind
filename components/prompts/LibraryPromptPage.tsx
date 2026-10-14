@@ -43,11 +43,11 @@ export default function LibraryPromptPage({ promptId }: { promptId: string }) {
   }, [authReady, user, profileLoading, data.onboardingComplete, workspaceId, promptId, requestKey]);
 
   if (!authReady || !user || profileLoading || !data.onboardingComplete || state?.key !== requestKey) {
-    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted"><p role="status">Carregando seu prompt…</p></main>;
+    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted"><p role="status">Carregando seu prompt…</p></main>;
   }
 
   if (state.error || !state.prompt) {
-    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
+    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="max-w-md text-center">
         <h1 className="text-3xl font-semibold">{state.error ? "Não conseguimos carregar este prompt" : "Prompt não encontrado"}</h1>
         <p className="mt-4 text-sm leading-6 text-muted">{state.error ? "Verifique sua conexão e tente novamente." : "Este prompt não está na sua biblioteca ou foi removido."}</p>

@@ -58,7 +58,7 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
+    <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-md rounded-3xl border border-border bg-foreground/[0.03] p-8 text-center">
         <p className="text-sm text-subtle">Mind · autenticação</p>
         <h1 className="mt-3 text-2xl font-semibold">{error ? "Não foi possível entrar" : "Concluindo seu acesso…"}</h1>

@@ -27,7 +27,7 @@ export default function BadgesPage() {
     catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível atualizar os emblemas."); }
     finally { setPending(false); }
   }
-  return <main className="min-h-[calc(100dvh-4rem)] bg-background px-5 py-12 text-foreground"><div className="mx-auto max-w-2xl"><Link href="/home" className="text-sm text-muted">Voltar à biblioteca</Link><h1 className="mt-8 text-3xl font-semibold">Emblemas da comunidade</h1>
+  return <main className="min-h-[calc(100dvh-4.5rem)] bg-background px-5 py-12 text-foreground"><div className="mx-auto max-w-2xl"><Link href="/home" className="text-sm text-muted">Voltar à biblioteca</Link><h1 className="mt-8 text-3xl font-semibold">Emblemas da comunidade</h1>
     {!authReady ? <p className="mt-6">Carregando…</p> : !user || !allowed ? <p className="mt-6 text-muted">Esta área exige permissão administrativa para atribuir emblemas.</p> : <div className="mt-8 space-y-5">
       <label className="block text-sm">UID da conta<input value={uid} onChange={event => { setUid(event.target.value); setLoadedUid(""); }} className="mt-2 block w-full rounded-xl border border-border bg-foreground/5 p-3" /></label>
       <button disabled={pending} type="button" onClick={() => void load()} className="rounded-xl border border-border px-5 py-3 disabled:opacity-40">Carregar conta</button>

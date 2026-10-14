@@ -64,7 +64,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
   }
 
   return (
-    <main className="min-h-[calc(100dvh-4rem)] bg-background text-foreground">
+    <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 pt-6 sm:px-8">
         <Link href={backHref} className="inline-flex items-center gap-2 rounded-lg py-2 text-sm text-muted hover:text-foreground"><ArrowLeft size={16} />{isPrivate ? "Voltar à biblioteca" : "Explorar prompts"}</Link>
         {!isPrivate && <button type="button" onClick={() => void sharePage()} aria-label="Compartilhar prompt" className="site-icon-button"><Share2 size={18} /></button>}
@@ -135,7 +135,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
           </section>}
         </section>
 
-        <div className="grid items-start gap-5 lg:grid-cols-3">
+        <div className="grid items-start gap-5 xl:grid-cols-3">
           <section id="creator" aria-labelledby="creator-heading" className="scroll-mt-24 rounded-2xl border border-border p-5 sm:p-7">
             <h2 id="creator-heading" className="text-lg font-medium">Conheça o criador</h2>
             {creatorProfile && creatorHref ? <CreatorLanyard profile={creatorProfile} href={creatorHref} /> : <div className="mt-5 flex items-center gap-4">
