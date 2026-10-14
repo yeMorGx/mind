@@ -6,11 +6,13 @@ import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import PublicPromptPage from "@/components/marketplace/PublicPromptPage";
 import { getPrompt, type Prompt } from "@/lib/firebase/data";
+import { getOwnProfile, type CreatorProfile } from "@/lib/firebase/publication";
 
 type PromptState = {
   key: string;
   prompt: Prompt | null;
   error: boolean;
+  profile?: CreatorProfile | null;
 };
 
 export default function LibraryPromptPage({ promptId }: { promptId: string }) {
@@ -32,8 +34,8 @@ export default function LibraryPromptPage({ promptId }: { promptId: string }) {
     if (!authReady || !user || profileLoading || !data.onboardingComplete || !workspaceId) return;
     let active = true;
     // Read only from the authenticated user's workspace; existing Firestore rules enforce ownership.
-    void getPrompt(workspaceId, promptId).then((prompt) => {
-      if (active) setState({ key: requestKey, prompt, error: false });
+    void Promise.all([getPrompt(workspaceId, promptId), getOwnProfile(user.uid).catch(() => null)]).then(([prompt, profile]) => {
+      if (active) setState({ key: requestKey, prompt, profile, error: false });
     }).catch(() => {
       if (active) setState({ key: requestKey, prompt: null, error: true });
     });
@@ -57,11 +59,12 @@ export default function LibraryPromptPage({ promptId }: { promptId: string }) {
 
   const prompt = state.prompt;
 
-  return <PublicPromptPage visibility="private" prompt={{
+  const profile = state.profile ?? { name: data.name || user.displayName || "Criador Mind", bio: "", avatarUrl: user.photoURL || "", published: false };
+  return <PublicPromptPage visibility="private" creatorProfile={profile} creatorHref={profile.published ? `/u/${user.uid}` : "/home/profile"} prompt={{
     id: prompt.id,
     slug: prompt.id,
     creatorId: user.uid,
-    creatorName: data.name || user.displayName || "Criador Mind",
+    creatorName: profile.name,
     creatorSlug: "",
     title: prompt.title,
     content: prompt.content,

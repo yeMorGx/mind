@@ -8,16 +8,20 @@ import PromptCard from "@/components/marketplace/PromptCard";
 import ResultsMarquee from "@/components/marketplace/ResultsMarquee";
 import Logo from "@/components/ui/logo";
 import type { Prompt } from "@/lib/supabase/types";
+import type { CreatorProfile } from "@/lib/firebase/publication";
+import CreatorLanyard from "@/components/marketplace/CreatorLanyard";
+import CreatorBadges from "@/components/ui/CreatorBadges";
 
 /* eslint-disable @next/next/no-img-element -- Supabase returns short-lived signed image URLs. */
 
-export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [], visibility = "public", actions, creatorHref }: {
+export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [], visibility = "public", actions, creatorHref, creatorProfile }: {
   prompt: Prompt;
   creatorPrompts?: Prompt[];
   relatedPrompts?: Prompt[];
   visibility?: "public" | "private";
   actions?: ReactNode;
   creatorHref?: string;
+  creatorProfile?: CreatorProfile;
 }) {
   const isPrivate = visibility === "private";
   const backHref = isPrivate ? "/home" : "/";
@@ -61,12 +65,13 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className={`min-h-screen bg-background text-foreground ${creatorProfile && creatorHref ? "xl:pl-64" : ""}`}>
       <header className="mx-auto grid w-full max-w-6xl grid-cols-3 items-center px-5 py-5 sm:px-8">
         <Link href={backHref} aria-label={isPrivate ? "Voltar à biblioteca" : "Voltar ao início"} className="justify-self-start rounded-lg p-2 text-white/60 hover:bg-white/5 hover:text-white"><ArrowLeft size={20} /></Link>
         <Link href={backHref} aria-label="Mind — página inicial" className="justify-self-center"><Logo /></Link>
         {!isPrivate && <button type="button" onClick={() => void sharePage()} aria-label="Compartilhar prompt" className="justify-self-end rounded-lg p-2 text-white/70 hover:bg-white/5"><Share2 size={18} /></button>}
       </header>
+      {creatorProfile && creatorHref && <CreatorLanyard profile={creatorProfile} href={creatorHref} />}
 
       <article className="mx-auto w-full max-w-6xl space-y-10 px-5 pb-20 pt-6 sm:px-8 lg:pt-10">
         <section className="min-w-0">
@@ -140,6 +145,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
               <span aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.08] text-xl font-semibold">{Array.from(creatorName.trim())[0]?.toUpperCase() || "M"}</span>
               <div className="min-w-0">
                 <p className="break-words text-lg font-medium">{creatorName}</p>
+                <CreatorBadges badges={creatorProfile?.badges} />
                 {creatorHref && <Link href={creatorHref} className="mt-1 block text-sm text-white/60 underline">Ver perfil público</Link>}
                 {prompt.creatorSlug && <p className="mt-1 break-words text-sm text-white/40">@{prompt.creatorSlug}</p>}
               </div>

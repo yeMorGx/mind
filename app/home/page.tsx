@@ -4,14 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "firebase/auth";
-import { motion } from "framer-motion";
-import { Instrument_Serif } from "next/font/google";
 import { Copy, Files, Pencil, Star, Trash2 } from "lucide-react";
 import Sidebar, { type PromptView } from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import { ActionNode } from "@/components/ui/ActionNode";
-import Input from "@/components/ui/input";
-import { Spotlight } from "@/components/ui/spotlight";
 import PromptDialog from "@/components/prompts/PromptDialog";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { getFirebaseServices } from "@/lib/firebase/client";
@@ -27,7 +23,6 @@ import {
   type Prompt,
 } from "@/lib/firebase/data";
 
-const instrumentSerif = Instrument_Serif({ subsets: ["latin"], weight: "400" });
 
 export default function HomePage() {
   const router = useRouter();
@@ -208,7 +203,6 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <Spotlight />
       <Sidebar
         activeView={activeView}
         workspaceName={workspaceName}
@@ -221,34 +215,12 @@ export default function HomePage() {
       />
       <Header searchValue={searchValue} onSearchChange={setSearchValue} onMenuClick={() => setMobileNavOpen(true)} />
 
-      <main className="ml-0 flex min-h-screen flex-col md:ml-72">
+      <main className="ml-0 flex min-h-screen flex-col pt-24 md:ml-20">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 md:px-8">
-          <div className="flex flex-1 flex-col items-center justify-center py-16">
-            <motion.h1
-              initial={{ opacity: 0, filter: "blur(10px)", y: 15 }}
-              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-              transition={{ duration: 1 }}
-              className={`${instrumentSerif.className} mb-8 text-center text-5xl`}
-            >
-              Keep every great prompt organized.
-            </motion.h1>
-
-            <div className="w-full max-w-3xl">
-              <Input
-                value={draftTitle}
-                onChange={setDraftTitle}
-                onEnter={() => openNewPrompt(draftTitle.trim())}
-                placeholder="Start with a prompt title..."
-                className="py-4"
-              />
-              <div className="mt-4 flex justify-center">
-                <button onClick={() => openNewPrompt(draftTitle.trim())} className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-white/90">
-                  + New prompt
-                </button>
-              </div>
-            </div>
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+            <div><h1 className="text-3xl font-semibold">Sua biblioteca</h1><p className="mt-2 text-sm text-white/55">Crie, organize e escolha o que compartilhar.</p></div>
+            <button type="button" onClick={() => openNewPrompt()} className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-white/90">+ Novo prompt</button>
           </div>
-
           <section className="pb-12">
             <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 p-4">
               <p className="text-sm text-white/60">Publique seu perfil e escolha os prompts que quer divulgar.</p>
@@ -256,20 +228,20 @@ export default function HomePage() {
             </div>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-medium">
-                {activeView === "favorites" ? "Favorite prompts" : "Your prompts"}
+                {activeView === "favorites" ? "Favoritos" : "Seus prompts"}
               </h2>
-              <span className="text-sm text-white/40">{visiblePrompts.length} saved</span>
+              <span className="text-sm text-white/40">{visiblePrompts.length} salvos</span>
             </div>
 
             {pageError && <p role="alert" className="mb-4 rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-200">{pageError}</p>}
 
             {promptsLoading ? (
-              <p className="py-12 text-center text-sm text-white/45">Loading prompts...</p>
+              <p className="py-12 text-center text-sm text-white/45">Carregando prompts…</p>
             ) : visiblePrompts.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/15 p-10 text-center">
-                <p className="font-medium">{activeView === "favorites" ? "No favorite prompts yet" : "Your library is empty"}</p>
-                <p className="mt-2 text-sm text-white/45">{activeView === "favorites" ? "Mark a prompt as favorite to find it here." : "Save your first prompt to start building your library."}</p>
-                {activeView === "all" && <button onClick={() => openNewPrompt()} className="mt-5 rounded-xl border border-white/15 px-4 py-2 text-sm hover:bg-white/5">Create your first prompt</button>}
+                <p className="font-medium">{activeView === "favorites" ? "Nenhum favorito ainda" : "Sua biblioteca está vazia"}</p>
+                <p className="mt-2 text-sm text-white/45">{activeView === "favorites" ? "Favorite um prompt para encontrá-lo aqui." : "Crie seu primeiro prompt para começar."}</p>
+                {activeView === "all" && <button onClick={() => openNewPrompt()} className="mt-5 rounded-xl border border-white/15 px-4 py-2 text-sm hover:bg-white/5">Criar meu primeiro prompt</button>}
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

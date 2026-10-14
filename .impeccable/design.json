@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-14T02:28:48.401Z",
+  "title": "Design System: Mind",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Dark application ground"
+      },
+      "profile-background": {
+        "role": "neutral",
+        "displayName": "Light profile ground"
+      },
+      "landing-ink": {
+        "role": "primary",
+        "displayName": "Landing ink"
+      },
+      "founder": {
+        "role": "secondary",
+        "displayName": "Founder gold"
+      },
+      "verified": {
+        "role": "secondary",
+        "displayName": "Verification blue"
+      },
+      "moderator": {
+        "role": "secondary",
+        "displayName": "Moderator green"
+      },
+      "creator": {
+        "role": "secondary",
+        "displayName": "Creator violet"
+      },
+      "partner": {
+        "role": "secondary",
+        "displayName": "Partner copper"
+      }
+    },
+    "typographyMeta": {
+      "landing-display": {
+        "displayName": "Landing display",
+        "purpose": "Instrument Serif on the accepted sky landing; source loads weight 400 and requests bold styling."
+      },
+      "prompt-headline": {
+        "displayName": "Prompt headline",
+        "purpose": "Prompt title; grows to 48px at the small breakpoint."
+      }
+    },
+    "shadows": [
+      {
+        "name": "comparison-grip",
+        "value": "0 2px 12px rgba(23, 24, 26, 0.25)",
+        "purpose": "Local depth below the image-comparison handle."
+      }
+    ],
+    "motion": [
+      {
+        "name": "comparison-grip-scale",
+        "value": "scale 260ms cubic-bezier(0.3, 1.5, 0.4, 1)",
+        "purpose": "Handle hover/held feedback; disabled under reduced motion."
+      },
+      {
+        "name": "upload-feedback",
+        "value": "scale 420ms cubic-bezier(.3,1.35,.4,1), background-color 200ms ease",
+        "purpose": "Dropzone feedback when a file is dragged over it; disabled under reduced motion."
+      },
+      {
+        "name": "results-loop",
+        "value": "results-drift var(--results-duration, 30s) linear infinite",
+        "purpose": "Image loop; pauses on keyboard focus and reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Library action",
+      "kind": "button",
+      "refersTo": "button-library",
+      "description": "White primary action on dark library surfaces.",
+      "html": "<button class=\"ds-library-action\">+ Novo prompt</button>",
+      "css": ".ds-library-action{border:0;border-radius:12px;background:#fff;color:#000;padding:12px 20px;font-family:var(--font-sans,sans-serif);font-size:14px;line-height:20px;font-weight:600;cursor:pointer}.ds-library-action:hover{background:rgba(255,255,255,.9)}"
+    },
+    {
+      "name": "Profile share action",
+      "kind": "button",
+      "refersTo": "button-profile",
+      "description": "Dark pill action on the light creator profile.",
+      "html": "<button class=\"ds-profile-action\">Compartilhar perfil</button>",
+      "css": ".ds-profile-action{border:0;border-radius:9999px;background:#17181a;color:#fff;padding:12px 20px;font-family:var(--font-sans,sans-serif);font-size:14px;line-height:20px;font-weight:500;cursor:pointer}.ds-profile-action:hover{background:#34343d}.ds-profile-action:focus-visible{outline:2px solid #17181a;outline-offset:4px}"
+    },
+    {
+      "name": "Landing action",
+      "kind": "button",
+      "refersTo": "button-landing",
+      "description": "Ink action against the accepted light sky.",
+      "html": "<button class=\"ds-landing-action\">Começar grátis</button>",
+      "css": ".ds-landing-action{border:0;border-radius:12px;background:#102a43;color:#fff;padding:12px 24px;font-family:var(--font-sans,sans-serif);font-weight:600;cursor:pointer;transition:background-color .15s}.ds-landing-action:hover{background:#183d5d}.ds-landing-action:focus-visible{outline:2px solid #102a43;outline-offset:4px}"
+    },
+    {
+      "name": "Header search",
+      "kind": "input",
+      "description": "Dark library search field with focus border.",
+      "html": "<label class=\"ds-search\"><svg class=\"ds-search-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><span class=\"ds-search-label\">Buscar prompts</span><input type=\"search\" placeholder=\"Buscar prompts…\"/></label>",
+      "css": ".ds-search{position:relative;display:block;max-width:384px;color:#ededed;font-family:var(--font-sans,sans-serif)}.ds-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:rgba(255,255,255,.4);pointer-events:none}.ds-search-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.ds-search input{width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(8,8,8,.95);padding:8px 16px 8px 40px;font-family:inherit;font-size:14px;line-height:20px;color:inherit;outline:none;transition:border-color .15s}.ds-search input::placeholder{color:rgba(255,255,255,.4)}.ds-search input:focus{border-color:rgba(255,255,255,.3)}"
+    },
+    {
+      "name": "Sidebar control",
+      "kind": "nav",
+      "description": "Compact icon control with active, hover, and focus treatment.",
+      "html": "<nav aria-label=\"Navegação principal\" class=\"ds-nav\"><button aria-label=\"Todos os prompts\" aria-current=\"page\" title=\"Todos os prompts\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z\"/></svg></button></nav>",
+      "css": ".ds-nav{display:flex;justify-content:center;width:80px;background:#080808;padding:16px 0}.ds-nav button{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:12px;background:transparent;color:rgba(255,255,255,.6);cursor:pointer;transition:background-color .15s,color .15s}.ds-nav button[aria-current],.ds-nav button:hover{background:rgba(255,255,255,.1);color:#fff}.ds-nav button:focus-visible{outline:2px solid #fff}.ds-nav svg{width:20px;height:20px}"
+    },
+    {
+      "name": "Library node surface",
+      "kind": "card",
+      "refersTo": "library-node",
+      "description": "Compact dark text surface; the runtime ActionNode supplies its animated fan.",
+      "html": "<article class=\"ds-node\"><h3>Título do prompt</h3><p>Texto do prompt salvo na biblioteca.</p></article>",
+      "css": ".ds-node{border:1px solid rgba(255,255,255,.12);border-radius:20px;background:#111;color:var(--foreground,#ededed);padding:20px;font-family:var(--font-sans,sans-serif)}.ds-node h3{margin:0;font-size:16px;font-weight:500}.ds-node p{margin:8px 0 0;font-size:14px;line-height:20px;color:rgba(255,255,255,.5)}"
+    },
+    {
+      "name": "Prompt category",
+      "kind": "chip",
+      "description": "Quiet category label on dark prompt pages.",
+      "html": "<span class=\"ds-category\">Categoria</span>",
+      "css": ".ds-category{display:inline-block;border:1px solid rgba(255,255,255,.1);border-radius:9999px;background:rgba(255,255,255,.03);color:rgba(255,255,255,.7);padding:6px 12px;font-family:var(--font-sans,sans-serif);font-size:12px;line-height:16px}"
+    }
+  ],
+  "narrative": {
+    "overview": "Mind uses two surface themes. The private library, editor, and prompt pages use dark backgrounds, quiet borders, and bright actions. Public creator profiles use a light ground, a cover with an overlapping avatar, and an image-led publication grid. These profile choices follow the supplied visual references.\n\nThe accepted landing retains its light animated sky, serif headline, and circular gallery without image titles. Its community section uses the dark theme. Theme choice belongs to each surface; the profile palette is not a global replacement.",
+    "keyCharacteristics": [
+      "Results and creator photography carry the visual emphasis.",
+      "Compact navigation and restrained interface labels support the content.",
+      "Rounded media, fields, and actions recur across both themes."
+    ],
+    "rules": [],
+    "dos": [
+      "Do retain the accepted sky landing and use the light profile theme on public creator profiles.",
+      "Do keep the library and prompt surfaces dark with their existing content hierarchy.",
+      "Do use genuine profile and prompt images, wrap long names, and provide useful missing-image states.",
+      "Do preserve accessible control labels, visible focus, and existing reduced-motion behavior."
+    ],
+    "donts": [
+      "Don't turn profile colors into a universal site theme.",
+      "Don't add invented follower, like, or sales metrics to creator identity.",
+      "Don't offer self-assigned verification or founder badges.",
+      "Don't treat illustrative review fixtures as shipped creator content."
+    ]
+  }
+}

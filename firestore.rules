@@ -19,11 +19,25 @@ service cloud.firestore {
       allow read: if resource.data.published == true;
       allow create, update: if signedIn() && request.auth.uid == creatorId
         && request.resource.data.creatorId == creatorId
-        && request.resource.data.keys().hasOnly(['creatorId', 'name', 'bio', 'published', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['creatorId', 'name', 'bio', 'published', 'headline', 'avatarUrl', 'bannerUrl', 'updatedAt'])
         && request.resource.data.name is string && request.resource.data.name.size() <= 80
         && request.resource.data.bio is string && request.resource.data.bio.size() <= 1000
+        && request.resource.data.get('headline', '') is string && request.resource.data.get('headline', '').size() <= 100
+        && request.resource.data.get('avatarUrl', '') is string && request.resource.data.get('avatarUrl', '').size() <= 80000
+        && request.resource.data.get('bannerUrl', '') is string && request.resource.data.get('bannerUrl', '').size() <= 80000
         && request.resource.data.published == true;
       allow delete: if signedIn() && request.auth.uid == creatorId;
+    }
+
+    match /accountBadges/{userId} {
+      allow read: if true;
+      allow create, update: if signedIn() && request.auth.token.get('badgeAdmin', false) == true
+        && request.resource.data.keys().hasOnly(['badges', 'updatedAt'])
+        && request.resource.data.badges is list
+        && request.resource.data.badges.size() <= 4
+        && request.resource.data.badges.hasOnly(['verified', 'moderator', 'creator', 'partner'])
+        && (!exists(/databases/$(database)/documents/accountBadges/$(userId)) || !('owner' in resource.data.badges));
+      allow delete: if signedIn() && request.auth.token.get('badgeAdmin', false) == true && !('owner' in resource.data.badges);
     }
 
     match /publicPrompts/{publicId} {

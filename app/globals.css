@@ -189,3 +189,22 @@ body {
 .mind-node-library .mind-node-card { padding: 20px; height: 100%; }
 .mind-node-library .mind-node-fan { z-index: 3; }
 .mind-node-library .mind-node-trigger { z-index: 4; }
+
+.creator-lanyard-shell { width: 224px; margin: 0 auto; padding-top: 12px; }
+.creator-lanyard-scene { position: relative; height: 320px; }
+.creator-lanyard-fallback { position: absolute; inset: 74px 44px 35px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 16px; background: #e8e5ef; color: #5d547a; font-size: 54px; }
+.creator-lanyard-fallback img { width: 100%; height: 100%; object-fit: cover; }
+.creator-lanyard-scene:has(.lanyard[data-rendered]) .creator-lanyard-fallback { visibility: hidden; }
+@media (min-width: 1280px) {
+  .creator-lanyard-shell { position: fixed; left: 16px; top: 90px; z-index: 20; margin: 0; }
+}
+@media (max-width: 1279px) {
+  .creator-lanyard-shell { padding-top: 0; }
+  .creator-lanyard-scene { height: 220px; }
+  .creator-lanyard-fallback { inset: 45px 58px 22px; }
+}
+@media (max-width: 1279px) {
+  .creator-lanyard-shell { display: flex; align-items: center; width: min(420px, calc(100% - 40px)); }
+  .creator-lanyard-scene { flex: none; width: 124px; height: 160px; }
+  .creator-lanyard-fallback { inset: 38px 27px 22px; font-size: 32px; }
+}
