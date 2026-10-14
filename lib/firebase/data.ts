@@ -2,7 +2,6 @@ import type { User } from "firebase/auth";
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
   getDoc,
   onSnapshot,
@@ -37,6 +36,7 @@ export type Prompt = PromptDetails & {
   title: string;
   content: string;
   isFavorite: boolean;
+  isPublished: boolean;
   createdAt: number | null;
   updatedAt: number | null;
 };
@@ -143,6 +143,7 @@ export function subscribeToPrompts(
             title: String(prompt.title ?? ""),
             content: String(prompt.content ?? ""),
             isFavorite: Boolean(prompt.isFavorite),
+            isPublished: Boolean(prompt.isPublished),
             createdAt: (prompt.createdAt as Timestamp | undefined)?.toMillis() ?? null,
             updatedAt: (prompt.updatedAt as Timestamp | undefined)?.toMillis() ?? null,
             ...readPromptDetails(prompt),
@@ -164,6 +165,7 @@ export async function getPrompt(workspaceId: string, promptId: string): Promise<
     title: String(prompt.title ?? ""),
     content: String(prompt.content ?? ""),
     isFavorite: Boolean(prompt.isFavorite),
+    isPublished: Boolean(prompt.isPublished),
     createdAt: (prompt.createdAt as Timestamp | undefined)?.toMillis() ?? null,
     updatedAt: (prompt.updatedAt as Timestamp | undefined)?.toMillis() ?? null,
     ...readPromptDetails(prompt),
@@ -224,15 +226,32 @@ export async function updatePrompt(
   }
   validatePromptDetails(trimmedTitle, trimmedContent, details ?? emptyPromptDetails);
 
-  await updateDoc(doc(db, "workspaces", workspaceId, "prompts", promptId), {
+  const existing = await getPrompt(workspaceId, promptId);
+  const values = {
     title: trimmedTitle,
     content: trimmedContent,
     ...(details ?? {}),
     updatedAt: serverTimestamp(),
-  });
+  };
+  const batch = writeBatch(db);
+  batch.update(doc(db, "workspaces", workspaceId, "prompts", promptId), values);
+  if (existing?.isPublished) {
+    const workspace = await getWorkspace(workspaceId);
+    batch.update(doc(db, "publicPrompts", `${workspace?.ownerId}_${promptId}`), {
+      title: trimmedTitle, content: trimmedContent, ...(details ?? {}), updatedAt: Date.now(),
+    });
+  }
+  await batch.commit();
 }
 
 export async function removePrompt(workspaceId: string, promptId: string) {
   const { db } = requireFirebaseServices();
-  await deleteDoc(doc(db, "workspaces", workspaceId, "prompts", promptId));
+  const existing = await getPrompt(workspaceId, promptId);
+  const batch = writeBatch(db);
+  batch.delete(doc(db, "workspaces", workspaceId, "prompts", promptId));
+  if (existing?.isPublished) {
+    const workspace = await getWorkspace(workspaceId);
+    batch.delete(doc(db, "publicPrompts", `${workspace?.ownerId}_${promptId}`));
+  }
+  await batch.commit();
 }

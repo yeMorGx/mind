@@ -6,14 +6,16 @@ import Link from "next/link";
 import { signOut } from "firebase/auth";
 import { motion } from "framer-motion";
 import { Instrument_Serif } from "next/font/google";
-import { Copy, Pencil, Star, Trash2 } from "lucide-react";
+import { Copy, Files, Pencil, Star, Trash2 } from "lucide-react";
 import Sidebar, { type PromptView } from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
+import { ActionNode } from "@/components/ui/ActionNode";
 import Input from "@/components/ui/input";
 import { Spotlight } from "@/components/ui/spotlight";
 import PromptDialog from "@/components/prompts/PromptDialog";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { getFirebaseServices } from "@/lib/firebase/client";
+import { setPromptPublication } from "@/lib/firebase/publication";
 import type { PromptDetails } from "@/lib/prompt-media";
 import {
   createPrompt,
@@ -47,6 +49,7 @@ export default function HomePage() {
   const [dialogError, setDialogError] = useState("");
   const [pageError, setPageError] = useState("");
   const [copiedPromptId, setCopiedPromptId] = useState("");
+  const [publishingId, setPublishingId] = useState("");
 
   useEffect(() => {
     if (authReady && !user) router.replace("/");
@@ -161,6 +164,21 @@ export default function HomePage() {
     }
   }
 
+  async function duplicatePrompt(prompt: Prompt) {
+    if (!user || !data.primaryWorkspaceId) return;
+    try {
+      await createPrompt(data.primaryWorkspaceId, user.uid, `${prompt.title.slice(0, 110)} (cópia)`, prompt.content, { description: prompt.description, category: prompt.category, model: prompt.model, images: prompt.images });
+    } catch { setPageError("Não foi possível duplicar o prompt."); }
+  }
+
+  async function togglePublication(prompt: Prompt) {
+    if (!user || publishingId) return;
+    setPublishingId(prompt.id); setPageError("");
+    try { await setPromptPublication(data.primaryWorkspaceId, user.uid, prompt.id, !prompt.isPublished); }
+    catch (error) { setPageError(error instanceof Error && error.message.startsWith("Publique") ? error.message : "Não foi possível alterar a publicação do prompt."); }
+    finally { setPublishingId(""); }
+  }
+
   async function deletePrompt(prompt: Prompt) {
     if (!data.primaryWorkspaceId || !window.confirm(`Excluir “${prompt.title}”?`)) return;
     try {
@@ -232,6 +250,10 @@ export default function HomePage() {
           </div>
 
           <section className="pb-12">
+            <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 p-4">
+              <p className="text-sm text-white/60">Publique seu perfil e escolha os prompts que quer divulgar.</p>
+              <Link href="/home/profile" className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black">Meu perfil de criador</Link>
+            </div>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-medium">
                 {activeView === "favorites" ? "Favorite prompts" : "Your prompts"}
@@ -252,52 +274,23 @@ export default function HomePage() {
             ) : (
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {visiblePrompts.map((prompt) => (
-                  <motion.article
-                    key={prompt.id}
-                    whileHover={{ y: -3 }}
-                    className="group relative rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-md"
-                  >
-                    <div className="flex items-start gap-3">
-                      <Link href={`/home/prompts/${encodeURIComponent(prompt.id)}`} aria-label={`Abrir página do prompt ${prompt.title}`} className="min-w-0 flex-1 text-left outline-none after:absolute after:inset-0 after:rounded-2xl focus-visible:after:ring-2 focus-visible:after:ring-white/50">
-                        <h3 className="truncate font-medium">{prompt.title}</h3>
-                        <p className="mt-2 line-clamp-4 whitespace-pre-wrap text-sm text-white/50">{prompt.content}</p>
-                      </Link>
-                      <button
-                        type="button"
-                        aria-label={prompt.isFavorite ? "Remove from favorites" : "Add to favorites"}
-                        aria-pressed={prompt.isFavorite}
-                        onClick={() => void toggleFavorite(prompt)}
-                        className="relative z-10 rounded-lg p-2 text-white/45 transition hover:bg-white/5 hover:text-yellow-200"
-                      >
-                        <Star size={17} fill={prompt.isFavorite ? "currentColor" : "none"} />
-                      </button>
-                    </div>
+                  <ActionNode key={prompt.id} title={prompt.title} description="" className="mind-node-library" actions={[
+                    { id: "edit", label: `Editar ${prompt.title}`, icon: Pencil, onClick: () => openPrompt(prompt) },
+                    { id: "copy", label: `Copiar ${prompt.title}`, icon: Copy, onClick: () => void copyPrompt(prompt) },
+                    { id: "favorite", label: prompt.isFavorite ? "Remover dos favoritos" : "Favoritar prompt", icon: Star, onClick: () => void toggleFavorite(prompt) },
+                    { id: "duplicate", label: `Duplicar ${prompt.title}`, icon: Files, onClick: () => void duplicatePrompt(prompt) },
+                  ]}>
+                    <Link href={`/home/prompts/${encodeURIComponent(prompt.id)}`} aria-label={`Abrir página do prompt ${prompt.title}`} className="block min-w-0 rounded-lg focus-visible:outline-2 focus-visible:outline-white">
+                      <h3 className="truncate pr-5 font-medium">{prompt.title}</h3>
+                      <p className="mt-2 line-clamp-4 whitespace-pre-wrap text-sm text-white/50">{prompt.content}</p>
+                    </Link>
                     <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-white/40">
-                      <span>{prompt.updatedAt ? `Updated ${new Date(prompt.updatedAt).toLocaleDateString("pt-BR")}` : "Recently saved"}</span>
-                      <div className="relative z-10 flex items-center gap-1">
-                        <button type="button" aria-label={`Editar ${prompt.title}`} title="Editar prompt" onClick={() => openPrompt(prompt)} className="rounded-md p-1.5 text-white/45 transition hover:bg-white/5 hover:text-white">
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          aria-label={`Copiar ${prompt.title}`}
-                          onClick={() => void copyPrompt(prompt)}
-                          className="flex items-center gap-1.5 rounded-md p-1.5 text-white/45 transition hover:bg-white/5 hover:text-white"
-                        >
-                          <Copy size={14} />
-                          {copiedPromptId === prompt.id ? "Copied" : "Copy"}
-                        </button>
-                        <button
-                          type="button"
-                          aria-label={`Excluir ${prompt.title}`}
-                          onClick={() => void deletePrompt(prompt)}
-                          className="rounded-md p-1.5 text-white/35 transition hover:bg-red-400/10 hover:text-red-200"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
+                      <span>{copiedPromptId === prompt.id ? "Prompt copiado" : prompt.updatedAt ? `Atualizado ${new Date(prompt.updatedAt).toLocaleDateString("pt-BR")}` : "Salvo recentemente"}</span>
+                      <button type="button" disabled={Boolean(publishingId)} onClick={() => void togglePublication(prompt)} className="rounded-md px-2 py-1 hover:bg-white/10 disabled:opacity-40">{publishingId === prompt.id ? "Salvando…" : prompt.isPublished ? "Tornar privado" : "Publicar"}</button>
+                      <button type="button" aria-label={`Excluir ${prompt.title}`} onClick={() => void deletePrompt(prompt)} className="rounded-md p-1.5 hover:bg-red-400/10 hover:text-red-200"><Trash2 size={15} /></button>
                     </div>
-                  </motion.article>
+                    {prompt.isPublished && <Link href={`/share/${user.uid}/${prompt.id}`} className="mt-3 block text-xs text-white/70 underline">Abrir link público</Link>}
+                  </ActionNode>
                 ))}
               </div>
             )}

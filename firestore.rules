@@ -15,6 +15,31 @@ service cloud.firestore {
       allow read, create, update, delete: if signedIn() && request.auth.uid == userId;
     }
 
+    match /creatorProfiles/{creatorId} {
+      allow read: if resource.data.published == true;
+      allow create, update: if signedIn() && request.auth.uid == creatorId
+        && request.resource.data.creatorId == creatorId
+        && request.resource.data.keys().hasOnly(['creatorId', 'name', 'bio', 'published', 'updatedAt'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 80
+        && request.resource.data.bio is string && request.resource.data.bio.size() <= 1000
+        && request.resource.data.published == true;
+      allow delete: if signedIn() && request.auth.uid == creatorId;
+    }
+
+    match /publicPrompts/{publicId} {
+      allow read: if resource.data.published == true
+        && exists(/databases/$(database)/documents/creatorProfiles/$(resource.data.creatorId))
+        && get(/databases/$(database)/documents/creatorProfiles/$(resource.data.creatorId)).data.published == true;
+      allow create, update: if signedIn()
+        && request.resource.data.creatorId == request.auth.uid
+        && publicId == request.auth.uid + '_' + request.resource.data.promptId
+        && ownsWorkspace(request.resource.data.workspaceId)
+        && exists(/databases/$(database)/documents/workspaces/$(request.resource.data.workspaceId)/prompts/$(request.resource.data.promptId))
+        && request.resource.data.keys().hasOnly(['creatorId', 'workspaceId', 'promptId', 'published', 'title', 'content', 'description', 'category', 'model', 'images', 'createdAt', 'updatedAt'])
+        && request.resource.data.published == true;
+      allow delete: if signedIn() && resource.data.creatorId == request.auth.uid;
+    }
+
     match /workspaces/{workspaceId} {
       allow create: if signedIn() && request.resource.data.ownerId == request.auth.uid;
       allow read, delete: if ownsWorkspace(workspaceId);

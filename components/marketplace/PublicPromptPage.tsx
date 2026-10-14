@@ -11,12 +11,13 @@ import type { Prompt } from "@/lib/supabase/types";
 
 /* eslint-disable @next/next/no-img-element -- Supabase returns short-lived signed image URLs. */
 
-export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [], visibility = "public", actions }: {
+export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedPrompts = [], visibility = "public", actions, creatorHref }: {
   prompt: Prompt;
   creatorPrompts?: Prompt[];
   relatedPrompts?: Prompt[];
   visibility?: "public" | "private";
   actions?: ReactNode;
+  creatorHref?: string;
 }) {
   const isPrivate = visibility === "private";
   const backHref = isPrivate ? "/home" : "/";
@@ -61,19 +62,14 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
-        <Link href={backHref} aria-label="Mind — página inicial"><Logo /></Link>
-        <div className="flex items-center gap-2">
-          {!isPrivate && <button type="button" onClick={() => void sharePage()} className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white sm:px-4">
-            <Share2 size={16} /> <span className="hidden sm:inline">Compartilhar</span>
-          </button>}
-          <Link href={backHref} className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:bg-white/90">{isPrivate ? "Minha biblioteca" : "Explorar prompts"}</Link>
-        </div>
+      <header className="mx-auto grid w-full max-w-6xl grid-cols-3 items-center px-5 py-5 sm:px-8">
+        <Link href={backHref} aria-label={isPrivate ? "Voltar à biblioteca" : "Voltar ao início"} className="justify-self-start rounded-lg p-2 text-white/60 hover:bg-white/5 hover:text-white"><ArrowLeft size={20} /></Link>
+        <Link href={backHref} aria-label="Mind — página inicial" className="justify-self-center"><Logo /></Link>
+        {!isPrivate && <button type="button" onClick={() => void sharePage()} aria-label="Compartilhar prompt" className="justify-self-end rounded-lg p-2 text-white/70 hover:bg-white/5"><Share2 size={18} /></button>}
       </header>
 
-      <article className="mx-auto grid w-full max-w-7xl gap-10 px-5 pb-20 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,.95fr)] lg:gap-16 lg:pt-12">
+      <article className="mx-auto w-full max-w-6xl space-y-10 px-5 pb-20 pt-6 sm:px-8 lg:pt-10">
         <section className="min-w-0">
-          <Link href={backHref} className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white"><ArrowLeft size={15} /> {isPrivate ? "Voltar à biblioteca" : "Todos os prompts"}</Link>
           <div className="mt-8 flex flex-wrap gap-2">
             {prompt.category && <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70">{prompt.category}</span>}
             {prompt.model && <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/50">{prompt.model}</span>}
@@ -92,6 +88,24 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
           ) : (
             <div className="mt-9 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-white/15 text-sm text-white/35">Nenhuma imagem adicionada a este prompt.</div>
           )}
+
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:p-7">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.17em] text-white/35">Prompt completo</p>
+                <p className="mt-2 text-sm text-white/55">Copie e experimente na sua ferramenta.</p>
+              </div>
+              <button type="button" onClick={() => void copyPrompt()} className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90">
+                {copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Copiado" : "Copiar prompt"}
+              </button>
+            </div>
+            <pre className="mt-6 max-h-[520px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-white/[0.07] bg-black/40 p-4 font-mono text-sm leading-6 text-white/75">{prompt.content}</pre>
+            {shareMessage && <p role="status" className="mt-3 text-sm text-white/60">{shareMessage}</p>}
+            <p role="status" className="sr-only">{copied ? "Prompt copiado para a área de transferência." : ""}</p>
+            {!isPrivate && <button type="button" onClick={() => void sharePage()} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-3 text-sm text-white/70 hover:bg-white/5 hover:text-white"><ExternalLink size={15} /> Compartilhar esta página</button>}
+            <p className="mt-4 text-center text-xs leading-5 text-white/35">{isPrivate ? "Este prompt pertence à sua biblioteca. O acesso exige sua conta." : "Sem pagamento e sem cadastro para visualizar ou copiar."}</p>
+          </div>
+
 
           {references.length > 0 && <section className="mt-8">
             <h2 className="mb-3 text-lg font-medium">{references.length === 1 ? "Imagem de referência" : "Imagens de referência"}</h2>
@@ -119,30 +133,14 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
           </section>}
         </section>
 
-        <aside className="lg:pt-16">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:p-7">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs uppercase tracking-[0.17em] text-white/35">Prompt completo</p>
-                <p className="mt-2 text-sm text-white/55">Copie e experimente na sua ferramenta.</p>
-              </div>
-              <button type="button" onClick={() => void copyPrompt()} className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90">
-                {copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Copiado" : "Copiar prompt"}
-              </button>
-            </div>
-            <pre className="mt-6 max-h-[520px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-white/[0.07] bg-black/40 p-4 font-mono text-sm leading-6 text-white/75">{prompt.content}</pre>
-            {shareMessage && <p role="status" className="mt-3 text-sm text-white/60">{shareMessage}</p>}
-            <p role="status" className="sr-only">{copied ? "Prompt copiado para a área de transferência." : ""}</p>
-            {!isPrivate && <button type="button" onClick={() => void sharePage()} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 py-3 text-sm text-white/70 hover:bg-white/5 hover:text-white"><ExternalLink size={15} /> Compartilhar esta página</button>}
-            <p className="mt-4 text-center text-xs leading-5 text-white/35">{isPrivate ? "Este prompt pertence à sua biblioteca. O acesso exige sua conta." : "Sem pagamento e sem cadastro para visualizar ou copiar."}</p>
-          </div>
-
-          <section id="creator" aria-labelledby="creator-heading" className="mt-5 scroll-mt-8 rounded-2xl border border-white/10 p-5 sm:p-7">
+        <div className="grid gap-5 md:grid-cols-3">
+          <section id="creator" aria-labelledby="creator-heading" className="scroll-mt-8 rounded-2xl border border-white/10 p-5 sm:p-7">
             <h2 id="creator-heading" className="text-xs uppercase tracking-[0.17em] text-white/40">Conheça o criador</h2>
             <div className="mt-5 flex items-center gap-4">
               <span aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/[0.08] text-xl font-semibold">{Array.from(creatorName.trim())[0]?.toUpperCase() || "M"}</span>
               <div className="min-w-0">
                 <p className="break-words text-lg font-medium">{creatorName}</p>
+                {creatorHref && <Link href={creatorHref} className="mt-1 block text-sm text-white/60 underline">Ver perfil público</Link>}
                 {prompt.creatorSlug && <p className="mt-1 break-words text-sm text-white/40">@{prompt.creatorSlug}</p>}
               </div>
             </div>
@@ -150,7 +148,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             {creatorPrompts.length > 0 && <a href="#creator-prompts" className="mt-4 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white">Mais prompts deste criador <ArrowRight size={15} /></a>}
           </section>
 
-          <section aria-labelledby="details-heading" className="mt-5 rounded-2xl border border-white/10 p-5 sm:p-7">
+          <section aria-labelledby="details-heading" className="rounded-2xl border border-white/10 p-5 sm:p-7">
             <h2 id="details-heading" className="text-lg font-medium">Sobre este prompt</h2>
             <dl className="mt-5 space-y-4 text-sm">
               {[
@@ -163,7 +161,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             </dl>
           </section>
 
-          <section aria-labelledby="how-to-heading" className="mt-5 rounded-2xl border border-white/10 p-5 sm:p-7">
+          <section aria-labelledby="how-to-heading" className="rounded-2xl border border-white/10 p-5 sm:p-7">
             <h2 id="how-to-heading" className="flex items-center gap-2 text-lg font-medium"><Sparkles size={18} className="text-white/60" /> Como usar</h2>
             <ol className="mt-5 list-decimal space-y-3 pl-5 text-sm leading-6 text-white/55 marker:text-white/30">
               <li>Copie o texto completo do prompt.</li>
@@ -172,7 +170,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             </ol>
             <p className="mt-4 text-xs leading-5 text-white/35">Os resultados podem variar conforme o modelo, a versão e as configurações da ferramenta.</p>
           </section>
-        </aside>
+        </div>
       </article>
 
       {(creatorPrompts.length > 0 || relatedPrompts.length > 0) && <div className="mx-auto max-w-7xl space-y-14 px-5 pb-20 sm:px-8">

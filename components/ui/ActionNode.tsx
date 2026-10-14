@@ -1,7 +1,7 @@
 "use client";
 
 // Adapted from Bencho Action node (MIT): https://bencho.dev/licence
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { GitCommitHorizontal, Plus, type LucideIcon } from "lucide-react";
 
@@ -75,8 +75,8 @@ function ride(s: number, corner: number, off: number) {
 
 export type NodeAction = { id: string; label: string; icon: LucideIcon; onClick: () => void };
 
-export function ActionNode({ title, description, actions, disabled = false }: {
-  title: string; description: string; actions: NodeAction[]; disabled?: boolean;
+export function ActionNode({ title, description, actions, disabled = false, children, className = "" }: {
+  title: string; description: string; actions: NodeAction[]; disabled?: boolean; children?: ReactNode; className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -86,15 +86,14 @@ export function ActionNode({ title, description, actions, disabled = false }: {
   const off = 16 + R;
   const mid = ((corner + off) * Math.PI) / 4;
 
-  return <div className="mind-node"
+  return <div className={`mind-node ${className}`}
     onPointerEnter={() => setOpen(true)}
     onPointerLeave={(event) => { if (!event.currentTarget.contains(document.activeElement)) setOpen(false); }}
     onFocus={() => setOpen(true)}
     onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}
     onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); trigger.current?.focus(); setOpen(false); } }}>
     <div className="mind-node-card">
-      <div className="mind-node-top"><GitCommitHorizontal size={18} /><h2>{title}</h2></div>
-      <p>{description}</p>
+      {children || <><div className="mind-node-top"><GitCommitHorizontal size={18} /><h2>{title}</h2></div><p>{description}</p></>}
       <button ref={trigger} type="button" className="mind-node-trigger" aria-label="Mostrar ações do prompt" aria-expanded={open} onClick={() => setOpen(true)}><Plus size={18} /></button>
     </div>
     {/* Anchored ON the corner, so every button's travel is

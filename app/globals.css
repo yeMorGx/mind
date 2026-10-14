@@ -183,3 +183,9 @@ body {
   .results-marquee-viewport { overflow-x: auto; scrollbar-width: thin; scrollbar-color: #454545 #101010; }
   .results-marquee-group { min-width: 0; justify-content: flex-start; }
 }
+
+/* The library card is the action node itself; the fan belongs to its corner. */
+.mind-node-library { margin: 56px 40px 0 0; }
+.mind-node-library .mind-node-card { padding: 20px; height: 100%; }
+.mind-node-library .mind-node-fan { z-index: 3; }
+.mind-node-library .mind-node-trigger { z-index: 4; }
