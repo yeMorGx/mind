@@ -18,6 +18,8 @@ import {
 import Logo from "@/components/ui/logo";
 import { getFirebaseServices } from "@/lib/firebase/client";
 import { ensureUserProfile, getAuthDestination, getFirebaseAuthMessage } from "@/lib/firebase/auth";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { getNativePublicCreator, startAccountMigration } from "@/lib/supabase/mind";
 
 type Props = {
   isOpen: boolean;
@@ -41,6 +43,10 @@ export default function LoginModal({
     setNotice("");
     try {
       const credential = await action();
+      if (isSupabaseConfigured && await getNativePublicCreator(credential.user.uid)) {
+        await startAccountMigration(credential.user);
+        return;
+      }
       await ensureUserProfile(credential.user);
       const destination = await getAuthDestination(credential.user);
       onClose();

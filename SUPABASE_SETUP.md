@@ -1,6 +1,6 @@
 # Configurar o Supabase
 
-Status: o login, o onboarding e a biblioteca em produção continuam usando Firebase. Este guia prepara a migração futura e as páginas públicas do marketplace. A troca do backend ativo depende de configuração e validação prévias, incluindo o acesso às contas e aos dados existentes.
+Status: este guia registra a preparação antiga do marketplace. A migração ativa por conta, com preservação de IDs e vínculo autenticado, está em `docs/migration-supabase.md` e `supabase/migrations`. Contas não migradas continuam no Firebase; não execute o SQL antigo sobre a migração atual.
 
 O Mind usa Supabase Auth, Postgres com Row Level Security e Storage privado. O esquema do marketplace está em `SUPABASE_SETUP.sql`.
 

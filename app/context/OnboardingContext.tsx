@@ -10,10 +10,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
+import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseServices, isFirebaseConfigured } from "@/lib/firebase/client";
 import type { OnboardingData } from "@/lib/firebase/data";
+import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { bootstrapAccount } from "@/lib/supabase/mind";
+import { setNativeBackend, type MindUser as User } from "@/lib/backend";
 import { ensureCreatorProfile } from "@/lib/firebase/publication";
 
 type ContextType = {
@@ -45,59 +48,70 @@ const OnboardingContext = createContext<ContextType | null>(null);
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<OnboardingData>(initialData);
   const [user, setUser] = useState<User | null>(null);
-  const [authReady, setAuthReady] = useState(!isFirebaseConfigured);
+  const [authReady, setAuthReady] = useState(!isFirebaseConfigured && !isSupabaseConfigured);
   const [profileLoading, setProfileLoading] = useState(false);
   const profileRequest = useRef(0);
 
   useEffect(() => {
     const services = getFirebaseServices();
-    if (!services) return;
-
-    return onAuthStateChanged(services.auth, async (nextUser) => {
+    const supabase = getSupabaseClient();
+    let firebaseUser: FirebaseUser | null = null;
+    let nativeUserId = "";
+    let alive = true;
+    async function sync() {
       const requestId = ++profileRequest.current;
-      setUser(nextUser);
-
-      if (!nextUser) {
-        setAuthReady(true);
-        setData(initialData);
-        setProfileLoading(false);
-        return;
-      }
-
       setProfileLoading(true);
-      setAuthReady(true);
       try {
-        const profileSnapshot = await getDoc(
-          doc(services.db, "users", nextUser.uid),
-        );
-        const profile: Partial<OnboardingData> = profileSnapshot.exists()
-          ? (profileSnapshot.data() as Partial<OnboardingData>)
-          : {};
-        if (profileRequest.current !== requestId) return;
-        setData({
-          ...initialData,
-          ...profile,
-          name: String(profile.name ?? nextUser.displayName ?? ""),
-          email: String(profile.email ?? nextUser.email ?? ""),
-          invitedEmails: Array.isArray(profile.invitedEmails)
-            ? profile.invitedEmails.map(String)
-            : [],
-        });
-        // Provision public identity separately so a publication error never blocks login.
-        void ensureCreatorProfile(nextUser).catch(() => {
-          console.warn("Não foi possível preparar o perfil público. Tente novamente no editor de perfil.");
-        });
+        if (supabase && localStorage.getItem("mind-native-session") === "1") {
+          const { data: session, error } = await supabase.auth.getSession();
+          if (error) throw error;
+          if (session.session) {
+            const account = await bootstrapAccount();
+            if (!alive || profileRequest.current !== requestId) return;
+            setNativeBackend(true);
+            nativeUserId = account.id;
+            setUser({ uid: account.public_id, email: session.session.user.email ?? null,
+              displayName: account.onboarding.name || account.creator_profile.name, photoURL: account.creator_profile.avatarUrl || null,
+              backend: "supabase", getIdTokenResult: async () => ({ claims: { badgeAdmin: account.badge_admin } }) });
+            setData({ ...initialData, ...account.onboarding });
+            return;
+          }
+          localStorage.removeItem("mind-native-session");
+        }
+        if (!alive || profileRequest.current !== requestId) return;
+        setNativeBackend(false);
+        nativeUserId = "";
+        setUser(firebaseUser);
+        if (!firebaseUser || !services) { setData(initialData); return; }
+        const current = firebaseUser;
+        const snapshot = await getDoc(doc(services.db, "users", current.uid));
+        if (!alive || profileRequest.current !== requestId) return;
+        const profile = snapshot.data() as Partial<OnboardingData> | undefined;
+        setData({ ...initialData, ...profile, name: String(profile?.name ?? current.displayName ?? ""),
+          email: String(profile?.email ?? current.email ?? ""),
+          invitedEmails: Array.isArray(profile?.invitedEmails) ? profile.invitedEmails.map(String) : [] });
+        void ensureCreatorProfile(current).catch(() => console.warn("Não foi possível preparar o perfil público. Tente novamente no editor de perfil."));
       } catch {
-        if (profileRequest.current !== requestId) return;
-        setData({
-          ...initialData,
-          name: nextUser.displayName ?? "",
-          email: nextUser.email ?? "",
-        });
+        if (!alive || profileRequest.current !== requestId) return;
+        // Never show an old Firebase library as if it were a failed native session.
+        if (localStorage.getItem("mind-native-session") === "1") {
+          setUser(null); setData(initialData);
+        } else {
+          setUser(firebaseUser); setData({ ...initialData, name: firebaseUser?.displayName ?? "", email: firebaseUser?.email ?? "" });
+        }
       } finally {
-        if (profileRequest.current === requestId) setProfileLoading(false);
+        if (alive && profileRequest.current === requestId) { setAuthReady(true); setProfileLoading(false); }
       }
+    }
+    const unsubscribe = services ? onAuthStateChanged(services.auth, value => { firebaseUser = value; void sync(); }) : undefined;
+    const nativeListener = supabase?.auth.onAuthStateChange((event, session) => {
+      if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user.id === nativeUserId) return;
+      setTimeout(() => { if (alive) void sync(); }, 0);
     });
+    const refresh = () => { void sync(); };
+    window.addEventListener("mind:session", refresh);
+    if (!services) void sync();
+    return () => { alive = false; unsubscribe?.(); nativeListener?.data.subscription.unsubscribe(); window.removeEventListener("mind:session",refresh); };
   }, []);
 
   const updateData = useCallback((values: Partial<OnboardingData>) => {

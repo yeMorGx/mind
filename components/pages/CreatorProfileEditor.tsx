@@ -6,6 +6,8 @@ import { useOnboarding } from "@/app/context/OnboardingContext";
 import { preparePromptImage } from "@/lib/prompt-media";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import { downloadOwnFirebaseBackup } from "@/lib/firebase/backup";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { startAccountMigration } from "@/lib/supabase/mind";
 import { ensureCreatorProfile, getOwnProfile, saveCreatorProfile, profileSaveErrorMessage, type CreatorProfile } from "@/lib/firebase/publication";
 
 export default function CreatorProfileEditor() {
@@ -55,6 +57,12 @@ export default function CreatorProfileEditor() {
     catch { setMessage("Não foi possível baixar o backup. Confira sua conexão e tente novamente."); }
     finally { setPending(false); }
   }
+  async function migrate() {
+    if (!user || pending) return;
+    setPending(true); setMessage("");
+    try { await startAccountMigration(user); }
+    catch { setMessage("Não foi possível abrir o login Google. Tente novamente."); setPending(false); }
+  }
   return <main className="min-h-screen bg-background px-5 py-12 text-foreground"><div className="mx-auto max-w-2xl">
     <Link href="/home" className="text-sm text-white/60">← Voltar à biblioteca</Link>
     <h1 className="mt-8 text-3xl font-semibold">Seu perfil de criador</h1>
@@ -85,6 +93,11 @@ export default function CreatorProfileEditor() {
       <h2 className="text-lg font-medium">Seus dados</h2>
       <p className="mt-2 text-sm leading-6 text-white/55">Baixe uma cópia do perfil e dos prompts da sua biblioteca, incluindo as imagens salvas.</p>
       <button type="button" disabled={pending} onClick={() => void backup()} className="mt-4 rounded-xl border border-white/20 px-5 py-3 text-sm disabled:opacity-40">Baixar backup dos meus dados</button>
+      {isSupabaseConfigured && user.backend !== "supabase" && <div className="mt-6">
+        <p className="text-sm leading-6 text-white/70">Depois que seu backup estiver autorizado, confirme a mesma conta Google para concluir a migração da biblioteca.</p>
+        <button type="button" disabled={pending} onClick={() => void migrate()} className="mt-3 rounded-xl bg-white px-5 py-3 text-sm font-medium text-black disabled:opacity-40">Concluir migração com Google</button>
+      </div>}
+      {user.backend === "supabase" && <p className="mt-4 text-sm text-white/70">Sua conta e biblioteca já estão no Supabase.</p>}
     </section>}
   </div></main>;
 }

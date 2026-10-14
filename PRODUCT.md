@@ -2,7 +2,7 @@
 
 Mind é um lugar gratuito para criadores e influenciadores de IA publicarem prompts e resultados e compartilharem links com seus seguidores.
 
-- Biblioteca privada com Firebase Auth e Firestore. Preservar contas e dados existentes.
+- Biblioteca privada: contas existentes ainda não migradas usam Firebase Auth e Firestore; contas com backup autorizado podem concluir a migração para sessão e dados Supabase pelo Google. Preservar contas, dados e IDs existentes.
 - Perfil sempre público: nome, apresentação, bio, avatar e capa. E-mail e dados da equipe continuam privados.
 - Cada prompt começa privado e é publicado separadamente. O perfil público mostra somente os prompts escolhidos.
 - Visitantes podem abrir perfis e prompts públicos sem conta.

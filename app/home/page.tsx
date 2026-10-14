@@ -11,6 +11,8 @@ import { ActionNode } from "@/components/ui/ActionNode";
 import PromptDialog from "@/components/prompts/PromptDialog";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { getFirebaseServices } from "@/lib/firebase/client";
+import { getSupabaseClient } from "@/lib/supabase/client";
+import { setNativeBackend } from "@/lib/backend";
 import { setPromptPublication } from "@/lib/firebase/publication";
 import type { PromptDetails } from "@/lib/prompt-media";
 import {
@@ -83,7 +85,7 @@ export default function HomePage() {
       },
       () => {
         setPromptState({ workspaceId, prompts: [], loading: false });
-        setPageError("Não foi possível carregar seus prompts. Confira as regras do Firestore.");
+        setPageError("Não foi possível carregar seus prompts. Confira sua conexão e tente novamente.");
       },
     );
   }, [data.onboardingComplete, data.primaryWorkspaceId, user]);
@@ -185,9 +187,13 @@ export default function HomePage() {
 
   async function handleSignOut() {
     const services = getFirebaseServices();
-    if (!services) return;
     try {
-      await signOut(services.auth);
+      const supabase = getSupabaseClient();
+      if (supabase) { const { error } = await supabase.auth.signOut(); if (error) throw error; }
+      if (services) await signOut(services.auth);
+      localStorage.removeItem("mind-native-session");
+      setNativeBackend(false);
+      window.dispatchEvent(new Event("mind:session"));
       router.replace("/");
     } catch {
       setPageError("Não foi possível sair da conta.");

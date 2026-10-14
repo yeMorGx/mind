@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import type { User } from "firebase/auth";
+import type { MindUser as User } from "@/lib/backend";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
 import { createWorkspaceForUser, type OnboardingData } from "@/lib/firebase/data";

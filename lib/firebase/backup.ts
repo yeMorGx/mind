@@ -1,5 +1,7 @@
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { requireFirebaseServices } from "./client";
+import { usingSupabase } from "@/lib/backend";
+import { exportNativeBackup } from "@/lib/supabase/mind";
 
 /** Export only the current user's data; credentials and passwords are never included. */
 export async function exportOwnFirebaseData() {
@@ -32,13 +34,13 @@ export async function exportOwnFirebaseData() {
 }
 
 export async function downloadOwnFirebaseBackup() {
-  const data = await exportOwnFirebaseData();
+  const data = usingSupabase() ? await exportNativeBackup() : await exportOwnFirebaseData();
   // Firestore timestamps include their serialized seconds/nanoseconds in JSON.
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `mind-backup-${data.account.firebaseUid}.json`;
+  link.download = `mind-backup-${"firebaseUid" in data.account ? data.account.firebaseUid : data.account.publicId}.json`;
   document.body.appendChild(link);
   link.click();
   link.remove();

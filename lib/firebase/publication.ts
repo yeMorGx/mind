@@ -1,11 +1,13 @@
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where, writeBatch } from "firebase/firestore";
-import type { User } from "firebase/auth";
+import { usingSupabase, type MindUser as User } from "@/lib/backend";
+import * as native from "@/lib/supabase/mind";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { requireFirebaseServices } from "./client";
 import { getPrompt, type Prompt } from "./data";
 import type { Prompt as PublicPrompt } from "@/lib/supabase/types";
 import { getAccountBadges, type BadgeKind } from "./badges";
 
-export type CreatorProfile = { name: string; bio: string; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[] };
+export type CreatorProfile = { name: string; bio: string; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[]; backend?: "supabase" };
 function imageValue(value: unknown) {
   return typeof value === "string" && value.length <= 80000 && /^(https:\/\/|data:image\/(jpeg|png|webp);base64,)/.test(value) ? value : "";
 }
@@ -14,6 +16,7 @@ function readProfile(value: Record<string, unknown>): CreatorProfile {
     headline: String(value.headline ?? "").slice(0, 100), avatarUrl: imageValue(value.avatarUrl), bannerUrl: imageValue(value.bannerUrl) };
 }
 export async function getOwnProfile(uid: string): Promise<CreatorProfile | null> {
+  if (usingSupabase()) return native.getNativeOwnProfile();
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "users", uid));
   const value = snapshot.data()?.creatorProfile;
@@ -32,6 +35,7 @@ export function profileSaveErrorMessage(error: unknown): string {
 export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
   const name = profile.name.trim(), bio = profile.bio.trim();
   if (!name || name.length > 80 || bio.length > 1000) throw new Error("Informe um nome de até 80 caracteres e uma bio de até 1.000.");
+  if (usingSupabase()) return native.saveNativeProfile({ name, bio, headline: (profile.headline ?? "").trim().slice(0,100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) });
   const { db } = requireFirebaseServices();
   const values = { name, bio, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
   const userRef = doc(db, "users", uid);
@@ -42,6 +46,7 @@ export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
   await batch.commit();
 }
 export async function ensureCreatorProfile(user: User) {
+  if (usingSupabase()) { await native.bootstrapAccount(); return; }
   const { db } = requireFirebaseServices();
   const userRef = doc(db, "users", user.uid);
   const publicRef = doc(db, "creatorProfiles", user.uid);
@@ -59,6 +64,7 @@ export async function ensureCreatorProfile(user: User) {
   });
 }
 export async function setPromptPublication(workspaceId: string, uid: string, promptId: string, published: boolean) {
+  if (usingSupabase()) return native.publishNativePrompt(workspaceId, promptId, published);
   const { db, auth } = requireFirebaseServices();
   const prompt = await getPrompt(workspaceId, promptId);
   if (!prompt) throw new Error("Prompt não encontrado.");
@@ -79,6 +85,10 @@ export async function setPromptPublication(workspaceId: string, uid: string, pro
   await batch.commit();
 }
 export async function getPublicCreator(uid: string): Promise<CreatorProfile | null> {
+  if (isSupabaseConfigured) {
+    const migrated = await native.getNativePublicCreator(uid);
+    if (migrated) return migrated;
+  }
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "creatorProfiles", uid));
   return snapshot.exists() ? { ...readProfile(snapshot.data()), badges: await getAccountBadges(uid).catch(() => []) } : null;
@@ -93,11 +103,13 @@ function asPublicPrompt(record: Record<string, unknown>, profile: CreatorProfile
   };
 }
 export async function getCreatorPrompts(uid: string, profile: CreatorProfile) {
+  if (profile.backend === "supabase") return native.getNativePublicPrompts(uid, profile);
   const { db } = requireFirebaseServices();
   const result = await getDocs(query(collection(db, "publicPrompts"), where("creatorId", "==", uid), where("published", "==", true)));
   return result.docs.map(snapshot => asPublicPrompt(snapshot.data(), profile));
 }
 export async function getSharedPrompt(uid: string, promptId: string, profile: CreatorProfile) {
+  if (profile.backend === "supabase") return (await native.getNativePublicPrompts(uid, profile, promptId))[0] ?? null;
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "publicPrompts", `${uid}_${promptId}`));
   return snapshot.exists() && snapshot.data().published ? asPublicPrompt(snapshot.data(), profile) : null;

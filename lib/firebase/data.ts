@@ -1,4 +1,5 @@
-import type { User } from "firebase/auth";
+import { usingSupabase, type MindUser as User } from "@/lib/backend";
+import * as native from "@/lib/supabase/mind";
 import {
   addDoc,
   collection,
@@ -45,6 +46,7 @@ export async function saveOnboardingProgress(
   user: User,
   values: Partial<OnboardingData>,
 ) {
+  if (usingSupabase()) return native.saveNativeOnboarding(values);
   const { db } = requireFirebaseServices();
   await setDoc(
     doc(db, "users", user.uid),
@@ -68,6 +70,7 @@ export async function createWorkspaceForUser(
     throw new Error("Volte e informe o nome da equipe.");
   }
   if (!data.workspaceName.trim()) throw new Error("Digite um nome para o workspace.");
+  if (usingSupabase()) return native.createNativeWorkspace(user, data);
 
   const { db } = requireFirebaseServices();
   const workspaceRef = doc(collection(db, "workspaces"));
@@ -116,6 +119,7 @@ export async function createWorkspaceForUser(
 }
 
 export async function getWorkspace(workspaceId: string) {
+  if (usingSupabase()) return native.getNativeWorkspace(workspaceId);
   const { db } = requireFirebaseServices();
   const workspace = await getDoc(doc(db, "workspaces", workspaceId));
   return workspace.exists() ? workspace.data() : null;
@@ -126,6 +130,7 @@ export function subscribeToPrompts(
   onPrompts: (prompts: Prompt[]) => void,
   onError: (error: Error) => void,
 ) {
+  if (usingSupabase()) return native.subscribeNativePrompts(workspaceId, onPrompts, onError);
   const { db } = requireFirebaseServices();
   const promptsQuery = query(
     collection(db, "workspaces", workspaceId, "prompts"),
@@ -156,6 +161,7 @@ export function subscribeToPrompts(
 }
 
 export async function getPrompt(workspaceId: string, promptId: string): Promise<Prompt | null> {
+  if (usingSupabase()) return native.getNativePrompt(workspaceId, promptId);
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "workspaces", workspaceId, "prompts", promptId));
   if (!snapshot.exists()) return null;
@@ -179,6 +185,7 @@ export async function createPrompt(
   content: string,
   details: PromptDetails = emptyPromptDetails,
 ) {
+  if (usingSupabase()) return native.createNativePrompt(workspaceId, userId, title, content, details);
   const { db } = requireFirebaseServices();
   const trimmedTitle = title.trim();
   const trimmedContent = content.trim();
@@ -204,6 +211,7 @@ export async function setPromptFavorite(
   promptId: string,
   isFavorite: boolean,
 ) {
+  if (usingSupabase()) return native.favoriteNativePrompt(workspaceId, promptId, isFavorite);
   const { db } = requireFirebaseServices();
   await updateDoc(doc(db, "workspaces", workspaceId, "prompts", promptId), {
     isFavorite,
@@ -218,6 +226,7 @@ export async function updatePrompt(
   content: string,
   details?: PromptDetails,
 ) {
+  if (usingSupabase()) return native.updateNativePrompt(workspaceId, promptId, title, content, details);
   const { db } = requireFirebaseServices();
   const trimmedTitle = title.trim();
   const trimmedContent = content.trim();
@@ -245,6 +254,7 @@ export async function updatePrompt(
 }
 
 export async function removePrompt(workspaceId: string, promptId: string) {
+  if (usingSupabase()) return native.removeNativePrompt(workspaceId, promptId);
   const { db } = requireFirebaseServices();
   const existing = await getPrompt(workspaceId, promptId);
   const batch = writeBatch(db);

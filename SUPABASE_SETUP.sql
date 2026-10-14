@@ -1,5 +1,6 @@
 -- Mind: schema for creator profiles, shareable prompts and private image uploads.
--- Run once in the Supabase SQL Editor before deploying the app.
+-- Historical preparation; the running migration uses supabase/migrations/*native_mind*.
+-- Do not run this file over the active migration schema. See docs/migration-supabase.md.
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,

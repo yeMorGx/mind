@@ -1,5 +1,7 @@
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { requireFirebaseServices } from "./client";
+import { usingSupabase } from "@/lib/backend";
+import { assignNativeBadges, getNativeBadges } from "@/lib/supabase/mind";
 
 export const badgeKinds = ["owner", "verified", "moderator", "creator", "partner"] as const;
 export type BadgeKind = typeof badgeKinds[number];
@@ -11,6 +13,7 @@ export const badgeInfo: Record<BadgeKind, { label: string; icon: string; color: 
   partner: { label: "Parceiro patrocinado", icon: "handshake", color: "#c55424", background: "#fff0e7", description: "Criador com parceria ou patrocínio confirmado pelo Mind." },
 };
 export async function getAccountBadges(uid: string): Promise<BadgeKind[]> {
+  if (usingSupabase()) return (await getNativeBadges(uid)) ?? [];
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "accountBadges", uid));
   const values = snapshot.data()?.badges;
@@ -18,6 +21,7 @@ export async function getAccountBadges(uid: string): Promise<BadgeKind[]> {
 }
 export async function assignAccountBadges(uid: string, badges: BadgeKind[]) {
   if (!uid.trim() || uid.includes("/") || badges.includes("owner")) throw new Error("Informe um UID válido. O selo de fundador exige atribuição administrativa no servidor.");
+  if (usingSupabase()) return assignNativeBadges(uid.trim(), badges);
   const { db } = requireFirebaseServices();
   await setDoc(doc(db, "accountBadges", uid.trim()), { badges, updatedAt: serverTimestamp() });
 }

@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import { ensureUserProfile, getAuthDestination, getSupabaseAuthMessage } from "@/lib/supabase/auth";
+import { getSupabaseAuthMessage } from "@/lib/supabase/auth";
+import { bootstrapAccount } from "@/lib/supabase/mind";
+import { selectNativeSession } from "@/lib/backend";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -39,13 +41,16 @@ export default function AuthCallbackPage() {
         if (userError) throw userError;
         if (!data.user) throw new Error("Não foi possível confirmar a conta.");
 
-        await ensureUserProfile(data.user);
         const requestedPath = params.get("next");
         if (requestedPath === "/auth/reset-password") {
           router.replace(requestedPath);
           return;
         }
-        router.replace(await getAuthDestination(data.user));
+        const expected = sessionStorage.getItem("mind-migration-source");
+        const account = await bootstrapAccount(expected ?? undefined);
+        sessionStorage.removeItem("mind-migration-source");
+        selectNativeSession(account.public_id);
+        window.location.replace(account.onboarding.onboardingComplete ? "/home/profile" : "/register/step-2");
       } catch (callbackError) {
         setError(getSupabaseAuthMessage(callbackError));
       }

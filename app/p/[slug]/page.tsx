@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PublicPromptPage from "@/components/marketplace/PublicPromptPage";
-import { getPublicPrompt, getPromptRecommendations } from "@/lib/supabase/server-data";
+import { getPublicPrompt, getPromptRecommendations, getPublicCreatorProfile } from "@/lib/supabase/server-data";
 
 export const dynamic = "force-dynamic";
 
@@ -23,13 +23,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: prompt.title,
         description,
         type: "article",
-        images: cover ? [{ url: cover.url, alt: prompt.title }] : [],
+        images: cover?.url.startsWith("https://") ? [{ url: cover.url, alt: prompt.title }] : [],
       },
       twitter: {
         card: cover ? "summary_large_image" : "summary",
         title: prompt.title,
         description,
-        images: cover ? [cover.url] : [],
+        images: cover?.url.startsWith("https://") ? [cover.url] : [],
       },
     };
   } catch {
@@ -44,5 +44,6 @@ export default async function PromptPage({ params }: Props) {
   const recommendations = await getPromptRecommendations(prompt).catch(() => ({
     creatorPrompts: [], relatedPrompts: [],
   }));
-  return <PublicPromptPage key={prompt.id} prompt={prompt} {...recommendations} />;
+  const creator = await getPublicCreatorProfile(prompt.creatorId);
+  return <PublicPromptPage key={prompt.id} prompt={prompt} creatorProfile={creator ?? undefined} creatorHref={`/u/${prompt.creatorId}`} {...recommendations} />;
 }
