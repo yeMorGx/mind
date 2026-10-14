@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { preparePromptImage } from "@/lib/prompt-media";
 import CreatorBadges from "@/components/ui/CreatorBadges";
+import { downloadOwnFirebaseBackup } from "@/lib/firebase/backup";
 import { getOwnProfile, saveCreatorProfile, profileSaveErrorMessage, ProfilePublicationError, type CreatorProfile, type ProfileSaveIntent } from "@/lib/firebase/publication";
 
 export default function CreatorProfileEditor() {
@@ -49,6 +50,13 @@ export default function CreatorProfileEditor() {
     }
     finally { setPending(false); }
   }
+  async function backup() {
+    if (!user || pending) return;
+    setPending(true); setMessage("");
+    try { const count = await downloadOwnFirebaseBackup(); setMessage(`Backup baixado com perfil, biblioteca e ${count} ${count === 1 ? "prompt" : "prompts"}.`); }
+    catch { setMessage("Não foi possível baixar o backup. Confira sua conexão e tente novamente."); }
+    finally { setPending(false); }
+  }
   return <main className="min-h-screen bg-background px-5 py-12 text-foreground"><div className="mx-auto max-w-2xl">
     <Link href="/home" className="text-sm text-white/60">← Voltar à biblioteca</Link>
     <h1 className="mt-8 text-3xl font-semibold">Seu perfil de criador</h1>
@@ -78,5 +86,10 @@ export default function CreatorProfileEditor() {
       {profile.published && user && <div className="flex flex-wrap gap-4 text-sm"><Link href={`/u/${user.uid}`} className="underline">Ver perfil público</Link><button type="button" onClick={() => void navigator.clipboard.writeText(`${window.location.origin}/u/${user.uid}`).then(() => setMessage("Link do perfil copiado.")).catch(() => setMessage("Não foi possível copiar o link."))} className="underline">Copiar link do perfil</button></div>}
     </form> : !message && <p className="mt-8" role="status">Carregando perfil…</p>}
     {message && <p className="mt-5 text-sm text-white/70" role="status">{message}</p>}
+    {user && loadedUid === user.uid && <section className="mt-10 border-t border-white/10 pt-6">
+      <h2 className="text-lg font-medium">Seus dados</h2>
+      <p className="mt-2 text-sm leading-6 text-white/55">Baixe uma cópia do perfil e dos prompts da sua biblioteca, incluindo as imagens salvas.</p>
+      <button type="button" disabled={pending} onClick={() => void backup()} className="mt-4 rounded-xl border border-white/20 px-5 py-3 text-sm disabled:opacity-40">Baixar backup dos meus dados</button>
+    </section>}
   </div></main>;
 }
