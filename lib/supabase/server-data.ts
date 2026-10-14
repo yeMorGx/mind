@@ -71,3 +71,16 @@ export async function getPublicUsernames(ids: string[]): Promise<Record<string,s
   if (error) throw error;
   return Object.fromEntries((data ?? []).map(row => [row.public_id,row.username]));
 }
+
+// Catalog-only enrichment; the protected landing keeps its current data flow.
+export async function getCatalogCreatorAvatars(ids: string[]): Promise<Record<string,string>> {
+  const client = publicClient(); if (!client || !ids.length) return {};
+  const publicIds = [...new Set(ids)];
+  const [native,directory] = await Promise.all([
+    client.from("mind_creators").select("public_id,avatar_url:profile->>avatarUrl").in("public_id",publicIds),
+    client.from("mind_creator_directory").select("public_id,avatar_url:profile->>avatarUrl").in("public_id",publicIds),
+  ]);
+  if (native.error) throw native.error;
+  if (directory.error) throw directory.error;
+  return Object.fromEntries([...(directory.data ?? []),...(native.data ?? [])].map(row => [row.public_id, typeof row.avatar_url === "string" ? row.avatar_url : ""]));
+}

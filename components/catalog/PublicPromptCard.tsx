@@ -8,6 +8,8 @@ export default function PublicPromptCard({ prompt }: { prompt: Prompt }) {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
   const [failedCover, setFailedCover] = useState<string | null>(null);
+  const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
+  const creatorName = prompt.creatorName || "Criador Mind";
   const cover = prompt.images.find(image => image.role === "gallery" || image.role === "after") ?? prompt.images[0];
   async function copy() {
     try { await navigator.clipboard.writeText(prompt.content); setCopied(true); setError(""); window.setTimeout(() => setCopied(false), 1800); }
@@ -20,7 +22,14 @@ export default function PublicPromptCard({ prompt }: { prompt: Prompt }) {
     </Link>
     <div className="p-4">
       <Link href={`/p/${prompt.slug}`}><h2 className="line-clamp-2 break-words text-base font-semibold leading-6">{prompt.title}</h2></Link>
-      <div className="mt-2 flex flex-wrap items-center gap-2">{prompt.model && <span className="catalog-model-tag">{prompt.model}</span>}<Link href={creatorProfileHref(prompt.creatorId,prompt.creatorSlug)} className="min-w-0 truncate py-1 text-xs text-muted hover:text-foreground">por {prompt.creatorSlug ? `@${prompt.creatorSlug}` : prompt.creatorName}</Link></div>
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <Link href={creatorProfileHref(prompt.creatorId,prompt.creatorSlug)} title={prompt.creatorSlug ? `${creatorName} · @${prompt.creatorSlug}` : creatorName} className="inline-flex min-h-10 min-w-0 max-w-full items-center gap-2 text-sm text-muted hover:text-foreground">
+          {/* eslint-disable-next-line @next/next/no-img-element -- Public profile images include optimized data URLs. */}
+          {prompt.creatorAvatarUrl && failedAvatar !== prompt.creatorAvatarUrl ? <img src={prompt.creatorAvatarUrl} alt="" loading="lazy" className="size-7 shrink-0 rounded-full object-cover" onError={() => setFailedAvatar(prompt.creatorAvatarUrl ?? "")} /> : <span aria-hidden="true" className="grid size-7 shrink-0 place-items-center rounded-full bg-media text-xs font-medium text-foreground">{Array.from(creatorName.trim())[0]?.toUpperCase() || "M"}</span>}
+          <span className="truncate font-medium">{creatorName}</span>
+        </Link>
+        {prompt.model && <span className="catalog-model-tag">{prompt.model}</span>}
+      </div>
       <button type="button" onClick={() => void copy()} className="mt-4 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 text-sm font-medium hover:bg-surface-hover">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Copiado" : "Copiar prompt"}</button>
       {error && <p role="status" className="mt-2 text-xs leading-5 text-red-700">{error}</p>}
     </div>

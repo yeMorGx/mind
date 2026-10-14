@@ -42,6 +42,7 @@ export type Prompt = {
   creatorId: string;
   creatorName: string;
   creatorSlug: string;
+  creatorAvatarUrl?: string;
   title: string;
   content: string;
   description: string;
