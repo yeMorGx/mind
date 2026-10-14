@@ -2,10 +2,18 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Search, Sparkles, UserRound, X } from "lucide-react";
+import { ArrowUpRight, Search, Sparkles, X } from "lucide-react";
 import { getSearchSuggestions, type SearchSuggestions } from "@/lib/search";
 import { creatorProfileHref } from "@/lib/usernames";
 type Props = { value: string; onChange: (value: string) => void; onSearch: (query?: string) => void };
+function PersonAvatar({ name,src }: { name: string; src: string }) {
+  const [failed,setFailed] = useState<string | null>(null);
+  if (src && failed !== src) {
+    // eslint-disable-next-line @next/next/no-img-element -- Public avatars include optimized data URLs.
+    return <img src={src} alt="" className="size-9 shrink-0 rounded-full object-cover" onError={() => setFailed(src)} />;
+  }
+  return <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-media text-sm font-medium text-foreground">{Array.from(name.trim())[0]?.toUpperCase() || "M"}</span>;
+}
 export default function HeaderSearch({ value,onChange,onSearch }: Props) {
   const router = useRouter();
   const root = useRef<HTMLFormElement>(null);
@@ -33,8 +41,8 @@ export default function HeaderSearch({ value,onChange,onSearch }: Props) {
   },[]);
   const current = result?.term === term ? result.data : null;
   const suggestions = current ? [
-    ...current.prompts.map(prompt => ({key:`prompt:${prompt.creator_id}:${prompt.prompt_id}`,href:`/p/${prompt.creator_id}~${prompt.prompt_id}`,title:prompt.title,detail:`Prompt · ${prompt.model ? `${prompt.model} · ` : ""}${prompt.creator_name}`,person:false})),
-    ...current.people.map(person => ({key:`person:${person.public_id}`,href:creatorProfileHref(person.public_id,person.username),title:person.name,detail:`Criador · @${person.username}`,person:true})),
+    ...current.prompts.map(prompt => ({key:`prompt:${prompt.creator_id}:${prompt.prompt_id}`,href:`/p/${prompt.creator_id}~${prompt.prompt_id}`,title:prompt.title,detail:`Prompt · ${prompt.model ? `${prompt.model} · ` : ""}${prompt.creator_name}`,person:false,avatarUrl:""})),
+    ...current.people.map(person => ({key:`person:${person.public_id}`,href:creatorProfileHref(person.public_id,person.username),title:person.name,detail:`@${person.username} · Ver perfil`,person:true,avatarUrl:person.avatar_url || ""})),
   ] : [];
   const selected = active >= 0 && active < suggestions.length ? active : -1;
   function submit() { setOpen(false); setActive(-1); onSearch(term); }
@@ -53,7 +61,7 @@ export default function HeaderSearch({ value,onChange,onSearch }: Props) {
       <div id={listId} role="listbox" aria-label="Sugestões de busca" className="header-search-options">
         {term.length < 2 ? <p role="status" className="px-4 py-5 text-sm leading-6 text-muted">Busque pelo tema, modelo de IA ou @ do criador. Digite pelo menos 2 caracteres.</p> : !current ? <p role="status" className="px-4 py-5 text-sm text-muted">Buscando sugestões…</p> : <>
           {suggestions.map((item,index) => <Link key={item.key} id={`${listId}-${index}`} role="option" aria-selected={selected === index} href={item.href} onClick={() => { setOpen(false); setActive(-1); }} onPointerMove={() => setActive(index)} className={`header-search-option ${selected === index ? "is-selected" : ""}`}>
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-media text-muted" aria-hidden="true">{item.person ? <UserRound size={17} /> : <Sparkles size={17} />}</span>
+            {item.person ? <PersonAvatar name={item.title} src={item.avatarUrl} /> : <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-media text-muted" aria-hidden="true"><Sparkles size={17} /></span>}
             <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{item.title}</span><span className="mt-0.5 block truncate text-xs text-muted">{item.detail}</span></span><ArrowUpRight size={15} className="shrink-0 text-subtle" />
           </Link>)}
           {!suggestions.length && !current.failed && <p role="status" className="px-4 py-5 text-sm leading-6 text-muted">Nenhum resultado para “{term}”. Tente outro tema ou @.</p>}
