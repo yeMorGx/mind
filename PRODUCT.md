@@ -33,3 +33,9 @@ A referência de catálogo orienta apenas as páginas internas: header com busca
 Cada pessoa escolhe um @ obrigatório e exclusivo, de 3 a 24 caracteres (letras minúsculas, números e _, começando por letra). Contas sem @ devem escolhê-lo na área interna antes de continuar; nunca gerar identificadores automaticamente. A exclusividade é garantida no banco, compartilhada por contas Firebase e Supabase. O perfil permite alterar o @. Explorar oferece busca de pessoas por nome ou @; links /u/@nome resolvem o perfil, preservando os antigos links por UID. A landing permanece protegida.
 
 A busca do header sugere prompts públicos e criadores enquanto a pessoa digita; @ restringe as sugestões a pessoas. Enter abre uma busca compartilhável em `/explore?q=...`, com ordenação por relevância. A pesquisa de prompts reconhece acentos, flexões e prefixos, com índices de texto no Supabase. Prompts privados não participam das sugestões públicas.
+
+## Exploração e interação social
+
+Os cards de Explorar seguem a estrutura do wireframe Figma `qCkRPKTQMKNyqzBN7EztnX`, nó `192:149`: imagem acima e bloco separado com foto/nome do criador e título abaixo. Não mostrar o texto completo nem copiar diretamente do card; a pessoa abre o prompt para ler e copiar. Curtidas são únicas por conta e prompt público; seguir e deixar de seguir ficam no perfil, com contagens reais. As relações usam os IDs públicos preservados na migração Firebase/Supabase. Visitantes precisam entrar para interagir.
+
+O header mostra somente a logo, busca centralizada e avatar do perfil com fallback para a foto do Google. Digitar muda as sugestões; resultados em Explorar só mudam ao enviar a busca. Remover os chips Pessoas/Prompts/Tudo/Com imagens/Texto. Há três filtros: ordenação, categoria e modelo. Perfis e Explorar usam margens menores; o perfil não tem botão de compartilhar. A biblioteca conserva seu conteúdo e suas ações.

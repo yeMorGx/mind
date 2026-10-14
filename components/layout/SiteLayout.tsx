@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useOnboarding } from "@/app/context/OnboardingContext";
@@ -8,14 +8,17 @@ import { getFirebaseServices } from "@/lib/firebase/client";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { setNativeBackend } from "@/lib/backend";
 import { catalogCategory, type CatalogItem } from "@/lib/catalog";
+import { getOwnProfile } from "@/lib/firebase/publication";
 import RequiredUsername from "@/components/profile/RequiredUsername";
 import LoginModal from "@/components/modal/modalLogin";
+import SocialProvider from "@/components/social/SocialProvider";
 import Header from "./Header";
 type PromptView = "all" | "favorites";
 
 type LayoutValue = {
   searchValue: string; setSearchValue: (value: string) => void; activeView: PromptView; category: string; model: string;
   setCategory: (value: string) => void; setModel: (value: string) => void;
+  requestLogin: () => void;
   newPromptOpen: boolean; newPromptVersion: number; openNewPrompt: () => void; closeNewPrompt: () => void;
 };
 const LayoutContext = createContext<LayoutValue | null>(null);
@@ -41,6 +44,11 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   const [newPromptVersion, setNewPromptVersion] = useState(0);
   const [loginOpen, setLoginOpen] = useState(false);
   const [error, setError] = useState("");
+  const [headerProfile,setHeaderProfile]=useState<{uid:string;avatar?:string;name?:string}|null>(null);
+  const [profileVersion,setProfileVersion]=useState(0);
+  const uid=user?.uid;
+  useEffect(()=>{if(!uid)return;let alive=true;void getOwnProfile(uid).then(profile=>{if(alive)setHeaderProfile({uid,avatar:profile?.avatarUrl,name:profile?.name});}).catch(()=>{});return()=>{alive=false;};},[uid,profileVersion]);
+  useEffect(()=>{const refresh=()=>setProfileVersion(value=>value+1);window.addEventListener("mind:username",refresh);return()=>window.removeEventListener("mind:username",refresh);},[]);
   const library = pathname === "/home";
   const profileHref = user ? `/u/${user.uid}` : undefined;
   function resetFilters() { setCategory(""); setModel(""); setSearchValue(""); }
@@ -74,11 +82,11 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   }
   // The landing is protected and does not receive internal navigation or styles.
   if (pathname === "/") return children;
-  return <LayoutContext.Provider value={{ searchValue, setSearchValue, activeView, category, model, setCategory, setModel, newPromptOpen, newPromptVersion, openNewPrompt, closeNewPrompt: () => setNewPromptOpen(false) }}>
-    <div className="site-app min-h-screen bg-background text-foreground">
+  return <LayoutContext.Provider value={{ searchValue, setSearchValue, activeView, category, model, setCategory, setModel, requestLogin: () => setLoginOpen(true), newPromptOpen, newPromptVersion, openNewPrompt, closeNewPrompt: () => setNewPromptOpen(false) }}>
+    <SocialProvider><div className="site-app min-h-screen bg-background text-foreground">
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
       <Header searchValue={searchValue} onSearchChange={setSearchValue} onSearch={search}
-        profileHref={profileHref} userName={data.name || user?.displayName || "Minha conta"} onLogin={() => setLoginOpen(true)} authReady={authReady}
+        profileHref={profileHref} userName={(headerProfile?.uid===uid?headerProfile?.name:undefined) || data.name || user?.displayName || "Minha conta"} photoUrl={headerProfile?.uid===uid?headerProfile?.avatar:undefined} googlePhotoUrl={user?.photoURL || undefined} onLogin={() => setLoginOpen(true)} authReady={authReady}
         onCreate={openNewPrompt} library={library} favorites={activeView === "favorites"} onLibrary={favorites => openLibrary(favorites ? "favorites" : "all")} onExplore={resetFilters} onSignOut={() => void logout()} />
       <div id="conteudo" tabIndex={-1} className="site-content pt-32 md:pt-18">
         {error && <div role="alert" className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pt-5 text-sm text-red-700"><p>{error}</p><button type="button" onClick={() => setError("")} className="underline">Fechar</button></div>}
@@ -86,6 +94,6 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       </div>
       <RequiredUsername onLogout={logout} />
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
-    </div>
+    </div></SocialProvider>
   </LayoutContext.Provider>;
 }

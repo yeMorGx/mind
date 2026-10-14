@@ -97,3 +97,9 @@ Campo com sugestões em painel ancorado, espera de 250 ms e cancelamento de cons
 ## Adaptação para celular
 
 Header de 116 px com marca/conta e busca em largura total; navegação inferior de 64 px mais a área segura. A busca em foco esconde a barra inferior. A raiz reserva espaço para ambas as barras. Filtros abrem em um painel ancorado; a ordenação usa um controle compacto. Campos usam pelo menos 16 px para evitar zoom automático no iPhone. As ações dos cards da biblioteca ficam dentro da capa, com alvos de toque de 44 px, preservando a animação no desktop. A landing fica fora dessas regras.
+
+## Atualização do catálogo a partir do wireframe
+
+Referência de estrutura: Figma `qCkRPKTQMKNyqzBN7EztnX`, nó `192:149`. Capas em 7:6, cantos de 18 px; bloco de identificação separado por 10 px, com avatar/nome antes do título e curtidas discretas na mesma linha do criador. Sem copiar ou exibir o corpo do prompt nos cards públicos.
+
+Explorar e perfil usam largura disponível, com 24 px laterais no desktop e 16 px no celular. A biblioteca não recebe essa mudança. Header somente com logo, busca centrada e avatar real com fallback Google/inicial. Campo sem outline externo; sugestões e seleção por teclado continuam visíveis. Somente o envio de uma consulta altera os resultados de Explorar. Três dropdowns estilizados reúnem ordenação, categoria e modelo; não há chips de tipo. No perfil, Seguir/Seguindo e contagens reais substituem Compartilhar perfil. Curtidas e seguidores carregam em lote e mostram falhas e estados pendentes; não apresentar contagens simuladas.

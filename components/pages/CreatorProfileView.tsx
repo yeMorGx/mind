@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Copy, Check, ImageIcon } from "lucide-react";
+import { ArrowUpRight, ImageIcon } from "lucide-react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import CreatorProfileEditor from "./CreatorProfileEditor";
 import CreatorBadges from "@/components/ui/CreatorBadges";
-import { creatorProfileHref } from "@/lib/usernames";
+import { FollowControls } from "@/components/social/SocialControls";
 import type { CreatorProfile } from "@/lib/firebase/publication";
 import type { Prompt } from "@/lib/supabase/types";
 
@@ -17,15 +17,10 @@ export default function CreatorProfileView({ profile: initialProfile, prompts, c
   const [updatedProfile, setUpdatedProfile] = useState<CreatorProfile | null>(null);
   const profile = updatedProfile ?? initialProfile;
   function editProfile() { setEditing(true); window.setTimeout(() => { document.getElementById("edit-profile-heading")?.focus(); document.getElementById("editar-perfil")?.scrollIntoView({ behavior: "instant", block: "start" }); }, 0); }
-  const [copied, setCopied] = useState(false);
   const [notice, setNotice] = useState("");
   function closeEditor() { setEditing(false); window.setTimeout(() => document.getElementById("edit-profile-button")?.focus(), 0); }
-  async function share() {
-    try { await navigator.clipboard.writeText(`${window.location.origin}${creatorProfileHref(creatorId,profile.username)}`); setCopied(true); setNotice("Link do perfil copiado."); window.setTimeout(() => setCopied(false), 2000); }
-    catch { setNotice("Não foi possível copiar o link. Copie o endereço na barra do navegador."); }
-  }
   return <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground selection:bg-[#dce7ff]">
-    <div className="mx-auto max-w-6xl px-5 pb-16 pt-8 sm:px-8">
+    <div className="profile-page-inner">
       <div className="h-44 overflow-hidden rounded-2xl bg-media sm:h-60 lg:h-72">
         {profile.bannerUrl && <img src={profile.bannerUrl} alt="Capa do perfil" className="size-full object-cover" />}
       </div>
@@ -41,8 +36,9 @@ export default function CreatorProfileView({ profile: initialProfile, prompts, c
               {profile.headline && <p className="mt-2 text-sm font-medium text-muted">{profile.headline}</p>}
             </div>
           </div>
-          <div className="flex shrink-0 flex-wrap gap-2">{owner && <button id="edit-profile-button" type="button" aria-expanded={editing} aria-controls="editar-perfil" onClick={editProfile} className="rounded-full border border-foreground/25 px-5 py-3 text-sm font-medium hover:bg-black/5">Editar perfil</button>}<button type="button" onClick={() => void share()} className="inline-flex w-fit items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Link copiado" : "Compartilhar perfil"}</button></div>
+          <div className="flex shrink-0 flex-wrap gap-2">{owner && <button id="edit-profile-button" type="button" aria-expanded={editing} aria-controls="editar-perfil" onClick={editProfile} className="rounded-full border border-foreground/25 px-5 py-3 text-sm font-medium hover:bg-black/5">Editar perfil</button>}</div>
         </div>
+        <div className="mt-5"><FollowControls creatorId={creatorId}/></div>
         {profile.bio && <p className="mt-6 max-w-3xl whitespace-pre-wrap text-sm leading-7 text-muted sm:text-base">{profile.bio}</p>}
         {notice && <p role="status" className="mt-3 text-sm text-muted">{notice}</p>}
       </section>

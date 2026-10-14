@@ -365,3 +365,53 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
   .site-app .catalog-library-card .mind-node-action { position: static; width: 44px !important; height: 44px !important; margin: 0 !important; transform: none !important; }
   .site-app .catalog-library-card button { min-height: 44px; }
 }
+
+/* Submitted searches, compact exploration filters, and wider content surfaces. */
+.site-app .explore-page, .site-app .profile-page-inner { width: 100%; max-width: none; padding: 28px 24px 48px; }
+.site-app .explore-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.site-app .explore-filters { display: flex; gap: 10px; }
+.site-app .explore-filter { position: relative; z-index: 20; min-width: 0; }
+.site-app .explore-filter summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; min-width: 144px; max-width: 220px; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--surface); font-size: 13px; cursor: pointer; list-style: none; }
+.site-app .explore-filter summary::-webkit-details-marker { display: none; }
+.site-app .explore-filter summary span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.site-app .explore-filter summary svg { flex: none; color: var(--muted); }
+.site-app .explore-filter[open] summary { border-color: var(--foreground); }
+.site-app .explore-filter-popup { position: absolute; top: calc(100% + 8px); right: 0; width: 240px; max-height: 320px; overflow-y: auto; padding: 6px; border: 1px solid var(--border-color); border-radius: 14px; background: var(--surface); }
+.site-app .explore-filter-popup button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 44px; padding: 10px 12px; border-radius: 8px; text-align: left; font-size: 13px; }
+.site-app .explore-filter-popup button:hover, .site-app .explore-filter-popup button[aria-pressed="true"] { background: var(--surface-hover); }
+.site-app .showcase-search input:focus-visible { outline: none; outline-offset: 0; border-color: transparent; box-shadow: none; background: var(--surface-hover); }
+@media (min-width: 1024px) {
+  .site-app .showcase-header-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(260px,min(480px,calc(100vw - 680px))) minmax(0,1fr); gap: 20px; position: relative; padding: 0 24px; }
+  .site-app .showcase-brand { grid-column: 1; grid-row: 1; justify-self: start; }
+  .site-app .showcase-nav { grid-column: 1; grid-row: 1; justify-self: start; margin-left: 64px; gap: 16px; }
+  .site-app .showcase-search { grid-column: 2; grid-row: 1; width: 100%; margin: 0; }
+  .site-app .showcase-account-actions { grid-column: 3; grid-row: 1; justify-self: end; }
+}
+@media (max-width: 767px) {
+  .site-app .explore-page, .site-app .profile-page-inner { padding: 22px 16px 36px; }
+  .site-app .explore-heading { flex-direction: column; align-items: stretch; gap: 18px; margin-bottom: 20px; }
+  .site-app .explore-filters { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+  .site-app .explore-filter summary { min-width: 0; max-width: none; gap: 4px; padding: 10px 8px; font-size: 12px; }
+  .site-app .explore-filter-popup { width: min(240px,calc(100vw - 32px)); }
+  .site-app .explore-filter:first-child .explore-filter-popup { left: 0; right: auto; }
+  .site-app .explore-filter:nth-child(2) .explore-filter-popup { left: 50%; right: auto; transform: translateX(-50%); }
+}
+
+.site-app .wireframe-prompt-card .catalog-card-cover { aspect-ratio: 7 / 6; border-radius: 18px; }
+.site-app .wireframe-prompt-card > .prompt-card-details { margin-top: 10px; padding: 12px 14px 16px; border-radius: 16px; background: var(--surface); }
+.site-app .prompt-card-creator-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.site-app .prompt-card-creator { display: flex; align-items: center; min-width: 0; gap: 10px; min-height: 44px; }
+.site-app .social-like { position: relative; display: inline-flex; flex: none; align-items: center; gap: 6px; }
+.site-app .social-like > button:first-child { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; min-height: 44px; padding: 8px; border-radius: 50%; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.site-app .social-like > button:first-child:hover { background: var(--surface-hover); color: var(--foreground); }
+.site-app .social-like > button.is-liked { color: #b52251; }
+.site-app .social-like button:disabled { opacity: .5; cursor: wait; }
+.site-app .social-error { display: block; color: #b42318; font-size: 12px; line-height: 1.6; }
+.site-app .social-like .social-error { position: absolute; right: 0; top: 100%; z-index: 10; width: min(220px,calc(100vw - 48px)); padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--surface); }
+.site-app .social-retry { min-height: 44px; text-decoration: underline; text-underline-offset: 3px; color: var(--muted); font-size: 12px; }
+.site-app .social-follow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+.site-app .social-follow-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 104px; min-height: 44px; padding: 10px 20px; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); font-size: 14px; font-weight: 500; }
+.site-app .social-follow-button.is-following { background: var(--surface-hover); color: var(--foreground); }
+.site-app .social-follow-button:disabled { opacity: .5; cursor: wait; }
+.site-app .social-counts { display: inline-flex; flex-wrap: wrap; gap: 18px; font-size: 13px; color: var(--muted); }
+.site-app .social-counts strong { color: var(--foreground); font-weight: 600; font-variant-numeric: tabular-nums; }

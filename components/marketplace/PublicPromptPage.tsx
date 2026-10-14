@@ -9,6 +9,7 @@ import ResultsMarquee from "@/components/marketplace/ResultsMarquee";
 import type { Prompt } from "@/lib/supabase/types";
 import type { CreatorProfile } from "@/lib/firebase/publication";
 import CreatorLanyard from "@/components/marketplace/CreatorLanyard";
+import { LikeButton } from "@/components/social/SocialControls";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 
 /* eslint-disable @next/next/no-img-element -- Supabase returns short-lived signed image URLs. */
@@ -65,12 +66,12 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
 
   return (
     <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 pt-6 sm:px-8">
+      <div className="mx-auto flex max-w-none items-center justify-between px-4 pt-6 sm:px-6">
         <Link href={backHref} className="inline-flex items-center gap-2 rounded-lg py-2 text-sm text-muted hover:text-foreground"><ArrowLeft size={16} />{isPrivate ? "Voltar à biblioteca" : "Explorar prompts"}</Link>
         {!isPrivate && <button type="button" onClick={() => void sharePage()} aria-label="Compartilhar prompt" className="site-icon-button"><Share2 size={18} /></button>}
       </div>
 
-      <article className="mx-auto w-full max-w-6xl space-y-10 px-5 pb-20 pt-6 sm:px-8 lg:pt-10">
+      <article className="mx-auto w-full max-w-none space-y-10 px-4 pb-20 pt-6 sm:px-6 lg:pt-10">
         <section className="min-w-0">
           <div className="mt-8 flex flex-wrap gap-2">
             {prompt.category && <span className="rounded-full border border-border bg-foreground/[0.03] px-3 py-1.5 text-xs text-muted">{prompt.category}</span>}
@@ -84,6 +85,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             <span>{isPrivate ? "Privado · sua biblioteca" : "Grátis para experimentar"}</span>
           </div>
 
+          {!isPrivate && <div className="mt-4"><LikeButton creatorId={prompt.creatorId} promptId={prompt.id}/></div>}
           {actions}
           {displayedImages.length > 0 ? (
             <ResultsMarquee images={displayedImages} />
@@ -176,7 +178,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
         </div>
       </article>
 
-      {(creatorPrompts.length > 0 || relatedPrompts.length > 0) && <div className="mx-auto max-w-7xl space-y-14 px-5 pb-20 sm:px-8">
+      {(creatorPrompts.length > 0 || relatedPrompts.length > 0) && <div className="mx-auto max-w-7xl space-y-14 px-4 pb-20 sm:px-6">
         {creatorPrompts.length > 0 && <section id="creator-prompts" className="scroll-mt-24 border-t border-border pt-10">
           <p className="text-xs uppercase tracking-[0.17em] text-subtle">Continue explorando</p>
           <h2 className="mt-3 text-2xl font-medium">Mais de {creatorName}</h2>
