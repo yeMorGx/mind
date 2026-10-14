@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { Plus, LogOut, UserRound } from "lucide-react";
+import { Plus, LogOut, UserRound, Compass, Library, Star } from "lucide-react";
 import HeaderSearch from "@/components/search/HeaderSearch";
 import Logo from "@/components/ui/logo";
 type HeaderProps = {
@@ -24,9 +24,9 @@ export default function Header({ searchValue, onSearchChange, onSearch, profileH
     <div className="showcase-header-inner">
       <Link href={profileHref ? "/home" : "/explore"} aria-label="Mind — início" className="showcase-brand"><span className="catalog-logo"><Logo /></span><span>Mind</span></Link>
       <nav aria-label="Navegação principal" className="showcase-nav">
-        <Link href="/explore" onClick={onExplore} aria-current={pathname === "/explore" ? "page" : undefined}>Explorar</Link>
-        <button type="button" onClick={() => onLibrary(false)} aria-current={library && !favorites ? "page" : undefined}>Biblioteca</button>
-        <button type="button" onClick={() => onLibrary(true)} aria-current={library && favorites ? "page" : undefined}>Favoritos</button>
+        <Link href="/explore" onClick={onExplore} aria-current={pathname === "/explore" ? "page" : undefined}><Compass size={20} className="md:hidden" />Explorar</Link>
+        <button type="button" onClick={() => onLibrary(false)} aria-current={library && !favorites ? "page" : undefined}><Library size={20} className="md:hidden" />Biblioteca</button>
+        <button type="button" onClick={() => onLibrary(true)} aria-current={library && favorites ? "page" : undefined}><Star size={20} className="md:hidden" />Favoritos</button>
       </nav>
       <HeaderSearch value={searchValue} onChange={onSearchChange} onSearch={onSearch} />
       <div className="showcase-account-actions">

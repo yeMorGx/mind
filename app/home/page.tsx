@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
+import CatalogFilters from "@/components/catalog/CatalogFilters";
 import LibraryPromptCard from "@/components/catalog/LibraryPromptCard";
 import { matchesCatalog } from "@/lib/catalog";
 import { useCatalogOptions, useSiteLayout } from "@/components/layout/SiteLayout";
@@ -67,7 +68,7 @@ export default function HomePage() {
     promptState.loading;
 
   const allPrompts = useMemo(() => promptState.workspaceId === data.primaryWorkspaceId ? promptState.prompts : [], [promptState, data.primaryWorkspaceId]);
-  useCatalogOptions(allPrompts);
+  const catalogOptions = useCatalogOptions(allPrompts);
   const visiblePrompts = useMemo(() => allPrompts.filter(prompt => (activeView !== "favorites" || prompt.isFavorite) && matchesCatalog(prompt, searchValue, category, model, data.name || user?.displayName || "")), [allPrompts, activeView, searchValue, category, model, data.name, user?.displayName]);
   function openNewPrompt() { setSelectedPrompt(null); setDialogError(""); requestNewPrompt(); }
   function closeDialog() { setDialogOpen(false); closeNewPrompt(); setSelectedPrompt(null); setDialogError(""); }
@@ -141,20 +142,21 @@ export default function HomePage() {
   }
 
   if (!authReady || profileLoading || !user || !data.onboardingComplete) {
-    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">Carregando seu espaço...</main>;
+    return <main className="catalog-page flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">Carregando seu espaço...</main>;
   }
 
   return (
     <div className="relative min-h-[calc(100dvh-4.5rem)] overflow-hidden bg-background text-foreground">
 
-      <main className="flex min-h-[calc(100dvh-4.5rem)] flex-col pt-7">
+      <main className="catalog-page flex min-h-[calc(100dvh-4.5rem)] flex-col pt-7">
         <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col px-5 sm:px-8">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <div><h1 className="text-2xl font-semibold tracking-tight">{activeView === "favorites" ? "Favoritos" : "Meus prompts"}</h1><p className="mt-2 text-sm text-muted">Crie, organize e escolha o que compartilhar.</p></div>
+            <CatalogFilters categories={[]} models={catalogOptions.models} />
           </div>
           <section className="pb-12">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap gap-2">{[["", "Tudo"], ...[...new Set(allPrompts.map(prompt => prompt.category || (prompt.images.length ? "Imagem" : "Texto")))].map(value => [value,value])].map(([value,label]) => <button key={value} type="button" onClick={() => setCategory(value)} aria-pressed={category === value} className={`catalog-filter-chip ${category === value ? "is-active" : ""}`}>{label}</button>)}</div>
+              <div className="catalog-library-categories flex gap-2">{[["", "Tudo"], ...[...new Set(allPrompts.map(prompt => prompt.category || (prompt.images.length ? "Imagem" : "Texto")))].map(value => [value,value])].map(([value,label]) => <button key={value} type="button" onClick={() => setCategory(value)} aria-pressed={category === value} className={`catalog-filter-chip ${category === value ? "is-active" : ""}`}>{label}</button>)}</div>
               <span className="text-xs text-subtle">{visiblePrompts.length} {visiblePrompts.length === 1 ? "prompt" : "prompts"}</span>
             </div>
             {model && <button type="button" onClick={() => setModel("")} className="catalog-filter-chip mb-5 inline-flex items-center gap-2" aria-label={`Remover modelo ${model}`}>{model}<X size={14} /></button>}

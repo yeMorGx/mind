@@ -50,9 +50,9 @@ O conteúdo conduz a página: imagens e texto do prompt primeiro; identidade, de
 `components/layout/SiteLayout.tsx`, aplicado no layout raiz, é o único responsável por montar o `Header`. As páginas internas não repetem esses componentes nem reservam offsets próprios para eles. Na rota `/`, o layout raiz entrega a landing sem esse chrome nem seus offsets.
 
 - Header fixo de 72 px, fundo branco e borda inferior, com logo, navegação, busca, criação de prompt e avatar da conta. O botão cria um rascunho privado; a publicação continua sendo uma decisão separada.
-- Sem sidebar, por solicitação do proprietário. Explorar, Biblioteca e Favoritos ficam no header. Perfil e saída ficam no menu da conta, com fechamento por Escape e clique fora.
-- Os menus levam a Meus prompts, Explorar, Favoritos e Meu perfil. Categorias e modelos ficam acima da grade, derivam dos registros reais e filtram o catálogo atual; não há links de recursos indisponíveis, métricas fictícias ou ordenação “em alta” sem dados.
-- A raiz reserva somente o topo: 72 px no desktop e 128 px no celular, onde a busca ocupa uma segunda linha. A busca funciona na biblioteca e no catálogo; ao enviar de outra página, abre o catálogo público.
+- Sem sidebar, por solicitação do proprietário. Explorar, Biblioteca e Favoritos ficam no header. Perfil e saída ficam no menu da conta, com fechamento por Escape e clique fora. No celular, Explorar, Biblioteca e Favoritos ficam em uma barra inferior fixa, com ícones e rótulos.
+- Os menus levam a Meus prompts, Explorar, Favoritos e Meu perfil. Categorias e modelos ficam no botão Filtros junto à grade, derivam dos registros reais e filtram o catálogo atual; não há links de recursos indisponíveis, métricas fictícias ou ordenação “em alta” sem dados.
+- A raiz reserva somente o topo: 72 px no desktop e 116 px no celular, onde a busca ocupa uma segunda linha. A busca funciona na biblioteca e no catálogo; ao enviar de outra página, abre o catálogo público.
 - `/explore` é o catálogo público interno, independente da landing protegida. Usuários sem conta podem abrir e copiar prompts publicados. O acesso a funções privadas pede login.
 - A landing mantém seus arquivos, seu comportamento e seus estilos anteriores. As novas regras de CSS são restritas a `.site-app`.
 
@@ -93,3 +93,7 @@ A referência Dribbble orienta a navegação horizontal, a busca arredondada e a
 ## Busca do header
 
 Campo com sugestões em painel ancorado, espera de 250 ms e cancelamento de consultas antigas. Permite Ctrl/Cmd + K, setas, Enter, Escape e Tab; carregamento, falha parcial e resultado vazio são explícitos. Resultados mostram título/modelo/criador ou nome/@, com links diretos. Enter sem seleção abre `/explore?q=...`; a grade mantém a relevância retornada pelo banco e permite outras ordenações. A landing continua sem o header interno.
+
+## Adaptação para celular
+
+Header de 116 px com marca/conta e busca em largura total; navegação inferior de 64 px mais a área segura. A busca em foco esconde a barra inferior. A raiz reserva espaço para ambas as barras. Filtros abrem em um painel ancorado; a ordenação usa um controle compacto. Campos usam pelo menos 16 px para evitar zoom automático no iPhone. As ações dos cards da biblioteca ficam dentro da capa, com alvos de toque de 44 px, preservando a animação no desktop. A landing fica fora dessas regras.
