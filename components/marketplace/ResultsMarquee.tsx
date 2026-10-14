@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
-import { ArrowLeft, ArrowRight, Pause, Play, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
 
 type ResultImage = { id: string; url: string; label: string };
 
@@ -21,12 +21,10 @@ function ResultTile({ image, index, duplicate, onOpen }: {
       {/* eslint-disable-next-line @next/next/no-img-element -- Real optimized data URLs and signed image URLs. */}
       {failed ? <span className="results-marquee-error">Imagem indisponível</span> : <img src={image.url} alt={duplicate ? "" : image.label || `Resultado ${index + 1}`} loading={index === 0 ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)} />}
     </span>
-    <span className="results-marquee-caption" title={image.label}>{image.label || `Resultado ${index + 1}`}</span>
   </button>;
 }
 
 export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
-  const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [inView, setInView] = useState(false);
   const [active, setActive] = useState<number | null>(null);
@@ -37,7 +35,7 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
   const multiple = images.length > 1;
   const selected = active === null ? null : images[active];
   const opened = active !== null;
-  const running = multiple && inView && pageVisible && !paused && !hovered && !opened;
+  const running = multiple && inView && pageVisible && !hovered && !opened;
 
   useEffect(() => {
     const element = viewport.current;
@@ -76,12 +74,6 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
   return <section className="results-marquee mt-9" aria-labelledby="prompt-results-heading" data-single={!multiple || undefined}>
     <div className="mb-3 flex items-center justify-between gap-3">
       <h2 id="prompt-results-heading" className="text-sm font-medium text-white/75">Resultados do prompt</h2>
-      <div className="flex shrink-0 items-center gap-3">
-        <span className="text-xs text-white/50">{images.length} {images.length === 1 ? "imagem" : "imagens"}</span>
-        {multiple && <button type="button" className="results-marquee-pause" aria-label={paused ? "Retomar movimento dos resultados" : "Pausar movimento dos resultados"} aria-pressed={paused} onClick={() => setPaused((value) => !value)}>
-          {paused ? <Play size={14} /> : <Pause size={14} />}<span>{paused ? "Retomar" : "Pausar"}</span>
-        </button>}
-      </div>
     </div>
     <div ref={viewport} className="results-marquee-viewport" onPointerEnter={(event) => { if (event.pointerType !== "touch") setHovered(true); }} onPointerLeave={() => setHovered(false)}>
       <div className="results-marquee-track" style={{ animationPlayState: running ? "running" : "paused" } as CSSProperties}>

@@ -155,11 +155,8 @@ body {
 .results-marquee-card { flex: none; width: clamp(180px, 42vw, 240px); min-width: 0; text-align: left; cursor: zoom-in; }
 .results-marquee-media { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 16px; }
 .results-marquee-media img { display: block; width: 100%; height: auto; }
-.results-marquee-caption { display: block; margin-top: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; color: rgba(255,255,255,.65); }
 .results-marquee-error { padding: 20px; font-size: 13px; color: rgba(255,255,255,.65); }
-.results-marquee-pause { display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; color: rgba(255,255,255,.75); font-size: 12px; cursor: pointer; }
-.results-marquee-pause:hover { color: #fff; background: rgba(255,255,255,.05); }
-.results-marquee-card:focus-visible .results-marquee-media, .results-marquee-pause:focus-visible { outline: 2px solid var(--foreground); outline-offset: -3px; }
+.results-marquee-card:focus-visible .results-marquee-media { outline: 2px solid var(--foreground); outline-offset: -3px; }
 .results-marquee[data-single] .results-marquee-track { animation: none; width: 100%; }
 .results-marquee[data-single] .results-marquee-group { width: 100%; padding-right: 0; justify-content: center; }
 /* Keyboard browsing uses the original images in a native scrolling row. */
@@ -182,7 +179,7 @@ body {
 .results-lightbox-footer { display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 12px; color: rgba(255,255,255,.65); }
 @media (prefers-reduced-motion: reduce) {
   .results-marquee-track { animation: none; transform: none; }
-  .results-marquee-copy, .results-marquee-pause { display: none; }
+  .results-marquee-copy { display: none; }
   .results-marquee-viewport { overflow-x: auto; scrollbar-width: thin; scrollbar-color: #454545 #101010; }
   .results-marquee-group { min-width: 0; justify-content: flex-start; }
 }
