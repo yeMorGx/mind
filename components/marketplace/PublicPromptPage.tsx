@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Copy, ExternalLink, Share2, Sparkles } from "lucide-react";
 import { ImageCompare } from "@/components/ui/ImageCompare";
 import PromptCard from "@/components/marketplace/PromptCard";
+import ResultsMarquee from "@/components/marketplace/ResultsMarquee";
 import Logo from "@/components/ui/logo";
 import type { Prompt } from "@/lib/supabase/types";
 
@@ -19,7 +20,6 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
 }) {
   const isPrivate = visibility === "private";
   const backHref = isPrivate ? "/home" : "/";
-  const [activeImage, setActiveImage] = useState(0);
   const [copied, setCopied] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const displayedImages = useMemo(() => prompt.images.filter((image) => image.role === "gallery" || image.role === "after"), [prompt.images]);
@@ -72,7 +72,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
       </header>
 
       <article className="mx-auto grid w-full max-w-7xl gap-10 px-5 pb-20 pt-6 sm:px-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,.95fr)] lg:gap-16 lg:pt-12">
-        <section>
+        <section className="min-w-0">
           <Link href={backHref} className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white"><ArrowLeft size={15} /> {isPrivate ? "Voltar à biblioteca" : "Todos os prompts"}</Link>
           <div className="mt-8 flex flex-wrap gap-2">
             {prompt.category && <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70">{prompt.category}</span>}
@@ -88,24 +88,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
 
           {actions}
           {displayedImages.length > 0 ? (
-            <div className="mt-9">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="text-sm font-medium text-white/75">Resultados do prompt</h2>
-                <span className="text-xs text-white/40">{displayedImages.length} {displayedImages.length === 1 ? "imagem" : "imagens"}</span>
-              </div>
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
-                <img src={displayedImages[activeImage]?.url} alt={displayedImages[activeImage]?.label || `Resultado ${activeImage + 1} de ${prompt.title}`} className="aspect-[4/3] w-full object-contain" />
-                {displayedImages.length > 1 && <>
-                  <button type="button" aria-label="Imagem anterior" onClick={() => setActiveImage((index) => (index - 1 + displayedImages.length) % displayedImages.length)} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/65 p-2.5 text-white backdrop-blur hover:bg-black"><ArrowLeft size={17} /></button>
-                  <button type="button" aria-label="Próxima imagem" onClick={() => setActiveImage((index) => (index + 1) % displayedImages.length)} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/65 p-2.5 text-white backdrop-blur hover:bg-black"><ArrowRight size={17} /></button>
-                  <span className="absolute bottom-3 right-3 rounded-full bg-black/65 px-3 py-1.5 text-xs text-white/80 backdrop-blur">{activeImage + 1} / {displayedImages.length}</span>
-                </>}
-              </div>
-              {displayedImages[activeImage]?.label && <p className="mt-3 text-sm text-white/50">{displayedImages[activeImage].label}</p>}
-              {displayedImages.length > 1 && <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                {displayedImages.map((image, index) => <button key={image.id} type="button" aria-label={`Ver imagem ${index + 1}`} aria-pressed={activeImage === index} onClick={() => setActiveImage(index)} className={`h-16 w-20 shrink-0 overflow-hidden rounded-lg border ${activeImage === index ? "border-white/70" : "border-white/10 opacity-55"}`}><img src={image.url} alt="" className="h-full w-full object-cover" /></button>)}
-              </div>}
-            </div>
+            <ResultsMarquee images={displayedImages} />
           ) : (
             <div className="mt-9 flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-white/15 text-sm text-white/35">Nenhuma imagem adicionada a este prompt.</div>
           )}
