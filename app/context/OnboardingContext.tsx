@@ -14,6 +14,7 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseServices, isFirebaseConfigured } from "@/lib/firebase/client";
 import type { OnboardingData } from "@/lib/firebase/data";
+import { ensureCreatorProfile } from "@/lib/firebase/publication";
 
 type ContextType = {
   data: OnboardingData;
@@ -81,6 +82,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
           invitedEmails: Array.isArray(profile.invitedEmails)
             ? profile.invitedEmails.map(String)
             : [],
+        });
+        // Provision public identity separately so a publication error never blocks login.
+        void ensureCreatorProfile(nextUser).catch(() => {
+          console.warn("Não foi possível preparar o perfil público. Tente novamente no editor de perfil.");
         });
       } catch {
         if (profileRequest.current !== requestId) return;

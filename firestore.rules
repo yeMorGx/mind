@@ -16,7 +16,7 @@ service cloud.firestore {
     }
 
     match /creatorProfiles/{creatorId} {
-      allow read: if resource.data.published == true;
+      allow read: if true;
       allow create, update: if signedIn() && request.auth.uid == creatorId
         && request.resource.data.creatorId == creatorId
         && request.resource.data.keys().hasOnly(['creatorId', 'name', 'bio', 'published', 'headline', 'avatarUrl', 'bannerUrl', 'updatedAt'])
@@ -26,7 +26,6 @@ service cloud.firestore {
         && request.resource.data.get('avatarUrl', '') is string && request.resource.data.get('avatarUrl', '').size() <= 80000
         && request.resource.data.get('bannerUrl', '') is string && request.resource.data.get('bannerUrl', '').size() <= 80000
         && request.resource.data.published == true;
-      allow delete: if signedIn() && request.auth.uid == creatorId;
     }
 
     match /accountBadges/{userId} {
@@ -41,9 +40,7 @@ service cloud.firestore {
     }
 
     match /publicPrompts/{publicId} {
-      allow read: if resource.data.published == true
-        && exists(/databases/$(database)/documents/creatorProfiles/$(resource.data.creatorId))
-        && get(/databases/$(database)/documents/creatorProfiles/$(resource.data.creatorId)).data.published == true;
+      allow read: if resource.data.published == true;
       allow create, update: if signedIn()
         && request.resource.data.creatorId == request.auth.uid
         && publicId == request.auth.uid + '_' + request.resource.data.promptId

@@ -1,15 +1,16 @@
-import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, where, writeBatch } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where, writeBatch } from "firebase/firestore";
+import type { User } from "firebase/auth";
 import { requireFirebaseServices } from "./client";
 import { getPrompt, type Prompt } from "./data";
 import type { Prompt as PublicPrompt } from "@/lib/supabase/types";
 import { getAccountBadges, type BadgeKind } from "./badges";
 
-export type CreatorProfile = { name: string; bio: string; published: boolean; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[] };
+export type CreatorProfile = { name: string; bio: string; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[] };
 function imageValue(value: unknown) {
   return typeof value === "string" && value.length <= 80000 && /^(https:\/\/|data:image\/(jpeg|png|webp);base64,)/.test(value) ? value : "";
 }
 function readProfile(value: Record<string, unknown>): CreatorProfile {
-  return { name: String(value.name ?? "").slice(0, 80), bio: String(value.bio ?? "").slice(0, 1000), published: value.published === true,
+  return { name: String(value.name ?? "").slice(0, 80), bio: String(value.bio ?? "").slice(0, 1000),
     headline: String(value.headline ?? "").slice(0, 100), avatarUrl: imageValue(value.avatarUrl), bannerUrl: imageValue(value.bannerUrl) };
 }
 export async function getOwnProfile(uid: string): Promise<CreatorProfile | null> {
@@ -18,51 +19,53 @@ export async function getOwnProfile(uid: string): Promise<CreatorProfile | null>
   const value = snapshot.data()?.creatorProfile;
   return value ? { ...readProfile(value), badges: await getAccountBadges(uid).catch(() => []) } : null;
 }
-export type ProfileSaveIntent = "save" | "publish" | "unpublish";
-export class ProfilePublicationError extends Error {
-  constructor(readonly originalError: unknown, readonly published: boolean) {
-    super("O rascunho foi salvo, mas não foi possível atualizar a publicação.");
-    this.name = "ProfilePublicationError";
-  }
-}
 export function profileSaveErrorMessage(error: unknown): string {
-  const draftSaved = error instanceof ProfilePublicationError;
-  const cause = draftSaved ? error.originalError : error;
+  const cause = error;
   const code = typeof cause === "object" && cause !== null && "code" in cause ? String(cause.code).replace(/^firestore\//, "") : "";
-  const prefix = draftSaved ? "Rascunho salvo. " : "";
-  if (code === "permission-denied") return `${prefix}${draftSaved ? "A publicação está bloqueada pelas permissões do site. A administração precisa liberar essa função." : "O site não permitiu salvar seu perfil. A administração precisa conferir as permissões da conta."}`;
-  if (code === "unauthenticated") return `${prefix}Sua sessão expirou. Entre novamente na conta e tente salvar.`;
-  if (code === "unavailable" || code === "deadline-exceeded") return `${prefix}Não foi possível conectar ao serviço. Confira sua conexão e tente novamente.`;
-  if (code === "resource-exhausted") return `${prefix}O serviço está temporariamente sem capacidade para salvar. Tente novamente mais tarde.`;
+  if (code === "permission-denied") return "O site não permitiu salvar seu perfil público. A administração precisa conferir as permissões da conta.";
+  if (code === "unauthenticated") return "Sua sessão expirou. Entre novamente na conta e tente salvar.";
+  if (code === "unavailable" || code === "deadline-exceeded") return "Não foi possível conectar ao serviço. Confira sua conexão e tente novamente.";
+  if (code === "resource-exhausted") return "O serviço está temporariamente sem capacidade para salvar. Tente novamente mais tarde.";
   if (cause instanceof Error && cause.message.startsWith("Informe")) return cause.message;
-  return draftSaved ? error.message : "Não foi possível salvar o perfil. Tente novamente.";
+  return "Não foi possível salvar o perfil. Tente novamente.";
 }
-export async function saveCreatorProfile(uid: string, profile: CreatorProfile, intent: ProfileSaveIntent = "save") {
+export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
   const name = profile.name.trim(), bio = profile.bio.trim();
   if (!name || name.length > 80 || bio.length > 1000) throw new Error("Informe um nome de até 80 caracteres e uma bio de até 1.000.");
   const { db } = requireFirebaseServices();
   const values = { name, bio, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
   const userRef = doc(db, "users", uid);
-  const previous = await getDoc(userRef);
-  const wasPublished = previous.data()?.creatorProfile?.published === true;
-  // Drafts use the existing private document, independently of public collection permissions.
-  await setDoc(userRef, { creatorProfile: { ...values, published: wasPublished } }, { merge: true });
-  if (intent === "save") return { published: wasPublished };
-  const published = intent === "publish";
   const batch = writeBatch(db);
-  batch.set(userRef, { creatorProfile: { ...values, published } }, { merge: true });
-  if (published) batch.set(doc(db, "creatorProfiles", uid), { ...values, published: true, creatorId: uid, updatedAt: serverTimestamp() });
-  else batch.delete(doc(db, "creatorProfiles", uid));
-  try { await batch.commit(); }
-  catch (error) { throw new ProfilePublicationError(error, wasPublished); }
-  return { published };
+  // Keep the legacy flag true for compatibility with the deployed Firestore rules.
+  batch.set(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
+  batch.set(doc(db, "creatorProfiles", uid), { ...values, published: true, creatorId: uid, updatedAt: serverTimestamp() });
+  await batch.commit();
+}
+export async function ensureCreatorProfile(user: User) {
+  const { db } = requireFirebaseServices();
+  const userRef = doc(db, "users", user.uid);
+  const publicRef = doc(db, "creatorProfiles", user.uid);
+  // Only initialize missing profiles; never overwrite edits from another tab.
+  await runTransaction(db, async transaction => {
+    const privateSnapshot = await transaction.get(userRef);
+    const stored = privateSnapshot.data();
+    if (stored?.creatorProfile?.published === true) return;
+    const values = readProfile(stored?.creatorProfile ?? {
+      name: stored?.name || user.displayName || "Criador Mind", bio: "", avatarUrl: user.photoURL || "",
+    });
+    if (!values.name.trim()) values.name = "Criador Mind";
+    transaction.set(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
+    transaction.set(publicRef, { ...values, published: true, creatorId: user.uid, updatedAt: serverTimestamp() });
+  });
 }
 export async function setPromptPublication(workspaceId: string, uid: string, promptId: string, published: boolean) {
-  const { db } = requireFirebaseServices();
+  const { db, auth } = requireFirebaseServices();
   const prompt = await getPrompt(workspaceId, promptId);
   if (!prompt) throw new Error("Prompt não encontrado.");
-  const profile = await getOwnProfile(uid);
-  if (published && !profile?.published) throw new Error("Publique seu perfil antes de publicar este prompt.");
+  if (published) {
+    if (!auth.currentUser || auth.currentUser.uid !== uid) throw new Error("Entre novamente na conta para publicar este prompt.");
+    await ensureCreatorProfile(auth.currentUser);
+  }
   const batch = writeBatch(db);
   const publicRef = doc(db, "publicPrompts", `${uid}_${promptId}`);
   if (published) batch.set(publicRef, {
@@ -78,7 +81,7 @@ export async function setPromptPublication(workspaceId: string, uid: string, pro
 export async function getPublicCreator(uid: string): Promise<CreatorProfile | null> {
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "creatorProfiles", uid));
-  return snapshot.exists() && snapshot.data().published ? { ...readProfile(snapshot.data()), badges: await getAccountBadges(uid).catch(() => []) } : null;
+  return snapshot.exists() ? { ...readProfile(snapshot.data()), badges: await getAccountBadges(uid).catch(() => []) } : null;
 }
 function asPublicPrompt(record: Record<string, unknown>, profile: CreatorProfile): PublicPrompt {
   return {

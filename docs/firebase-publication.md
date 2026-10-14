@@ -1,12 +1,12 @@
 # Ativar perfis e prompts públicos
 
-A aplicação continua usando Firebase. A biblioteca e os documentos `users` permanecem privados. A publicação grava somente nome e bio em `creatorProfiles`, e os prompts escolhidos em `publicPrompts`. E-mail, convites e informações da equipe não são publicados.
+A aplicação continua usando Firebase. A biblioteca e os documentos `users` permanecem privados. Os perfis são sempre públicos: nome, apresentação, bio, foto e capa ficam em `creatorProfiles`; somente os prompts escolhidos ficam em `publicPrompts`. E-mail, convites e informações da equipe não são publicados.
 
 ## Ativação no projeto `mind-a9499`
 
 1. Abra o Firebase Console, Firestore Database, aba **Regras**.
 2. Substitua o conteúdo pelo arquivo `firestore.rules` deste repositório e clique em **Publicar**. O arquivo preserva as permissões existentes da biblioteca.
-3. Em **Meu perfil de criador**, salve nome e bio e clique em **Publicar perfil**.
+3. O perfil público é criado automaticamente ao entrar na conta. Em **Meu perfil de criador**, use **Salvar perfil** para atualizar nome, bio, apresentação, foto e capa.
 4. Na biblioteca, clique em **Publicar** somente nos prompts que deseja divulgar.
 
 Alternativa, em um terminal local com acesso administrativo ao projeto:
@@ -20,16 +20,16 @@ npx firebase-tools deploy --only firestore:rules --project mind-a9499
 
 - Perfil: `/u/{uid}`.
 - Prompt: `/share/{uid}/{promptId}`.
-- Perfil e prompts começam privados. Publicar um perfil não publica a biblioteca.
-- **Salvar perfil** grava o rascunho privado, mesmo quando há uma versão pública. **Publicar perfil** ou **Publicar alterações** atualiza a página pública. Se a etapa pública for recusada, o rascunho fica salvo e o estado de publicação anterior é preservado.
-- Tornar um perfil privado oculta todos os seus links públicos. Publicar o perfil novamente restaura os prompts que continuavam publicados.
+- Perfis são sempre públicos; prompts começam privados e são publicados individualmente.
+- **Salvar perfil** atualiza a página pública e a cópia no documento privado numa operação atômica. Se as permissões bloquearem a gravação, nenhuma das cópias é alterada.
+- Não existe ação de publicar ou tornar o perfil privado. Contas anteriores sem perfil público são inicializadas ao entrar na conta, abrir o editor ou publicar o primeiro prompt. Esse processo não publica nenhum prompt privado.
 - Tornar um prompt privado remove sua cópia pública.
 - Editar um prompt publicado atualiza a cópia pública na mesma operação. Excluir remove ambas as cópias.
 - Os visitantes não precisam de conta para ler publicações.
 
 ## Verificação após ativar
 
-Use uma conta do projeto para publicar um perfil e apenas um prompt. Abra os links numa janela anônima. Confirme que os outros prompts não aparecem. Retire o prompt e depois o perfil do ar e confirme que os links deixam de mostrar as publicações.
+Use uma conta do projeto para salvar o perfil e publicar apenas um prompt. Abra os links numa janela anônima. Confirme que os outros prompts não aparecem. Torne o prompt privado e confirme que ele deixa de aparecer, enquanto o perfil permanece acessível.
 
 O ambiente de desenvolvimento desta alteração não tinha credenciais administrativas do Firebase. O deploy na Vercel publica o código, mas não publica automaticamente as regras do Firestore. A ativação e a verificação com conta real precisam ser feitas após publicar as regras.
 

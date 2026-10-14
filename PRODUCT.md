@@ -3,8 +3,8 @@
 Mind é um lugar gratuito para criadores e influenciadores de IA publicarem prompts e resultados e compartilharem links com seus seguidores.
 
 - Biblioteca privada com Firebase Auth e Firestore. Preservar contas e dados existentes.
-- Perfil começa privado. Nome, apresentação, bio, avatar e capa podem ser publicados.
-- Cada prompt é publicado separadamente. Publicar o perfil não publica a biblioteca.
+- Perfil sempre público: nome, apresentação, bio, avatar e capa. E-mail e dados da equipe continuam privados.
+- Cada prompt começa privado e é publicado separadamente. O perfil público mostra somente os prompts escolhidos.
 - Visitantes podem abrir perfis e prompts públicos sem conta.
 - Sem venda, pagamento ou números fictícios de seguidores/curtidas.
 - Emblemas: fundador, verificado, moderador, criador de conteúdo e parceiro patrocinado. Atribuição administrativa; usuários não se verificam.

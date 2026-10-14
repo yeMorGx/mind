@@ -59,8 +59,8 @@ export default function LibraryPromptPage({ promptId }: { promptId: string }) {
 
   const prompt = state.prompt;
 
-  const profile = state.profile ?? { name: data.name || user.displayName || "Criador Mind", bio: "", avatarUrl: user.photoURL || "", published: false };
-  return <PublicPromptPage visibility="private" creatorProfile={profile} creatorHref={profile.published ? `/u/${user.uid}` : "/home/profile"} prompt={{
+  const profile = state.profile ?? { name: data.name || user.displayName || "Criador Mind", bio: "", avatarUrl: user.photoURL || "" };
+  return <PublicPromptPage visibility="private" creatorProfile={profile} creatorHref={`/u/${user.uid}`} prompt={{
     id: prompt.id,
     slug: prompt.id,
     creatorId: user.uid,
