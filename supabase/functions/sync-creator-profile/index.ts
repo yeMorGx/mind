@@ -30,6 +30,13 @@ Deno.serve(async request => {
     const raw = await request.text();
     if (raw.length > 200000) return reply({ error: "Perfil muito grande." }, 413);
     const body = JSON.parse(raw);
+    if (body.usernameOnly === true) {
+      const username = String(body.username ?? "").trim().replace(/^@/, "").toLowerCase();
+      if (!/^[a-z][a-z0-9_]{2,23}$/.test(username)) return reply({ error: "Use de 3 a 24 caracteres no @: letras, números e _, começando com uma letra." }, 400);
+      const { error } = await admin.rpc("mind_set_directory_username", { public_id_value: uid, username_value: username });
+      if (error) return reply({ error: error.message.startsWith("Este @") || error.message.startsWith("Sua conta") || error.message.startsWith("Entre novamente") ? error.message : "Não foi possível salvar seu @. Tente novamente." }, error.message.startsWith("Este @") ? 409 : 400);
+      return reply({ saved: true, username });
+    }
     const source = body.profile;
     if (!source || typeof source !== "object" || Array.isArray(source)) return reply({ error: "Perfil inválido." }, 400);
     const profile = { name: String(source.name ?? "").trim(), bio: String(source.bio ?? "").trim(), headline: String(source.headline ?? "").trim(), avatarUrl: image(source.avatarUrl), bannerUrl: image(source.bannerUrl) };
@@ -37,12 +44,13 @@ Deno.serve(async request => {
     const migrated = await admin.from("mind_creators").select("profile").eq("public_id", uid).maybeSingle();
     if (migrated.error) throw migrated.error;
     if (migrated.data) return body.ensure === true ? reply({ profile: migrated.data.profile }) : reply({ error: "Sua conta já foi migrada. Conclua o login Google para editar o perfil." }, 409);
-    if (body.ensure === true) {
-      const { error } = await admin.from("mind_creator_directory").upsert({ public_id: uid, profile }, { onConflict: "public_id", ignoreDuplicates: true });
-      if (error) throw error;
-    } else {
-      const { error } = await admin.from("mind_creator_directory").upsert({ public_id: uid, profile, updated_at: new Date().toISOString() });
-      if (error) throw error;
+    const { error } = await admin.rpc("mind_save_directory_identity", {
+      public_id_value: uid, profile_values: profile, ensure_only: body.ensure === true,
+      username_value: typeof source.username === "string" ? source.username : null,
+    });
+    if (error) {
+      if (error.message.startsWith("Este @") || error.message.startsWith("Use de 3")) return reply({ error: error.message }, error.message.startsWith("Este @") ? 409 : 400);
+      throw error;
     }
     return reply({ saved: true });
   } catch { return reply({ error: "Não foi possível atualizar o perfil. Tente novamente." }, 500); }

@@ -86,3 +86,7 @@ Resultados de prompts usam uma galeria horizontal manual, sem avanço automátic
 - Usar foco visível, labels acessíveis, targets confortáveis e navegação por teclado.
 - Não reintroduzir um tema escuro isolado em perfis, formulários ou biblioteca.
 - Não oferecer emblemas autoconcedidos nem métricas inventadas.
+
+## Identificação de criadores
+
+Cada pessoa escolhe um @ obrigatório e exclusivo, de 3 a 24 caracteres (letras minúsculas, números e _, começando por letra). Contas sem @ devem escolhê-lo na área interna antes de continuar; nunca gerar identificadores automaticamente. A exclusividade é garantida no banco, compartilhada por contas Firebase e Supabase. O perfil permite alterar o @. Explorar oferece busca de pessoas por nome ou @; links /u/@nome resolvem o perfil, preservando os antigos links por UID. A landing permanece protegida.

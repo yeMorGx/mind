@@ -1,3 +1,4 @@
+import { getUsername } from "./creators";
 import { requireSupabaseClient } from "./client";
 import type { Prompt, OnboardingData } from "@/lib/firebase/data";
 import type { CreatorProfile } from "@/lib/firebase/publication";
@@ -106,11 +107,11 @@ export async function createNativeWorkspace(user: MindUser,data: OnboardingData)
 }
 export async function getNativeOwnProfile() {
   const account = await bootstrapAccount();
-  return { ...account.creator_profile,backend:"supabase" as const,badges:await getNativeBadges(account.public_id) };
+  return { ...account.creator_profile,username:await getUsername(account.public_id),backend:"supabase" as const,badges:await getNativeBadges(account.public_id) };
 }
 export async function saveNativeProfile(profile: CreatorProfile) {
-  const { name,bio,headline="",avatarUrl="",bannerUrl="" } = profile;
-  const { error } = await requireSupabaseClient().rpc("mind_save_profile",{ profile_values:{name,bio,headline,avatarUrl,bannerUrl} });
+  const { name,bio,headline="",avatarUrl="",bannerUrl="",username="" } = profile;
+  const { error } = await requireSupabaseClient().rpc("mind_save_creator_profile",{ profile_values:{name,bio,headline,avatarUrl,bannerUrl},username_value:username });
   if (error) throw error;
 }
 export async function getNativeBadges(uid: string): Promise<NonNullable<CreatorProfile["badges"]>> {
@@ -128,10 +129,10 @@ export async function assignNativeBadges(uid: string,badges: string[]) {
 export async function getNativePublicCreator(uid: string): Promise<CreatorProfile|null> {
   const { data,error } = await requireSupabaseClient().from("mind_creators").select("profile").eq("public_id",uid).maybeSingle();
   if (error) throw error;
-  if (data) return {...data.profile,backend:"supabase",badges:await getNativeBadges(uid)};
+  if (data) return {...data.profile,username:await getUsername(uid),backend:"supabase",badges:await getNativeBadges(uid)};
   const directory = await requireSupabaseClient().from("mind_creator_directory").select("profile,badges").eq("public_id",uid).maybeSingle();
   if (directory.error) throw directory.error;
-  return directory.data ? {...directory.data.profile,backend:"directory",badges:directory.data.badges} : null;
+  return directory.data ? {...directory.data.profile,username:await getUsername(uid),backend:"directory",badges:directory.data.badges} : null;
 }
 export async function getNativePublicPrompts(uid: string,profile: CreatorProfile,id?: string) {
   let query = requireSupabaseClient().from("mind_public_prompts").select("prompt_id,document").eq("creator_id",uid);
@@ -139,7 +140,7 @@ export async function getNativePublicPrompts(uid: string,profile: CreatorProfile
   const { data,error } = await query;
   if (error) throw error;
   return (data ?? []).map(row => { const prompt=asPrompt(row.prompt_id,row.document);return {
-    ...prompt,slug:prompt.id,creatorId:uid,creatorName:profile.name,creatorSlug:"",status:"published" as const,
+    ...prompt,slug:prompt.id,creatorId:uid,creatorName:profile.name,creatorSlug:profile.username??"",status:"published" as const,
     createdAt:prompt.createdAt ?? Number.NaN,updatedAt:prompt.updatedAt ?? Number.NaN,
     images:prompt.images.map((image,position)=>({...image,path:"",position})),
   }; });

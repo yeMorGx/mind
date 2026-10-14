@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { preparePromptImage } from "@/lib/prompt-media";
+import UsernameInput from "@/components/profile/UsernameInput";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import { downloadOwnFirebaseBackup } from "@/lib/firebase/backup";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
@@ -43,6 +44,7 @@ export default function CreatorProfileEditor({ onSaved, onClose }: { onSaved: (p
     setPending(true); setMessage("");
     try {
       await saveCreatorProfile(user.uid, profile);
+      window.dispatchEvent(new Event("mind:username"));
       onSaved(profile);
     }
     catch (error) {
@@ -69,6 +71,7 @@ export default function CreatorProfileEditor({ onSaved, onClose }: { onSaved: (p
     <p className="mt-3 text-sm leading-6 text-muted">Seu perfil é sempre público. Escolha na biblioteca quais prompts aparecem nele.</p>
     {profile && loadedUid === user?.uid ? <form className="mt-8" onSubmit={event => { event.preventDefault(); void save(); }}><fieldset disabled={pending} className="space-y-6">
       <label className="block text-sm">Nome público<input required maxLength={80} value={profile.name} onChange={event => setProfile({ ...profile, name: event.target.value })} className="mt-2 block w-full rounded-xl border border-border bg-surface p-3" /></label>
+      <UsernameInput value={profile.username || ""} onChange={value => setProfile({ ...profile, username:value })} publicId={user?.uid ?? ""} disabled={pending} />
       <div className="grid gap-5 sm:grid-cols-2">
         {([ ["avatarUrl", "Foto do perfil"], ["bannerUrl", "Capa do perfil"] ] as const).map(([field, label]) => <label key={field} className="block text-sm">{label}
           {profile[field] && <div className="mt-2 flex items-start justify-between gap-3">

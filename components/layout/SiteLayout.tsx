@@ -8,13 +8,14 @@ import { getFirebaseServices } from "@/lib/firebase/client";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { setNativeBackend } from "@/lib/backend";
 import { catalogCategory, type CatalogItem } from "@/lib/catalog";
+import RequiredUsername from "@/components/profile/RequiredUsername";
 import LoginModal from "@/components/modal/modalLogin";
 import Header from "./Header";
 import Sidebar, { type PromptView } from "./Sidebar";
 
 type CatalogOptions = { path: string; categories: string[]; models: string[] };
 type LayoutValue = {
-  searchValue: string; activeView: PromptView; category: string; model: string;
+  searchValue: string; setSearchValue: (value: string) => void; activeView: PromptView; category: string; model: string;
   setCategory: (value: string) => void; setModel: (value: string) => void;
   setCatalogOptions: (value: CatalogOptions) => void;
   newPromptOpen: boolean; newPromptVersion: number; openNewPrompt: () => void; closeNewPrompt: () => void;
@@ -63,7 +64,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     setNewPromptVersion(value => value + 1); setNewPromptOpen(true);
     if (!library) router.push("/home");
   }
-  function search() { if (!library && pathname !== "/explore") { setCategory(""); setModel(""); router.push("/explore"); } }
+  function search() { if ((!library || searchValue.trim().startsWith("@")) && pathname !== "/explore") { setCategory(""); setModel(""); router.push("/explore"); } }
   async function logout() {
     try {
       const supabase = getSupabaseClient();
@@ -77,7 +78,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   }
   // The landing is protected and does not receive internal navigation or styles.
   if (pathname === "/") return children;
-  return <LayoutContext.Provider value={{ searchValue, activeView, category, model, setCategory, setModel, setCatalogOptions, newPromptOpen, newPromptVersion, openNewPrompt, closeNewPrompt: () => setNewPromptOpen(false) }}>
+  return <LayoutContext.Provider value={{ searchValue, setSearchValue, activeView, category, model, setCategory, setModel, setCatalogOptions, newPromptOpen, newPromptVersion, openNewPrompt, closeNewPrompt: () => setNewPromptOpen(false) }}>
     <div className="site-app min-h-screen bg-background text-foreground">
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
       <Header searchValue={searchValue} onSearchChange={setSearchValue} onSearch={search} mobileOpen={mobileOpen} onMenuClick={() => setMobileOpen(true)}
@@ -90,6 +91,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         {error && <div role="alert" className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pt-5 text-sm text-red-700"><p>{error}</p><button type="button" onClick={() => setError("")} className="underline">Fechar</button></div>}
         {children}
       </div>
+      <RequiredUsername onLogout={logout} />
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </div>
   </LayoutContext.Provider>;

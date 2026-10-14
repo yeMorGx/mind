@@ -280,3 +280,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
 
 .site-app .catalog-logo { position: relative; display: block; flex: none; width: 44px; height: 44px; }
 .site-app .catalog-logo > svg { position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; max-width: none; transform: translate(-50%, -50%); }
+
+.site-app .username-required-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 28px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 16px; background: var(--surface); color: var(--foreground); }
+.site-app .username-required-dialog::backdrop { background: rgb(23 24 26 / 55%); }

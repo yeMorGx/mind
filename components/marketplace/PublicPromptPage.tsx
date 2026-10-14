@@ -79,7 +79,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
           <h1 className="mt-5 break-words text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{prompt.title}</h1>
           {prompt.description && <p className="mt-5 whitespace-pre-wrap text-base leading-7 text-muted">{prompt.description}</p>}
           <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-subtle">
-            <a href="#creator" className="hover:text-foreground">por <strong className="font-medium text-muted">{creatorName}</strong></a>
+            <a href="#creator" className="hover:text-foreground">por <strong className="font-medium text-muted">{creatorName}</strong>{creatorProfile?.username && <span className="ml-2 text-subtle">@{creatorProfile.username}</span>}</a>
             <span aria-hidden="true">·</span>
             <span>{isPrivate ? "Privado · sua biblioteca" : "Grátis para experimentar"}</span>
           </div>

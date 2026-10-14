@@ -50,10 +50,11 @@ export async function getPublicCreatorProfile(uid:string):Promise<CreatorProfile
     client.from("mind_badges").select("badges").eq("public_id",uid).maybeSingle(),
   ]);
   if(creator.error)throw creator.error;
-  if(creator.data)return {...creator.data.profile,badges:badges.data?.badges??[]};
+  const usernames = await getPublicUsernames([uid]);
+  if(creator.data)return {...creator.data.profile,username:usernames[uid],badges:badges.data?.badges??[]};
   const directory=await client.from("mind_creator_directory").select("profile,badges").eq("public_id",uid).maybeSingle();
   if(directory.error)throw directory.error;
-  return directory.data?{...directory.data.profile,badges:directory.data.badges??[]}:null;
+  return directory.data?{...directory.data.profile,username:usernames[uid],badges:directory.data.badges??[]}:null;
 }
 export async function getPromptRecommendations(prompt:Prompt):Promise<{creatorPrompts:Prompt[];relatedPrompts:Prompt[]}> {
   const client=publicClient();if(!client)return {creatorPrompts:[],relatedPrompts:[]};
@@ -62,4 +63,11 @@ export async function getPromptRecommendations(prompt:Prompt):Promise<{creatorPr
     prompt.category?client.from("mind_public_prompts").select(selection).eq("document->>category",prompt.category).neq("creator_id",prompt.creatorId).limit(3):Promise.resolve({data:[],error:null}),
   ]);
   return {creatorPrompts:creator.error?[]:((creator.data??[]) as unknown as Row[]).map(mapRow),relatedPrompts:related.error?[]:((related.data??[]) as unknown as Row[]).map(mapRow)};
+}
+
+export async function getPublicUsernames(ids: string[]): Promise<Record<string,string>> {
+  const client = publicClient(); if (!client || !ids.length) return {};
+  const { data,error } = await client.from("mind_usernames").select("public_id,username").in("public_id", [...new Set(ids)]);
+  if (error) throw error;
+  return Object.fromEntries((data ?? []).map(row => [row.public_id,row.username]));
 }

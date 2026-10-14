@@ -5,6 +5,7 @@ import { ArrowUpRight, Copy, Check, ImageIcon } from "lucide-react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import CreatorProfileEditor from "./CreatorProfileEditor";
 import CreatorBadges from "@/components/ui/CreatorBadges";
+import { creatorProfileHref } from "@/lib/usernames";
 import type { CreatorProfile } from "@/lib/firebase/publication";
 import type { Prompt } from "@/lib/supabase/types";
 
@@ -20,7 +21,7 @@ export default function CreatorProfileView({ profile: initialProfile, prompts, c
   const [notice, setNotice] = useState("");
   function closeEditor() { setEditing(false); window.setTimeout(() => document.getElementById("edit-profile-button")?.focus(), 0); }
   async function share() {
-    try { await navigator.clipboard.writeText(`${window.location.origin}/u/${creatorId}`); setCopied(true); setNotice("Link do perfil copiado."); window.setTimeout(() => setCopied(false), 2000); }
+    try { await navigator.clipboard.writeText(`${window.location.origin}${creatorProfileHref(creatorId,profile.username)}`); setCopied(true); setNotice("Link do perfil copiado."); window.setTimeout(() => setCopied(false), 2000); }
     catch { setNotice("Não foi possível copiar o link. Copie o endereço na barra do navegador."); }
   }
   return <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground selection:bg-[#dce7ff]">
@@ -36,6 +37,7 @@ export default function CreatorProfileView({ profile: initialProfile, prompts, c
             </div>
             <div className="min-w-0 pb-1 sm:pt-6">
               <div className="flex flex-wrap items-center gap-3"><h1 className="min-w-0 max-w-full [overflow-wrap:anywhere] text-3xl font-semibold tracking-tight sm:text-4xl">{profile.name}</h1><CreatorBadges badges={profile.badges} /></div>
+              {profile.username && <p className="mt-2 text-sm font-medium text-muted">@{profile.username}</p>}
               {profile.headline && <p className="mt-2 text-sm font-medium text-muted">{profile.headline}</p>}
             </div>
           </div>

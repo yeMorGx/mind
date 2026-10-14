@@ -3,12 +3,14 @@ import { usingSupabase, type MindUser as User } from "@/lib/backend";
 import * as native from "@/lib/supabase/mind";
 import { isSupabaseConfigured, requireSupabaseClient } from "@/lib/supabase/client";
 import { syncLegacyPrompt } from "./public-prompt-sync";
+import { getUsername } from "@/lib/supabase/creators";
+import { normalizeUsername, USERNAME_PATTERN } from "@/lib/usernames";
 import { requireFirebaseServices } from "./client";
 import { getPrompt, type Prompt } from "./data";
 import type { Prompt as PublicPrompt } from "@/lib/supabase/types";
 import { getAccountBadges, type BadgeKind } from "./badges";
 
-export type CreatorProfile = { name: string; bio: string; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[]; backend?: "supabase" | "directory" };
+export type CreatorProfile = { name: string; bio: string; username?: string; headline?: string; avatarUrl?: string; bannerUrl?: string; badges?: BadgeKind[]; backend?: "supabase" | "directory" };
 function imageValue(value: unknown) {
   return typeof value === "string" && value.length <= 80000 && /^(https:\/\/|data:image\/(jpeg|png|webp);base64,)/.test(value) ? value : "";
 }
@@ -21,7 +23,7 @@ export async function getOwnProfile(uid: string): Promise<CreatorProfile | null>
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "users", uid));
   const value = snapshot.data()?.creatorProfile;
-  return value ? { ...readProfile(value), badges: await getAccountBadges(uid).catch(() => []) } : null;
+  return value ? { ...readProfile(value), username: isSupabaseConfigured ? await getUsername(uid) : undefined, badges: await getAccountBadges(uid).catch(() => []) } : isSupabaseConfigured ? native.getNativePublicCreator(uid) : null;
 }
 export function profileSaveErrorMessage(error: unknown): string {
   const cause = error;
@@ -30,19 +32,23 @@ export function profileSaveErrorMessage(error: unknown): string {
   if (code === "unauthenticated") return "Sua sessão expirou. Entre novamente na conta e tente salvar.";
   if (code === "unavailable" || code === "deadline-exceeded") return "Não foi possível conectar ao serviço. Confira sua conexão e tente novamente.";
   if (code === "resource-exhausted") return "O serviço está temporariamente sem capacidade para salvar. Tente novamente mais tarde.";
+  const message = cause && typeof cause === "object" && "message" in cause ? String(cause.message) : "";
+  if (message.startsWith("Este @") || message.startsWith("Use de 3")) return message;
   if (cause instanceof Error && cause.message.startsWith("Informe")) return cause.message;
   if (cause instanceof Error && (cause.message.startsWith("Sua conta já foi migrada") || cause.message.startsWith("Não foi possível atualizar") || cause.message.startsWith("Entre novamente"))) return cause.message;
   return "Não foi possível salvar o perfil. Tente novamente.";
 }
 export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
   const name = profile.name.trim(), bio = profile.bio.trim();
+  const username = normalizeUsername(profile.username ?? "");
+  if (!USERNAME_PATTERN.test(username)) throw new Error("Use de 3 a 24 caracteres no @: letras, números e _, começando com uma letra.");
   if (!name || name.length > 80 || bio.length > 1000) throw new Error("Informe um nome de até 80 caracteres e uma bio de até 1.000.");
-  if (usingSupabase()) return native.saveNativeProfile({ name, bio, headline: (profile.headline ?? "").trim().slice(0,100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) });
+  if (usingSupabase()) return native.saveNativeProfile({ name, bio, username, headline: (profile.headline ?? "").trim().slice(0,100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) });
   const { db } = requireFirebaseServices();
   const values = { name, bio, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
   const userRef = doc(db, "users", uid);
   if (isSupabaseConfigured) {
-    await syncLegacyProfile(uid, values);
+    await syncLegacyProfile(uid, { ...values, username });
     await setDoc(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
     return;
   }
@@ -124,7 +130,7 @@ export async function getPublicCreator(uid: string): Promise<CreatorProfile | nu
 function asPublicPrompt(record: Record<string, unknown>, profile: CreatorProfile): PublicPrompt {
   return {
     id: String(record.promptId), slug: String(record.promptId), creatorId: String(record.creatorId),
-    creatorName: profile.name, creatorSlug: "", title: String(record.title), content: String(record.content),
+    creatorName: profile.name, creatorSlug: profile.username ?? "", title: String(record.title), content: String(record.content),
     description: String(record.description ?? ""), category: String(record.category ?? ""), model: String(record.model ?? ""),
     status: "published", isFavorite: false, createdAt: Number(record.createdAt), updatedAt: Number(record.updatedAt),
     images: ((record.images ?? []) as Prompt["images"]).map((image, position) => ({ ...image, position, path: "" })),

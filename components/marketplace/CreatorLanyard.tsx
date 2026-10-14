@@ -51,7 +51,7 @@ export default function CreatorLanyard({ profile, href }: { profile: CreatorProf
     </div>
     <Link href={href} aria-label={`Ver perfil de ${profile.name}`} className="block rounded-xl px-1 py-2 text-center focus-visible:outline-2 focus-visible:outline-foreground">
       <span className="mt-1 flex justify-center [&>span]:justify-center"><CreatorBadges badges={profile.badges} /></span>
-      <span className="mt-4 inline-flex items-center gap-1 text-sm text-muted">Ver perfil do criador <ArrowUpRight size={13} /></span>
+      <span className="mt-4 inline-flex items-center gap-1 text-sm text-muted">{profile.username ? `@${profile.username}` : "Ver perfil do criador"} <ArrowUpRight size={13} /></span>
     </Link>
   </aside>;
 }
