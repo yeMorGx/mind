@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
-import { ArrowLeft, ArrowRight, Maximize2, Pause, Play, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Pause, Play, X } from "lucide-react";
 
 type ResultImage = { id: string; url: string; label: string };
 
@@ -20,7 +20,6 @@ function ResultTile({ image, index, duplicate, onOpen }: {
     <span className="results-marquee-media">
       {/* eslint-disable-next-line @next/next/no-img-element -- Real optimized data URLs and signed image URLs. */}
       {failed ? <span className="results-marquee-error">Imagem indisponível</span> : <img src={image.url} alt={duplicate ? "" : image.label || `Resultado ${index + 1}`} loading={index === 0 ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)} />}
-      <span className="results-marquee-expand" aria-hidden="true"><Maximize2 size={15} /></span>
     </span>
     <span className="results-marquee-caption" title={image.label}>{image.label || `Resultado ${index + 1}`}</span>
   </button>;
