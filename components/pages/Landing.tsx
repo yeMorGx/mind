@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { Instrument_Serif } from "next/font/google";
 import { CloudShader } from "@/components/ui/cloud-shader";
+import LandingGallery from "@/components/pages/LandingGallery";
 import LoginModal from "@/components/modal/modalLogin";
 import PromptCard from "@/components/marketplace/PromptCard";
 import { useOnboarding } from "@/app/context/OnboardingContext";
@@ -59,7 +60,7 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
 
       {/* LANDING CONTENT (BLUR AQUI) */}
       <motion.div
-        className="relative z-10 flex flex-col items-center justify-center w-full"
+        className="relative z-10 flex flex-col items-center justify-center w-full pt-16 sm:pt-20"
         animate={{
           filter: isModalOpen ? "blur(8px)" : "blur(0px)",
           scale: isModalOpen ? 0.98 : 1,
@@ -96,6 +97,7 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
             Já tenho uma conta
           </button>
         </div>
+        <LandingGallery prompts={initialPrompts} suspended={isModalOpen} />
       </motion.div>
 
       {/* MODAL */}
