@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { Instrument_Serif } from "next/font/google";
-import { Spotlight } from "@/components/ui/spotlight";
+import { CloudShader } from "@/components/ui/cloud-shader";
 import LoginModal from "@/components/modal/modalLogin";
 import PromptCard from "@/components/marketplace/PromptCard";
 import { useOnboarding } from "@/app/context/OnboardingContext";
@@ -44,6 +44,11 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
   return (
     <main>
     <div className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <CloudShader className="h-full w-full" speed={0.4} />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(0,0,0,0.5)_45%,rgba(0,0,0,0.5)_65%,rgba(0,0,0,0.3))]" />
+      </div>
 
       {/* DARK OVERLAY */}
       <motion.div
@@ -54,7 +59,7 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
 
       {/* LANDING CONTENT (BLUR AQUI) */}
       <motion.div
-        className="flex flex-col items-center justify-center w-full"
+        className="relative z-10 flex flex-col items-center justify-center w-full"
         animate={{
           filter: isModalOpen ? "blur(8px)" : "blur(0px)",
           scale: isModalOpen ? 0.98 : 1,
@@ -92,7 +97,6 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
           </button>
         </div>
       </motion.div>
-      <Spotlight />
 
       {/* MODAL */}
       <LoginModal
