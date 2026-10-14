@@ -16,11 +16,11 @@ export default function FinishPage() {
   }, [data.onboardingComplete, ready, router]);
 
   if (!ready || !data.onboardingComplete) {
-    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando seu workspace...</main>;
+    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted">Carregando seu workspace...</main>;
   }
 
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+    <main className="min-h-[calc(100dvh-4rem)] bg-background text-foreground flex items-center justify-center px-6">
       <div className="w-full max-w-2xl">
 
         <motion.div
@@ -35,8 +35,8 @@ export default function FinishPage() {
           className="
             rounded-3xl
             border
-            border-white/10
-            bg-white/[0.03]
+            border-border
+            bg-foreground/[0.03]
             p-10
             backdrop-blur-xl
           "
@@ -51,7 +51,7 @@ export default function FinishPage() {
               Tudo pronto!
             </h1>
 
-            <p className="mt-4 text-white/60">
+            <p className="mt-4 text-muted">
               Seu workspace foi configurado com sucesso.
             </p>
 
@@ -59,8 +59,8 @@ export default function FinishPage() {
 
           <div className="mt-10 space-y-4">
 
-            <div className="flex items-center justify-between rounded-xl border border-white/10 p-4">
-              <span className="text-white/60">
+            <div className="flex items-center justify-between rounded-xl border border-border p-4">
+              <span className="text-muted">
                 Nome
               </span>
 
@@ -69,8 +69,8 @@ export default function FinishPage() {
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl border border-white/10 p-4">
-              <span className="text-white/60">
+            <div className="flex items-center justify-between rounded-xl border border-border p-4">
+              <span className="text-muted">
                 Profissão
               </span>
 
@@ -79,8 +79,8 @@ export default function FinishPage() {
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl border border-white/10 p-4">
-              <span className="text-white/60">
+            <div className="flex items-center justify-between rounded-xl border border-border p-4">
+              <span className="text-muted">
                 Workspace
               </span>
 
@@ -90,8 +90,8 @@ export default function FinishPage() {
               </span>
             </div>
 
-            <div className="flex items-center justify-between rounded-xl border border-white/10 p-4">
-              <span className="text-white/60">
+            <div className="flex items-center justify-between rounded-xl border border-border p-4">
+              <span className="text-muted">
                 Tipo
               </span>
 
@@ -104,12 +104,12 @@ export default function FinishPage() {
 
           </div>
 
-          <div className="mt-10 rounded-2xl bg-white/5 p-5">
+          <div className="mt-10 rounded-2xl bg-foreground/5 p-5">
             <h3 className="font-medium">
               O que acontece agora?
             </h3>
 
-            <ul className="mt-3 space-y-2 text-sm text-white/60">
+            <ul className="mt-3 space-y-2 text-sm text-muted">
               <li>✓ Seu workspace foi criado</li>
               <li>✓ Sua conta está pronta</li>
               <li>✓ Você pode começar a salvar prompts</li>
@@ -125,10 +125,10 @@ export default function FinishPage() {
               mt-8
               w-full
               rounded-xl
-              bg-white
+              bg-primary
               py-4
               font-semibold
-              text-black
+              text-primary-foreground
               transition
               hover:scale-[1.02]
             "

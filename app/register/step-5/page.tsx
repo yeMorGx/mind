@@ -13,7 +13,7 @@ export default function Step5Page() {
   const { data } = useOnboarding();
 
   if (!ready || !user) {
-    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando cadastro...</main>;
+    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
   }
 
   return (
@@ -64,24 +64,24 @@ function Step5Form({
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+    <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-2xl">
         <div className="mb-10">
-          <p className="text-sm text-white/50">Passo 5 de 7</p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-[71%] rounded-full bg-white" />
+          <p className="text-sm text-muted">Passo 5 de 7</p>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-foreground/10">
+            <div className="h-full w-[71%] rounded-full bg-primary" />
           </div>
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-4xl font-bold">Crie sua equipe</h1>
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-muted">
             Configure o espaço da equipe. O acesso de outros membros será liberado quando o fluxo de convites estiver ativo.
           </p>
 
           <div className="mt-8 space-y-5">
             <div>
-              <label htmlFor="team-name" className="mb-2 block text-sm text-white/50">
+              <label htmlFor="team-name" className="mb-2 block text-sm text-muted">
                 Nome da equipe
               </label>
               <input
@@ -89,19 +89,19 @@ function Step5Form({
                 value={teamName}
                 onChange={(event) => setTeamName(event.target.value)}
                 placeholder="Ex: Mind Developers"
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-4 outline-none transition focus:border-white/30"
+                className="w-full rounded-xl border border-border bg-foreground/5 px-4 py-4 outline-none transition focus:border-foreground/30"
               />
             </div>
 
             <div>
-              <label htmlFor="team-size" className="mb-2 block text-sm text-white/50">
+              <label htmlFor="team-size" className="mb-2 block text-sm text-muted">
                 Quantidade de membros
               </label>
               <select
                 id="team-size"
                 value={teamSize}
                 onChange={(event) => setTeamSize(event.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-[#111] px-4 py-4 outline-none"
+                className="w-full rounded-xl border border-border bg-surface px-4 py-4 outline-none"
               >
                 <option>2-5 pessoas</option>
                 <option>6-10 pessoas</option>
@@ -111,28 +111,28 @@ function Step5Form({
               </select>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="rounded-2xl border border-border bg-foreground/[0.03] p-5">
               <p className="font-medium">Preview</p>
               <div className="mt-4 flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-xl">👥</div>
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-foreground/10 text-xl">👥</div>
                 <div>
                   <h3 className="font-medium">{teamName || "Nome da equipe"}</h3>
-                  <p className="text-sm text-white/50">Workspace colaborativo · {teamSize}</p>
+                  <p className="text-sm text-muted">Workspace colaborativo · {teamSize}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {error && <p role="alert" className="mt-4 text-sm text-red-300">{error}</p>}
+          {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
 
           <div className="mt-8 flex justify-between">
-            <button onClick={() => router.back()} className="rounded-xl border border-white/10 px-6 py-3">
+            <button onClick={() => router.back()} className="rounded-xl border border-border px-6 py-3">
               Voltar
             </button>
             <button
               disabled={pending}
               onClick={() => void continueToInvites()}
-              className="rounded-xl bg-white px-6 py-3 font-semibold text-black disabled:opacity-50"
+              className="rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground disabled:opacity-50"
             >
               {pending ? "Salvando..." : "Continuar →"}
             </button>

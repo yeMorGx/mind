@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import Logo from "@/components/ui/logo";
 import PublicPromptPage from "@/components/marketplace/PublicPromptPage";
 import { getPublicCreator, getCreatorPrompts, getSharedPrompt, type CreatorProfile } from "@/lib/firebase/publication";
 import type { Prompt } from "@/lib/supabase/types";
@@ -28,7 +26,7 @@ export default function PublicCreator({ creatorId, promptId }: { creatorId: stri
   const current = result?.key === requestKey ? result : null;
   if (current?.prompt) return <PublicPromptPage prompt={current.prompt} creatorHref={`/u/${creatorId}`} creatorProfile={current.profile} />;
   if (current) return <CreatorProfileView profile={current.profile} prompts={current.prompts} creatorId={creatorId} promptsError={current.promptsError} />;
-  return <main className="min-h-screen bg-background px-5 py-10 text-foreground"><header className="flex justify-center"><Link href="/" aria-label="Mind"><Logo /></Link></header><div className="mx-auto mt-14 max-w-5xl">
-    <p role="status" className="text-center text-white/60">{error?.key === requestKey ? error.message : promptId ? "Carregando prompt…" : "Carregando perfil…"}</p>
+  return <main className="min-h-[calc(100dvh-4rem)] bg-background px-5 py-10 text-foreground"><div className="mx-auto mt-14 max-w-5xl">
+    <p role="status" className="text-center text-muted">{error?.key === requestKey ? error.message : promptId ? "Carregando prompt…" : "Carregando perfil…"}</p>
   </div></main>;
 }

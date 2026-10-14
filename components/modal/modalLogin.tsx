@@ -164,23 +164,23 @@ export default function LoginModal({
                 overflow-y-auto
                 rounded-[32px]
                 border
-                border-white/10
-                bg-[#050505]
+                border-border
+                bg-surface
                 shadow-2xl
               "
             >
               <div className="grid md:min-h-[560px] md:grid-cols-[1fr_1.1fr]">
                 {/* LEFT */}
                 <div className="flex flex-col justify-center p-5 sm:p-7 lg:p-8">
-                  <div className="mb-3 inline-flex w-fit rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/60">
+                  <div className="mb-3 inline-flex w-fit rounded-full border border-border bg-foreground/[0.03] px-3 py-1 text-xs text-muted">
                     ✨ Organize seus prompts em um único lugar
                   </div>
 
-                  <h1 id="login-modal-title" className="mb-2 text-3xl sm:text-4xl font-semibold text-white">
+                  <h1 id="login-modal-title" className="mb-2 text-3xl sm:text-4xl font-semibold text-foreground">
                     Bem-vindo ao Mind.
                   </h1>
 
-                  <p className="mb-5 text-sm text-white/50">
+                  <p className="mb-5 text-sm text-muted">
                     Salve, organize e encontre seus prompts em segundos.
                   </p>
 
@@ -196,10 +196,10 @@ export default function LoginModal({
                         justify-center
                         gap-3
                         rounded-xl
-                        bg-white
+                        bg-primary
                         py-2.5
                         font-medium
-                        text-black
+                        text-primary-foreground
                         transition-all
                         hover:scale-[1.02]
                       "
@@ -232,11 +232,11 @@ export default function LoginModal({
                     </button>
 
                     <div className="flex items-center gap-4 py-2">
-                      <div className="h-px flex-1 bg-white/10" />
-                      <span className="text-sm text-white/40">
+                      <div className="h-px flex-1 bg-foreground/10" />
+                      <span className="text-sm text-subtle">
                         ou
                       </span>
-                      <div className="h-px flex-1 bg-white/10" />
+                      <div className="h-px flex-1 bg-foreground/10" />
                     </div>
 
                     <form
@@ -257,15 +257,15 @@ export default function LoginModal({
                         w-full
                         rounded-xl
                         border
-                        border-white/10
-                        bg-white/[0.03]
+                        border-border
+                        bg-foreground/[0.03]
                         px-4
                         py-2.5
-                        text-white
+                        text-foreground
                         outline-none
                         transition-all
-                        focus:border-white/30
-                        focus:bg-white/[0.05]
+                        focus:border-foreground/30
+                        focus:bg-foreground/[0.05]
                       "
                     />
 
@@ -280,25 +280,25 @@ export default function LoginModal({
                         w-full
                         rounded-xl
                         border
-                        border-white/10
-                        bg-white/[0.03]
+                        border-border
+                        bg-foreground/[0.03]
                         px-4
                         py-2.5
-                        text-white
+                        text-foreground
                         outline-none
                         transition-all
-                        focus:border-white/30
-                        focus:bg-white/[0.05]
+                        focus:border-foreground/30
+                        focus:bg-foreground/[0.05]
                       "
                     />
 
                     <div className="flex justify-end">
-                      <button type="button" onClick={() => void handlePasswordReset()} disabled={pending} className="text-sm text-white/50 transition hover:text-white disabled:opacity-50">
+                      <button type="button" onClick={() => void handlePasswordReset()} disabled={pending} className="text-sm text-muted transition hover:text-foreground disabled:opacity-50">
                         Esqueceu sua senha?
                       </button>
                     </div>
 
-                    {error && <p role="alert" className="rounded-lg border border-red-400/20 bg-red-400/5 p-3 text-sm text-red-200">{error}</p>}
+                    {error && <p role="alert" className="rounded-lg border border-red-400/20 bg-red-400/5 p-3 text-sm text-red-700">{error}</p>}
                     {notice && <p role="status" className="rounded-lg border border-emerald-400/20 bg-emerald-400/5 p-3 text-sm text-emerald-100">{notice}</p>}
 
                     <button
@@ -307,10 +307,10 @@ export default function LoginModal({
                       className="
                         w-full
                         rounded-xl
-                        bg-white
+                        bg-primary
                         py-2.5
                         font-semibold
-                        text-black
+                        text-primary-foreground
                         transition-all
                         hover:scale-[1.02]
                         active:scale-[0.98]
@@ -320,14 +320,14 @@ export default function LoginModal({
                     </button>
                     </form>
 
-                    <div className="pt-3 text-center text-sm text-white/50">
+                    <div className="pt-3 text-center text-sm text-muted">
                       Não possui conta?{" "}
                       <button
                         type="button"
                         onClick={() =>
                           router.push("/register")
                         }
-                        className="font-medium text-white transition hover:opacity-80"
+                        className="font-medium text-foreground transition hover:opacity-80"
                       >
                         Criar conta →
                       </button>
@@ -348,11 +348,11 @@ export default function LoginModal({
                   <div className="absolute inset-0 bg-gradient-to-r from-black via-black/30 to-transparent" />
 
                   <div className="absolute bottom-6 left-6 max-w-sm">
-                    <h2 className="text-2xl font-semibold text-white">
+                    <h2 className="text-2xl font-semibold text-foreground">
                       Nunca mais perca um prompt.
                     </h2>
 
-                    <p className="mt-3 text-white/60">
+                    <p className="mt-3 text-muted">
                       Organize suas ideias e encontre seus prompts quando precisar.
                     </p>
                   </div>

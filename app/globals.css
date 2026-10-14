@@ -1,21 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #060606;
-  --foreground: #ededed;
-
-  --input-background: #1a1a1a;
-  --input-foreground: #ffffff;
-  --border-color: #333333;
+  color-scheme: light;
+  --background: #fafafa;
+  --foreground: #17181a;
+  --surface: #ffffff;
+  --surface-hover: #f0f0f3;
+  --muted: #565660;
+  --subtle: #696975;
+  --media: #eeedf3;
+  --input-background: #f5f5f7;
+  --input-foreground: #17181a;
+  --border-color: #dedee5;
+  --primary: #17181a;
+  --primary-foreground: #ffffff;
+  --primary-hover: #34343d;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-
-}
+body { background: var(--background); color: var(--foreground); }
+* { scrollbar-width: thin; scrollbar-color: #c4c4ce transparent; }
+::selection { background: #dce1ec; color: #17181a; }
+input, textarea, select { accent-color: var(--foreground); caret-color: var(--foreground); }
+input::placeholder, textarea::placeholder { color: var(--subtle); opacity: 1; }
+button:not(:disabled), a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }
+.site-content { min-height: 100dvh; }
+.site-content:focus { outline: none; }
+.site-icon-button { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 12px; color: var(--muted); cursor: pointer; }
+.site-icon-button:hover { background: var(--surface-hover); color: var(--foreground); }
+.site-icon-button[aria-current="page"] { color: var(--foreground); }
+.site-navigation-drawer { position: fixed; inset: 0 auto 0 0; width: 80px; height: 100dvh; max-height: 100dvh; margin: 0; padding: 0; border: 0; border-right: 1px solid var(--border-color); color: var(--foreground); background: var(--surface); }
+.site-navigation-drawer::backdrop { background: rgb(23 24 26 / 35%); }
+.skip-link { position: fixed; z-index: 100; top: 8px; left: 8px; transform: translateY(-150%); padding: 12px 18px; border-radius: 12px; background: var(--primary); color: var(--primary-foreground); }
+.skip-link:focus { transform: none; }
 
 @theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-media: var(--media);
+  --color-border: var(--border-color);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
   --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
 }
  
@@ -111,45 +141,44 @@ body {
   .cmp-knob { transition: none; }
 }
 
-/* Bencho Action node and Upload dropzone (MIT), adapted for Mind.
-   Tokens are local to these components so the rest of the site stays unchanged. */
+/* Bencho Action node and Upload dropzone (MIT), using shared theme tokens. */
 .mind-node, .mind-upload {
   --card: var(--input-background);
   --fill-on: var(--foreground);
-  --fill-slab: #111;
-  --pane-edge: rgba(255, 255, 255, .12);
+  --fill-slab: var(--surface);
+  --pane-edge: var(--border-color);
   color: var(--fill-on);
   font-family: inherit;
 }
 .mind-node { position: relative; margin: 72px 64px 28px 0; }
 .mind-node-card { position: relative; z-index: 2; padding: 18px 48px 18px 18px; border-radius: 20px; border: 1px solid var(--pane-edge); background: var(--fill-slab); }
 .mind-node-top { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
-.mind-node-top > svg { color: rgba(255,255,255,.5); }
-.mind-node-card p { margin-top: 10px; font-size: 12px; line-height: 1.6; color: rgba(255,255,255,.5); }
+.mind-node-top > svg { color: var(--muted); }
+.mind-node-card p { margin-top: 10px; font-size: 12px; line-height: 1.6; color: var(--muted); }
 .mind-node-trigger { position: absolute; right: 12px; top: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--card); cursor: pointer; }
 /* Anchored on the card's own top-right corner. The fan overflows
    instead of shrinking the card's usable surface. */
 .mind-node-fan { position: absolute; top: 0; right: 0; z-index: 1; }
 .mind-node-reach { position: absolute; left: -140px; top: -72px; width: 200px; height: 170px; }
 .mind-node-action { position: absolute; top: 0; left: 0; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--pane-edge); background: var(--card); color: var(--fill-on); cursor: pointer; }
-.mind-node-action:hover { background: #303030; }
+.mind-node-action:hover { background: var(--surface-hover); }
 .mind-node-action:disabled { opacity: .4 !important; cursor: wait; }
 .mind-node-action:focus-visible, .mind-node-trigger:focus-visible, .mind-upload-zone:focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
 .mind-upload { width: 100%; }
 .mind-upload-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 176px; padding: 16px; border: 1px solid var(--pane-edge); border-radius: 16px; background: var(--fill-slab); cursor: pointer; transition: scale 420ms cubic-bezier(.3,1.35,.4,1), background-color 200ms ease; }
 /* A file over it and it grows, with a bounce; the arrow lifts
    toward the hand before the file is let go. */
-.mind-upload-zone[data-over] { scale: 1.02; background: #1b1b1b; }
+.mind-upload-zone[data-over] { scale: 1.02; background: var(--surface-hover); }
 .mind-upload-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: color-mix(in srgb, var(--fill-on) 6%, var(--fill-slab)); transition: translate 320ms cubic-bezier(.3,1.5,.4,1); }
 .mind-upload-zone[data-over] .mind-upload-icon { translate: 0 -4px; }
 .mind-upload-zone strong { font-size: 13px; font-weight: 500; text-align: center; }
-.mind-upload-zone > span:last-child { font-size: 12px; text-align: center; color: rgba(255,255,255,.45); }
+.mind-upload-zone > span:last-child { font-size: 12px; text-align: center; color: var(--muted); }
 .mind-upload-zone:disabled { cursor: default; opacity: .55; }
 @media (prefers-reduced-motion: reduce) { .mind-upload-zone, .mind-upload-icon { transition: none; } }
 
 /* Prompt results: manual scrolling with mouse dragging and native touch gestures. */
 .results-marquee { min-width: 0; max-width: 100%; }
-.results-marquee-viewport { overflow-x: auto; overscroll-behavior-x: contain; border-radius: 16px; padding-block: 2px; scrollbar-width: thin; scrollbar-color: #454545 #101010; cursor: grab; user-select: none; }
+.results-marquee-viewport { overflow-x: auto; overscroll-behavior-x: contain; border-radius: 16px; padding-block: 2px; scrollbar-width: thin; scrollbar-color: #c4c4ce transparent; cursor: grab; user-select: none; }
 .results-marquee-viewport:focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
 .results-marquee-viewport[data-dragging], .results-marquee-viewport[data-dragging] * { cursor: grabbing; }
 .results-marquee-track { display: flex; width: max-content; min-width: 100%; }
@@ -157,24 +186,24 @@ body {
 .results-marquee-card { flex: none; width: clamp(180px, 42vw, 240px); min-width: 0; text-align: left; cursor: grab; }
 .results-marquee-media { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 16px; }
 .results-marquee-media img { display: block; width: 100%; height: auto; }
-.results-marquee-error { padding: 20px; font-size: 13px; color: rgba(255,255,255,.65); }
+.results-marquee-error { padding: 20px; font-size: 13px; color: var(--muted); }
 .results-marquee-card:focus-visible .results-marquee-media { outline: 2px solid var(--foreground); outline-offset: -3px; }
 .results-marquee[data-single] .results-marquee-track { width: 100%; }
 .results-marquee[data-single] .results-marquee-viewport { cursor: default; }
 .results-marquee[data-single] .results-marquee-card { cursor: zoom-in; }
 .results-marquee[data-single] .results-marquee-group { width: 100%; padding-right: 0; justify-content: center; }
-.results-lightbox { width: min(94vw, 1100px); max-height: 94dvh; margin: auto; padding: 16px; border: 1px solid rgba(255,255,255,.15); border-radius: 16px; color: var(--foreground); background: #080808; }
+.results-lightbox { width: min(94vw, 1100px); max-height: 94dvh; margin: auto; padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; color: var(--foreground); background: var(--surface); }
 .results-lightbox[open] { display: flex; flex-direction: column; gap: 12px; }
 .results-lightbox::backdrop { background: rgba(0,0,0,.88); }
 .results-lightbox-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .results-lightbox-header h2 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 500; }
-.results-lightbox button { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 8px; background: #181818; cursor: pointer; }
-.results-lightbox button:hover { background: #303030; }
+.results-lightbox button { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 8px; background: var(--input-background); cursor: pointer; }
+.results-lightbox button:hover { background: var(--surface-hover); }
 .results-lightbox button:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }
 .results-lightbox-image { display: flex; align-items: center; justify-content: center; min-height: 180px; overflow: auto; }
 .results-lightbox-image img { width: auto; max-width: 100%; max-height: calc(94dvh - 140px); object-fit: contain; }
 .results-lightbox-image p { max-width: 360px; padding: 30px; font-size: 14px; text-align: center; }
-.results-lightbox-footer { display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 12px; color: rgba(255,255,255,.65); }
+.results-lightbox-footer { display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 12px; color: var(--muted); }
 
 
 /* The library card is the action node itself; the fan belongs to its corner. */

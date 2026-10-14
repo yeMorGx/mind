@@ -58,7 +58,7 @@ export function UploadDropzone({ onFiles, disabled = false, remaining = 8 }: {
         <span>JPEG, PNG ou WebP · até 5 MB por arquivo</span>
       </button>
     </motion.div>
-    {error && <p role="alert" className="mt-2 text-sm text-red-200">{error}</p>}
-    {phase === "done" && <p role="status" className="mt-2 text-xs text-white/50">Imagens preparadas. Salve o prompt para guardar as alterações.</p>}
+    {error && <p role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
+    {phase === "done" && <p role="status" className="mt-2 text-xs text-muted">Imagens preparadas. Salve o prompt para guardar as alterações.</p>}
   </div>;
 }

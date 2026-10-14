@@ -49,7 +49,7 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
 
   return <section className="results-marquee mt-9" aria-labelledby="prompt-results-heading" data-single={!multiple || undefined}>
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 id="prompt-results-heading" className="text-sm font-medium text-white/75">Resultados do prompt</h2>
+      <h2 id="prompt-results-heading" className="text-sm font-medium text-muted">Resultados do prompt</h2>
     </div>
     <div className="results-marquee-viewport" data-dragging={dragging || undefined}
       role="region" aria-label="Galeria de resultados do prompt" tabIndex={multiple ? 0 : undefined}
@@ -94,7 +94,7 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
         </div>
       </div>
     </div>
-    <p className="mt-3 text-xs text-white/50">{multiple ? "Arraste para explorar. Clique em uma imagem para ver o resultado completo." : "Clique na imagem para ver o resultado completo."}</p>
+    <p className="mt-3 text-xs text-muted">{multiple ? "Arraste para explorar. Clique em uma imagem para ver o resultado completo." : "Clique na imagem para ver o resultado completo."}</p>
 
     <dialog ref={dialog} className="results-lightbox" aria-labelledby="result-viewer-title" onCancel={(event) => { event.preventDefault(); setActive(null); }} onClose={() => setActive(null)}
       onClick={(event) => {

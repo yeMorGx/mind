@@ -1,33 +1,21 @@
 "use client";
+import Link from "next/link";
+import { Menu, Search, UserRound } from "lucide-react";
 
-import { Menu, Search } from "lucide-react";
-
-type HeaderProps = {
-  searchValue: string;
-  onSearchChange: (value: string) => void;
-  onMenuClick: () => void;
-};
-
-export default function Header({ searchValue, onSearchChange, onMenuClick }: HeaderProps) {
-  return (
-    <header className="fixed left-0 right-0 top-0 z-30 md:left-20 flex h-16 items-center justify-between gap-4 border-b border-white/10 bg-[#080808]/95 px-4 backdrop-blur-xl md:px-8">
-      <div className="flex items-center gap-3">
-        <button type="button" onClick={onMenuClick} aria-label="Abrir navegação" className="rounded-lg p-2 text-white/60 hover:bg-white/5 hover:text-white md:hidden">
-          <Menu size={20} />
-        </button>
-        <h1 className="text-lg font-medium">Biblioteca</h1>
+type HeaderProps = { title: string; searchValue?: string; onSearchChange: (value: string) => void; onMenuClick: () => void; mobileOpen: boolean; profileHref?: string; onLogin: () => void; authReady: boolean };
+export default function Header({ title, searchValue, onSearchChange, onMenuClick, mobileOpen, profileHref, onLogin, authReady }: HeaderProps) {
+  return <header className="site-header fixed inset-x-0 top-0 z-30 h-16 border-b border-border bg-surface md:left-20">
+    <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-5 sm:px-8">
+      <div className="flex shrink-0 items-center gap-2">
+        <div className="md:hidden"><button type="button" onClick={onMenuClick} aria-label="Abrir navegação" aria-expanded={mobileOpen} aria-controls="mobile-navigation" className="site-icon-button"><Menu size={20} /></button></div>
+        <p className={`text-sm font-medium ${searchValue !== undefined ? "hidden sm:block" : ""}`}>{title}</p>
       </div>
-      <label className="relative block w-full max-w-sm">
-        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-        <span className="sr-only">Buscar prompts</span>
-        <input
-          type="search"
-          value={searchValue}
-          onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Buscar prompts…"
-          className="w-full rounded-xl border border-white/10 bg-[#080808]/95 py-2 pl-10 pr-4 text-sm outline-none transition placeholder:text-white/40 focus:border-white/30"
-        />
-      </label>
-    </header>
-  );
+      {searchValue !== undefined && <label className="relative ml-auto block w-full max-w-sm">
+        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+        <span className="sr-only">Buscar na biblioteca</span>
+        <input type="search" value={searchValue} onChange={event => onSearchChange(event.target.value)} placeholder="Buscar prompts…" className="w-full rounded-xl border border-border bg-background py-2 pl-10 pr-3 text-sm outline-none placeholder:text-subtle focus:border-foreground" />
+      </label>}
+      {profileHref ? <Link href={profileHref} title="Meu perfil" aria-label="Meu perfil" className="site-icon-button shrink-0"><UserRound size={20} /></Link> : <button type="button" disabled={!authReady} onClick={onLogin} className="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50">Entrar</button>}
+    </div>
+  </header>;
 }

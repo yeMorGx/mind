@@ -58,17 +58,17 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
-        <p className="text-sm text-white/45">Mind · autenticação</p>
+    <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
+      <div className="w-full max-w-md rounded-3xl border border-border bg-foreground/[0.03] p-8 text-center">
+        <p className="text-sm text-subtle">Mind · autenticação</p>
         <h1 className="mt-3 text-2xl font-semibold">{error ? "Não foi possível entrar" : "Concluindo seu acesso…"}</h1>
         {error ? (
           <>
-            <p role="alert" className="mt-4 text-sm leading-6 text-red-200">{error}</p>
-            <Link href="/" className="mt-6 inline-flex rounded-xl bg-white px-5 py-3 font-medium text-black">Voltar ao Mind</Link>
+            <p role="alert" className="mt-4 text-sm leading-6 text-red-700">{error}</p>
+            <Link href="/" className="mt-6 inline-flex rounded-xl bg-primary px-5 py-3 font-medium text-primary-foreground">Voltar ao Mind</Link>
           </>
         ) : (
-          <p className="mt-3 text-sm text-white/50">Aguarde enquanto confirmamos sua conta.</p>
+          <p className="mt-3 text-sm text-muted">Aguarde enquanto confirmamos sua conta.</p>
         )}
       </div>
     </main>

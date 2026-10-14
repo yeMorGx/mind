@@ -47,7 +47,7 @@ export default function RegisterPage() {
   return (
     <OnboardingLayout step={1}>
       <h1 className="text-4xl font-bold">Crie sua conta</h1>
-      <p className="mt-2 text-white/60">
+      <p className="mt-2 text-muted">
         Vamos começar com algumas informações.
       </p>
 
@@ -58,7 +58,7 @@ export default function RegisterPage() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Nome"
-          className="w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none focus:border-white/30"
+          className="w-full rounded-xl border border-border bg-foreground/5 p-4 outline-none focus:border-foreground/30"
         />
         <input
           autoComplete="email"
@@ -67,7 +67,7 @@ export default function RegisterPage() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="Email"
-          className="w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none focus:border-white/30"
+          className="w-full rounded-xl border border-border bg-foreground/5 p-4 outline-none focus:border-foreground/30"
         />
         <input
           autoComplete="new-password"
@@ -77,23 +77,23 @@ export default function RegisterPage() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder="Senha (mínimo de 6 caracteres)"
-          className="w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none focus:border-white/30"
+          className="w-full rounded-xl border border-border bg-foreground/5 p-4 outline-none focus:border-foreground/30"
         />
 
         {!firebaseConfigured && (
-          <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-100/80">
+          <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-800">
             Configure as variáveis Firebase no arquivo .env.local para habilitar o cadastro.
           </p>
         )}
         {error && (
-          <p role="alert" className="rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-200">
+          <p role="alert" className="rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-700">
             {error}
           </p>
         )}
 
         <button
           disabled={pending || !firebaseConfigured}
-          className="mt-4 w-full rounded-xl bg-white py-4 font-semibold text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 w-full rounded-xl bg-primary py-4 font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? "Criando conta..." : "Continuar"}
         </button>

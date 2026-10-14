@@ -13,7 +13,7 @@ export default function Step6Page() {
   const { data } = useOnboarding();
 
   if (!ready || !user) {
-    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando cadastro...</main>;
+    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
   }
 
   return (
@@ -61,25 +61,25 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+    <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-2xl">
         <div className="mb-10">
-          <p className="text-sm text-white/50">Passo 6 de 7</p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-[85%] rounded-full bg-white" />
+          <p className="text-sm text-muted">Passo 6 de 7</p>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-foreground/10">
+            <div className="h-full w-[85%] rounded-full bg-primary" />
           </div>
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-4xl font-bold">Prepare os convites</h1>
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-muted">
             Salve os e-mails de quem deverá colaborar no workspace.
           </p>
 
           <div className="mt-8 space-y-4">
             {emails.map((email, index) => (
               <div key={index}>
-                <label className="mb-2 block text-sm text-white/50" htmlFor={`invite-${index}`}>
+                <label className="mb-2 block text-sm text-muted" htmlFor={`invite-${index}`}>
                   E-mail do membro {index + 1}
                 </label>
                 <input
@@ -88,7 +88,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
                   value={email}
                   onChange={(event) => updateEmail(index, event.target.value)}
                   placeholder="email@empresa.com"
-                  className="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-4 outline-none transition focus:border-white/30"
+                  className="mt-1 w-full rounded-xl border border-border bg-foreground/5 px-4 py-4 outline-none transition focus:border-foreground/30"
                 />
               </div>
             ))}
@@ -96,20 +96,20 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
             <button
               type="button"
               onClick={() => setEmails((current) => [...current, ""])}
-              className="w-full rounded-xl border border-dashed border-white/20 py-4 text-white/70 transition hover:border-white/40 hover:text-white"
+              className="w-full rounded-xl border border-dashed border-border py-4 text-muted transition hover:border-foreground/30 hover:text-foreground"
             >
               + Adicionar outro e-mail
             </button>
           </div>
 
-          <p className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-white/50">
+          <p className="mt-5 rounded-xl border border-border bg-foreground/[0.03] p-4 text-sm text-muted">
             Os e-mails serão guardados como convites pendentes. O envio automático precisa de um serviço de e-mail, que ainda não está configurado.
           </p>
 
-          {error && <p role="alert" className="mt-4 text-sm text-red-300">{error}</p>}
+          {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
 
           <div className="mt-8 flex justify-between">
-            <button onClick={() => router.back()} className="rounded-xl border border-white/10 px-6 py-3">
+            <button onClick={() => router.back()} className="rounded-xl border border-border px-6 py-3">
               Voltar
             </button>
             <div className="flex gap-3">
@@ -117,7 +117,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
                 type="button"
                 disabled={pending}
                 onClick={() => { setEmails([]); void continueToWorkspace([]); }}
-                className="rounded-xl border border-white/10 px-6 py-3 disabled:opacity-50"
+                className="rounded-xl border border-border px-6 py-3 disabled:opacity-50"
               >
                 Pular
               </button>
@@ -125,7 +125,7 @@ function Step6Form({ user, initialEmails }: { user: User; initialEmails: string[
                 type="button"
                 disabled={pending}
                 onClick={() => void continueToWorkspace()}
-                className="rounded-xl bg-white px-6 py-3 font-semibold text-black disabled:opacity-50"
+                className="rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground disabled:opacity-50"
               >
                 {pending ? "Salvando..." : "Continuar →"}
               </button>

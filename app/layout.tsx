@@ -2,6 +2,7 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
+import SiteLayout from "@/components/layout/SiteLayout";
 import { OnboardingProvider } from "./context/OnboardingContext";
 
 export const metadata = {
@@ -23,7 +24,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={geist.variable}>
       <body className={cn("font-sans bg-background text-foreground")}>
         <OnboardingProvider>
-          {children}
+          <SiteLayout>{children}</SiteLayout>
         </OnboardingProvider>
       </body>
     </html>

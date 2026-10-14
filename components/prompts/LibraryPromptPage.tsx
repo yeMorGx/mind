@@ -43,16 +43,16 @@ export default function LibraryPromptPage({ promptId }: { promptId: string }) {
   }, [authReady, user, profileLoading, data.onboardingComplete, workspaceId, promptId, requestKey]);
 
   if (!authReady || !user || profileLoading || !data.onboardingComplete || state?.key !== requestKey) {
-    return <main className="flex min-h-screen items-center justify-center bg-background text-white/60"><p role="status">Carregando seu prompt…</p></main>;
+    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted"><p role="status">Carregando seu prompt…</p></main>;
   }
 
   if (state.error || !state.prompt) {
-    return <main className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
+    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="max-w-md text-center">
         <h1 className="text-3xl font-semibold">{state.error ? "Não conseguimos carregar este prompt" : "Prompt não encontrado"}</h1>
-        <p className="mt-4 text-sm leading-6 text-white/55">{state.error ? "Verifique sua conexão e tente novamente." : "Este prompt não está na sua biblioteca ou foi removido."}</p>
-        {state.error && <button type="button" onClick={() => setAttempt((value) => value + 1)} className="mt-6 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black">Tentar novamente</button>}
-        <Link href="/home" className="mt-6 block text-sm text-white/70 hover:text-white">Voltar à biblioteca</Link>
+        <p className="mt-4 text-sm leading-6 text-muted">{state.error ? "Verifique sua conexão e tente novamente." : "Este prompt não está na sua biblioteca ou foi removido."}</p>
+        {state.error && <button type="button" onClick={() => setAttempt((value) => value + 1)} className="mt-6 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Tentar novamente</button>}
+        <Link href="/home" className="mt-6 block text-sm text-muted hover:text-foreground">Voltar à biblioteca</Link>
       </div>
     </main>;
   }

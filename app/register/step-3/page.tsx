@@ -80,20 +80,20 @@ export default function Step3Page() {
   }
 
   if (!ready) {
-    return <main className="flex min-h-screen items-center justify-center bg-black text-white/60">Carregando cadastro...</main>;
+    return <main className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
   }
 
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+    <main className="min-h-[calc(100dvh-4rem)] bg-background text-foreground flex items-center justify-center px-6">
       <div className="w-full max-w-3xl">
 
         <div className="mb-10">
-          <p className="text-sm text-white/50">
+          <p className="text-sm text-muted">
             Passo 3 de 7
           </p>
 
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-[42%] rounded-full bg-white" />
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-foreground/10">
+            <div className="h-full w-[42%] rounded-full bg-primary" />
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export default function Step3Page() {
             Como você conheceu o Mind?
           </h1>
 
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-muted">
             Queremos saber o que está funcionando para encontrar novos usuários.
           </p>
 
@@ -125,17 +125,17 @@ export default function Step3Page() {
                 className={`
                   rounded-2xl
                   border
-                  border-white/10
-                  bg-white/[0.03]
+                  border-border
+                  bg-foreground/[0.03]
                   p-5
                   text-left
                   transition
-                  hover:border-white/30
-                  hover:bg-white/[0.06]
+                  hover:border-foreground/30
+                  hover:bg-foreground/[0.06]
                   hover:scale-[1.02]
                   disabled:cursor-wait
                   disabled:opacity-60
-                  ${data.source === source.title ? "border-white/40 bg-white/[0.08]" : ""}
+                  ${data.source === source.title ? "border-foreground/30 bg-foreground/[0.08]" : ""}
                 `}
               >
                 <div className="text-3xl">
@@ -156,8 +156,8 @@ export default function Step3Page() {
             className="
               mt-8
               text-sm
-              text-white/50
-              hover:text-white
+              text-muted
+              hover:text-foreground
               transition
               disabled:opacity-50
             "
@@ -165,7 +165,7 @@ export default function Step3Page() {
             Pular esta etapa
           </button>
 
-          {error && <p role="alert" className="mt-4 text-sm text-red-300">{error}</p>}
+          {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
 
         </motion.div>
       </div>
