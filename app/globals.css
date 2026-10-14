@@ -18,6 +18,23 @@
 }
 
 body { background: var(--background); color: var(--foreground); }
+/* The landing is intentionally independent from the internal site's theme. */
+.landing-page {
+  --background: #060606;
+  --foreground: #ededed;
+  --surface: #080808;
+  --surface-hover: #1c1c1c;
+  --muted: #aaaab4;
+  --subtle: #9999a5;
+  --border-color: #333333;
+  --primary: #ededed;
+  --primary-foreground: #17181a;
+  --primary-hover: #d3d3d8;
+  --input-background: #1a1a1a;
+  --input-foreground: #ffffff;
+  color: var(--foreground);
+}
+
 * { scrollbar-width: thin; scrollbar-color: #c4c4ce transparent; }
 ::selection { background: #dce1ec; color: #17181a; }
 input, textarea, select { accent-color: var(--foreground); caret-color: var(--foreground); }

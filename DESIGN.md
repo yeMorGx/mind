@@ -44,19 +44,19 @@ components:
 
 ## Direção
 
-Por solicitação do proprietário, todas as páginas usam somente o tema claro. A biblioteca, os prompts, os perfis, o cadastro, o login e os estados de erro compartilham a mesma paleta. O céu e a galeria da landing são conteúdo visual; os emblemas mantêm as cores que indicam sua identidade.
+Por solicitação do proprietário, as páginas internas usam somente o tema claro. A landing (`/`) é uma exceção explícita: mantém a apresentação original, sem header/sidebar globais e com seus estilos próprios. A biblioteca, os prompts, os perfis, o cadastro, o login interno e os estados de erro compartilham a mesma paleta. O céu e a galeria da landing são conteúdo visual; os emblemas mantêm as cores que indicam sua identidade.
 
 O conteúdo conduz a página: imagens e texto do prompt primeiro; identidade, detalhes e instruções depois. Evitar estatísticas fictícias e reformulações de conteúdo sem necessidade.
 
 ## Navegação persistente
 
-`components/layout/SiteLayout.tsx`, aplicado no layout raiz, é o único responsável por montar `Header` e `Sidebar`. As páginas não repetem esses componentes nem reservam offsets próprios para eles.
+`components/layout/SiteLayout.tsx`, aplicado no layout raiz, é o único responsável por montar `Header` e `Sidebar`. As páginas internas não repetem esses componentes nem reservam offsets próprios para eles. Na rota `/`, o layout raiz entrega a landing sem esse chrome nem seus offsets.
 
 - Header fixo de 64 px, fundo branco e borda inferior. Título contextual, busca na biblioteca e acesso ao perfil ou login.
 - Sidebar fixa de 80 px a partir de 768 px, somente com o logo e ícones: explorar, biblioteca, favoritos e perfil. O estado ativo e o foco são visíveis.
 - Em telas menores, o mesmo menu abre em um dialog nativo com backdrop, foco contido, Escape e botão de fechar. A página continua com largura total quando o menu está fechado.
 - A raiz reserva 64 px no topo e, no desktop, 80 px à esquerda. Os containers principais têm até 1152 px, com gutters de 20 px no celular e 32 px a partir do breakpoint pequeno.
-- Links de retorno e ações específicas ficam no conteúdo; não criam outro header. O acesso autenticado não impede explorar a landing.
+- Links de retorno e ações específicas ficam no conteúdo; não criam outro header. A landing conserva seu comportamento original de encaminhar contas já configuradas à biblioteca.
 
 ## Cores e componentes
 
@@ -77,7 +77,7 @@ Resultados de prompts usam uma galeria horizontal manual, sem avanço automátic
 ## Regras
 
 - Preservar contas, dados, links e ações ao alterar a apresentação.
-- Manter um único header e uma única sidebar por página, inclusive em carregamentos e erros.
+- Manter um único header e uma única sidebar por página interna, inclusive em carregamentos e erros.
 - Usar foco visível, labels acessíveis, targets confortáveis e navegação por teclado.
 - Não reintroduzir um tema escuro isolado em perfis, formulários ou biblioteca.
 - Não oferecer emblemas autoconcedidos nem métricas inventadas.

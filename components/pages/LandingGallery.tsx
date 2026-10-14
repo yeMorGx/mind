@@ -15,7 +15,7 @@ export default function LandingGallery({ prompts, suspended }: { prompts: Prompt
     <CircularGallery items={items.length ? items : undefined} autoScroll={paused || suspended ? 0 : 0.65}
       showTitles={false} bend={2} itemSize={0.82} itemAspect={0.78} borderRadius={0.05} wave={0.3} dpr={1} intro={false} />
     <button type="button" onClick={() => setPaused(value => !value)} aria-label={paused ? "Retomar rotação da galeria" : "Pausar rotação da galeria"}
-      aria-pressed={paused} className="absolute bottom-3 right-5 grid size-9 place-items-center rounded-full border border-border bg-black/60 text-white hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground motion-reduce:hidden">
+      aria-pressed={paused} className="absolute bottom-3 right-5 grid size-9 place-items-center rounded-full border border-white/20 bg-black/60 text-white/80 hover:bg-black/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:hidden">
       {paused ? <Play size={15} /> : <Pause size={15} />}
     </button>
   </div>;

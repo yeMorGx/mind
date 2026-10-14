@@ -48,6 +48,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       router.replace("/");
     } catch { setError("Não foi possível sair da conta. Tente novamente."); }
   }
+  // The landing keeps its own original composition and navigation.
+  if (pathname === "/") return children;
+
   return <LayoutContext.Provider value={{ searchValue, activeView, setActiveView }}>
     <div className="min-h-screen bg-background text-foreground">
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>

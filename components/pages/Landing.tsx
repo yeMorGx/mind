@@ -23,7 +23,7 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
 
   useEffect(() => {
     if (!authReady || !user || profileLoading) return;
-    if (data.onboardingComplete) return;
+    if (data.onboardingComplete) router.replace("/home");
     else if (!data.role) router.replace("/register/step-2");
     else if (!data.usageType) router.replace("/register/step-4");
     else if (data.usageType === "team" && !data.teamName) router.replace("/register/step-5");
@@ -43,8 +43,8 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
   const headline = "Build your personal prompt library.";
 
   return (
-    <main>
-    <div className="relative overflow-hidden min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center bg-background text-foreground">
+    <main className="landing-page">
+    <div className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <CloudShader className="h-full w-full" speed={0.4} skyTopColor="#6ca8da" skyBottomColor="#b9ddf3" />
       </div>
@@ -71,28 +71,28 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
           initial={{ opacity: 0, filter: "blur(10px)", y: 15 }}
           animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           transition={{ duration: 1 }}
-          className={`${instrumentSerif.className} text-4xl font-bold mb-8 text-center text-foreground`}
+          className={`${instrumentSerif.className} text-4xl font-bold mb-8 text-center text-[#102a43]`}
         >
           {headline}
         </motion.h1>
 
-        <p className="max-w-lg px-6 text-center text-sm text-foreground">
+        <p className="max-w-lg px-6 text-center text-sm text-[#102a43]">
           Salve, organize e encontre seus melhores prompts em um só lugar.
         </p>
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
           <button
             type="button"
-            onClick={() => router.push(user && data.onboardingComplete ? "/home" : "/register")}
-            className="rounded-xl bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+            onClick={() => router.push("/register")}
+            className="rounded-xl bg-[#102a43] px-6 py-3 font-semibold text-white transition hover:bg-[#183d5d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#102a43]"
           >
-            {user && data.onboardingComplete ? "Minha biblioteca" : "Começar grátis"}
+            Começar grátis
           </button>
           <button
             type="button"
-            onClick={() => user && data.onboardingComplete ? router.push(`/u/${user.uid}`) : setIsModalOpen(true)}
-            className="rounded-xl border border-border bg-surface px-6 py-3 text-foreground transition hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+            onClick={() => setIsModalOpen(true)}
+            className="rounded-xl border border-white/80 bg-white/80 px-6 py-3 text-[#102a43] transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#102a43]"
           >
-            {user && data.onboardingComplete ? "Meu perfil" : "Já tenho uma conta"}
+            Já tenho uma conta
           </button>
         </div>
         <LandingGallery prompts={initialPrompts} suspended={isModalOpen} />
@@ -105,22 +105,22 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
       />
     </div>
       {initialPrompts.length > 0 && (
-      <section id="explorar" className="scroll-mt-24 border-t border-border bg-surface px-5 py-16 sm:px-8 sm:py-24">
-        <div className="mx-auto max-w-6xl">
+      <section id="explorar" className="scroll-mt-6 border-t border-white/[0.07] bg-[#080808] px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-7 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-subtle">Inspiração aberta</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/35">Inspiração aberta</p>
               <h2 className={`${instrumentSerif.className} mt-3 text-5xl sm:text-6xl`}>Prompts da comunidade</h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-subtle">Cada publicação reúne o prompt e as imagens que mostram o resultado. Abra uma para copiar e compartilhar.</p>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-white/45">Cada publicação reúne o prompt e as imagens que mostram o resultado. Abra uma para copiar e compartilhar.</p>
             </div>
-            <label className="flex w-full items-center gap-3 rounded-xl border border-border bg-foreground/[0.03] px-4 md:max-w-sm">
-              <Search size={17} className="shrink-0 text-subtle" />
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar prompts ou criadores" className="w-full bg-transparent py-3.5 text-sm outline-none placeholder:text-subtle" />
+            <label className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 md:max-w-sm">
+              <Search size={17} className="shrink-0 text-white/35" />
+              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar prompts ou criadores" className="w-full bg-transparent py-3.5 text-sm outline-none placeholder:text-white/35" />
             </label>
           </div>
 
           {categories.length > 1 && <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
-            {categories.map((item) => <button key={item} type="button" aria-pressed={category === item} onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-4 py-2 text-xs transition ${category === item ? "border-foreground bg-primary text-primary-foreground" : "border-border text-muted hover:border-foreground/30 hover:text-foreground"}`}>{item}</button>)}
+            {categories.map((item) => <button key={item} type="button" aria-pressed={category === item} onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-4 py-2 text-xs transition ${category === item ? "border-white bg-white text-black" : "border-white/10 text-white/55 hover:border-white/25 hover:text-white"}`}>{item}</button>)}
           </div>}
 
           {visiblePrompts.length ? (
@@ -128,10 +128,10 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
               {visiblePrompts.map((prompt) => <PromptCard key={prompt.id} prompt={prompt} />)}
             </div>
           ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-border px-6 py-16 text-center">
+            <div className="mt-8 rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center">
               <p className="text-lg font-medium">{initialPrompts.length ? "Nenhum prompt encontrado" : "As primeiras publicações estão chegando"}</p>
-              <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-subtle">{initialPrompts.length ? "Tente outra busca ou categoria." : "Crie seu perfil, monte um carrossel com seus resultados e compartilhe o prompt com a comunidade."}</p>
-              {!initialPrompts.length && <button type="button" onClick={() => router.push(user && data.onboardingComplete ? "/home" : "/register")} className="mt-6 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Publicar o primeiro prompt</button>}
+              <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-white/45">{initialPrompts.length ? "Tente outra busca ou categoria." : "Crie seu perfil, monte um carrossel com seus resultados e compartilhe o prompt com a comunidade."}</p>
+              {!initialPrompts.length && <button type="button" onClick={() => router.push("/register")} className="mt-6 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black">Publicar o primeiro prompt</button>}
             </div>
           )}
         </div>
