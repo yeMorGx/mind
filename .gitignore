@@ -23,6 +23,9 @@
 # misc
 .DS_Store
 *.pem
+mind-backup-*.json
+*-import-request.json
+/supabase/.temp/
 
 # debug
 npm-debug.log*
