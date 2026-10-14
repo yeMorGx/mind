@@ -39,3 +39,13 @@ A busca do header sugere prompts públicos e criadores enquanto a pessoa digita;
 Os cards de Explorar seguem a estrutura do wireframe Figma `qCkRPKTQMKNyqzBN7EztnX`, nó `192:149`: imagem acima e bloco separado com foto/nome do criador e título abaixo. Não mostrar o texto completo nem copiar diretamente do card; a pessoa abre o prompt para ler e copiar. Curtidas são únicas por conta e prompt público; seguir e deixar de seguir ficam no perfil, com contagens reais. As relações usam os IDs públicos preservados na migração Firebase/Supabase. Visitantes precisam entrar para interagir.
 
 O header mostra somente a logo, busca centralizada e avatar do perfil com fallback para a foto do Google. Digitar muda as sugestões; resultados em Explorar só mudam ao enviar a busca. Remover os chips Pessoas/Prompts/Tudo/Com imagens/Texto. Há três filtros: ordenação, categoria e modelo. Perfis e Explorar usam margens menores; o perfil não tem botão de compartilhar. A biblioteca conserva seu conteúdo e suas ações.
+
+## Edição, publicação e configurações
+
+Os editores de criar e editar prompt usam a tela inteira: texto e imagens lado a lado no computador, seções alternáveis no celular e ações sempre visíveis. A biblioteca mantém as ações animadas; os botões separados de copiar prompt e abrir link público foram removidos por solicitação do proprietário.
+
+Cada prompt tem um fluxo em `/home/prompts/[promptId]/publish`: revisar texto, autor e todas as imagens; confirmar a publicação; copiar o link ao concluir. Retirar uma publicação exige confirmação e preserva o rascunho. O conteúdo é relido antes da confirmação para detectar alterações desde a revisão.
+
+`/home/settings` reúne dados da conta, acesso ao perfil, categoria e ferramenta padrão para novos prompts, favoritos primeiro, exportação dos próprios dados e saída da sessão. Preferências persistem no onboarding privado da conta; a edição de nome, foto, capa e @ continua no perfil público.
+
+Em 14/10/2026, o proprietário autorizou diretamente dois ajustes na landing: remover o botão de pausa da galeria circular e melhorar a seção de prompts da comunidade. A comunidade usa fundo claro, capas dos resultados, título, autor e busca; o céu, a abertura e os fluxos de login permanecem preservados.

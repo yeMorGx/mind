@@ -9,7 +9,6 @@ import { matchesCatalog } from "@/lib/catalog";
 import { useCatalogOptions, useSiteLayout } from "@/components/layout/SiteLayout";
 import PromptDialog from "@/components/prompts/PromptDialog";
 import { useOnboarding } from "@/app/context/OnboardingContext";
-import { setPromptPublication } from "@/lib/firebase/publication";
 import type { PromptDetails } from "@/lib/prompt-media";
 import {
   createPrompt,
@@ -36,8 +35,7 @@ export default function HomePage() {
   const [savingPrompt, setSavingPrompt] = useState(false);
   const [dialogError, setDialogError] = useState("");
   const [pageError, setPageError] = useState("");
-  const [copiedPromptId, setCopiedPromptId] = useState("");
-  const [publishingId, setPublishingId] = useState("");
+  const [copyNotice, setCopyNotice] = useState("");
 
   useEffect(() => {
     if (authReady && !user) router.replace("/");
@@ -69,7 +67,7 @@ export default function HomePage() {
 
   const allPrompts = useMemo(() => promptState.workspaceId === data.primaryWorkspaceId ? promptState.prompts : [], [promptState, data.primaryWorkspaceId]);
   const catalogOptions = useCatalogOptions(allPrompts);
-  const visiblePrompts = useMemo(() => allPrompts.filter(prompt => (activeView !== "favorites" || prompt.isFavorite) && matchesCatalog(prompt, searchValue, category, model, data.name || user?.displayName || "")), [allPrompts, activeView, searchValue, category, model, data.name, user?.displayName]);
+  const visiblePrompts = useMemo(() => allPrompts.filter(prompt => (activeView !== "favorites" || prompt.isFavorite) && matchesCatalog(prompt, searchValue, category, model, data.name || user?.displayName || "")).sort((a,b)=>data.preferences?.favoritesFirst?Number(b.isFavorite)-Number(a.isFavorite):0), [allPrompts, activeView, searchValue, category, model, data.name, user?.displayName, data.preferences?.favoritesFirst]);
   function openNewPrompt() { setSelectedPrompt(null); setDialogError(""); requestNewPrompt(); }
   function closeDialog() { setDialogOpen(false); closeNewPrompt(); setSelectedPrompt(null); setDialogError(""); }
 
@@ -110,8 +108,8 @@ export default function HomePage() {
   async function copyPrompt(prompt: Prompt) {
     try {
       await navigator.clipboard.writeText(prompt.content);
-      setCopiedPromptId(prompt.id);
-      window.setTimeout(() => setCopiedPromptId(""), 1800);
+      setCopyNotice("Prompt copiado.");
+      window.setTimeout(() => setCopyNotice(""), 1800);
     } catch {
       setPageError("Não foi possível copiar o prompt para a área de transferência.");
     }
@@ -122,14 +120,6 @@ export default function HomePage() {
     try {
       await createPrompt(data.primaryWorkspaceId, user.uid, `${prompt.title.slice(0, 110)} (cópia)`, prompt.content, { description: prompt.description, category: prompt.category, model: prompt.model, images: prompt.images });
     } catch { setPageError("Não foi possível duplicar o prompt."); }
-  }
-
-  async function togglePublication(prompt: Prompt) {
-    if (!user || publishingId) return;
-    setPublishingId(prompt.id); setPageError("");
-    try { await setPromptPublication(data.primaryWorkspaceId, user.uid, prompt.id, !prompt.isPublished); }
-    catch (error) { setPageError(error instanceof Error ? error.message : "Não foi possível alterar a publicação do prompt."); }
-    finally { setPublishingId(""); }
   }
 
   async function deletePrompt(prompt: Prompt) {
@@ -172,18 +162,20 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="catalog-grid catalog-library-grid">
-                {visiblePrompts.map(prompt => <LibraryPromptCard key={prompt.id} prompt={prompt} creatorId={user.uid} copied={copiedPromptId === prompt.id} publishing={publishingId === prompt.id} publicationPending={Boolean(publishingId)}
-                  onEdit={() => openPrompt(prompt)} onCopy={() => void copyPrompt(prompt)} onFavorite={() => void toggleFavorite(prompt)} onDuplicate={() => void duplicatePrompt(prompt)} onPublication={() => void togglePublication(prompt)} onDelete={() => void deletePrompt(prompt)} />)}
+                {visiblePrompts.map(prompt => <LibraryPromptCard key={prompt.id} prompt={prompt}
+                  onEdit={() => openPrompt(prompt)} onCopy={() => void copyPrompt(prompt)} onFavorite={() => void toggleFavorite(prompt)} onDuplicate={() => void duplicatePrompt(prompt)} onDelete={() => void deletePrompt(prompt)} />)}
               </div>
             )}
           </section>
         </div>
       </main>
 
+      <span className="sr-only" role="status">{copyNotice}</span>
       <PromptDialog
         key={newPromptOpen ? `new:${newPromptVersion}` : `edit:${dialogKey}`}
         isOpen={dialogOpen || newPromptOpen}
         prompt={newPromptOpen ? null : selectedPrompt}
+        defaults={{category:data.preferences?.defaultCategory,model:data.preferences?.defaultModel}}
         pending={savingPrompt}
         error={dialogError}
         onClose={closeDialog}

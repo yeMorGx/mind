@@ -18,7 +18,7 @@ type PromptView = "all" | "favorites";
 type LayoutValue = {
   searchValue: string; setSearchValue: (value: string) => void; activeView: PromptView; category: string; model: string;
   setCategory: (value: string) => void; setModel: (value: string) => void;
-  requestLogin: () => void;
+  requestLogin: () => void; signOut: () => Promise<void>;
   newPromptOpen: boolean; newPromptVersion: number; openNewPrompt: () => void; closeNewPrompt: () => void;
 };
 const LayoutContext = createContext<LayoutValue | null>(null);
@@ -82,7 +82,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   }
   // The landing is protected and does not receive internal navigation or styles.
   if (pathname === "/") return children;
-  return <LayoutContext.Provider value={{ searchValue, setSearchValue, activeView, category, model, setCategory, setModel, requestLogin: () => setLoginOpen(true), newPromptOpen, newPromptVersion, openNewPrompt, closeNewPrompt: () => setNewPromptOpen(false) }}>
+  return <LayoutContext.Provider value={{ signOut: logout, searchValue, setSearchValue, activeView, category, model, setCategory, setModel, requestLogin: () => setLoginOpen(true), newPromptOpen, newPromptVersion, openNewPrompt, closeNewPrompt: () => setNewPromptOpen(false) }}>
     <SocialProvider><div className="site-app min-h-screen bg-background text-foreground">
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
       <Header searchValue={searchValue} onSearchChange={setSearchValue} onSearch={search}

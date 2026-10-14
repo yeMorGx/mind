@@ -6,9 +6,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function PromptPage({ params }: {
+export default async function PromptPage({ params, searchParams }: {
   params: Promise<{ promptId: string }>;
+  searchParams: Promise<{edit?:string}>;
 }) {
   const { promptId } = await params;
-  return <LibraryPromptPage key={promptId} promptId={promptId} />;
+  return <LibraryPromptPage key={promptId} promptId={promptId} startEditing={(await searchParams).edit === "1"} />;
 }

@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { Instrument_Serif } from "next/font/google";
 import { CloudShader } from "@/components/ui/cloud-shader";
 import LandingGallery from "@/components/pages/LandingGallery";
 import LoginModal from "@/components/modal/modalLogin";
-import PromptCard from "@/components/marketplace/PromptCard";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import type { Prompt } from "@/lib/supabase/types";
 
@@ -105,38 +105,34 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
       />
     </div>
       {initialPrompts.length > 0 && (
-      <section id="explorar" className="scroll-mt-6 border-t border-white/[0.07] bg-[#080808] px-5 py-16 sm:px-8 sm:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-7 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-white/35">Inspiração aberta</p>
-              <h2 className={`${instrumentSerif.className} mt-3 text-5xl sm:text-6xl`}>Prompts da comunidade</h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-white/45">Cada publicação reúne o prompt e as imagens que mostram o resultado. Abra uma para copiar e compartilhar.</p>
-            </div>
-            <label className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 md:max-w-sm">
-              <Search size={17} className="shrink-0 text-white/35" />
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar prompts ou criadores" className="w-full bg-transparent py-3.5 text-sm outline-none placeholder:text-white/35" />
-            </label>
+      <section id="explorar" className="landing-community">
+        <div className="landing-community-inner">
+          <div className="landing-community-heading">
+            <div><h2 className={instrumentSerif.className}>Prompts da comunidade</h2><p>Descubra o prompt por trás de cada resultado, direto de quem criou.</p></div>
+            <Link href="/explore" className="community-explore">Explorar todos <ArrowUpRight size={18}/></Link>
           </div>
-
-          {categories.length > 1 && <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
-            {categories.map((item) => <button key={item} type="button" aria-pressed={category === item} onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-4 py-2 text-xs transition ${category === item ? "border-white bg-white text-black" : "border-white/10 text-white/55 hover:border-white/25 hover:text-white"}`}>{item}</button>)}
-          </div>}
-
-          {visiblePrompts.length ? (
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {visiblePrompts.map((prompt) => <PromptCard key={prompt.id} prompt={prompt} />)}
-            </div>
-          ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-white/15 px-6 py-16 text-center">
-              <p className="text-lg font-medium">{initialPrompts.length ? "Nenhum prompt encontrado" : "As primeiras publicações estão chegando"}</p>
-              <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-white/45">{initialPrompts.length ? "Tente outra busca ou categoria." : "Crie seu perfil, monte um carrossel com seus resultados e compartilhe o prompt com a comunidade."}</p>
-              {!initialPrompts.length && <button type="button" onClick={() => router.push("/register")} className="mt-6 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black">Publicar o primeiro prompt</button>}
-            </div>
-          )}
+          <div className="community-toolbar">
+            <div className="community-categories" aria-label="Categorias de prompts">{categories.map(item=><button key={item} type="button" aria-pressed={category===item} onClick={()=>setCategory(item)}>{item}</button>)}</div>
+            <label className="community-search"><Search size={18}/><span className="sr-only">Buscar prompts ou criadores</span><input type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Buscar na comunidade"/></label>
+          </div>
+          {visiblePrompts.length ? <div className="community-grid">{visiblePrompts.map(prompt=><CommunityCard key={`${prompt.creatorId}:${prompt.id}`} prompt={prompt}/>)}</div> : <div className="community-empty" role="status"><h3>Nenhum prompt encontrado</h3><p>Tente outro termo ou escolha outra categoria.</p><button type="button" onClick={()=>{setSearch("");setCategory("Tudo");}}>Limpar busca</button></div>}
         </div>
       </section>
       )}
     </main>
   );
+}
+
+function CommunityCard({prompt}:{prompt:Prompt}){
+  const [failed,setFailed]=useState(false);
+  const cover=prompt.images.find(image=>image.role==="gallery"||image.role==="after")??prompt.images[0];
+  return <Link href={`/p/${prompt.slug}`} className="community-card">
+    <div className="community-cover">{cover&&!failed?
+      // eslint-disable-next-line @next/next/no-img-element -- Published prompt image URLs.
+      <img src={cover.url} alt={cover.label||prompt.title} loading="lazy" onError={()=>setFailed(true)}/>:<p>{prompt.description||"Abra para conhecer este prompt."}</p>}
+      <span className="community-open" aria-hidden="true"><ArrowUpRight size={20}/></span>
+    </div>
+    <div className="community-card-info"><h3>{prompt.title}</h3>{prompt.model&&<span>{prompt.model}</span>}</div>
+    <p className="community-author">por {prompt.creatorName||"Criador Mind"}</p>
+  </Link>;
 }

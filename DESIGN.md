@@ -103,3 +103,11 @@ Header de 116 px com marca/conta e busca em largura total; navegação inferior 
 Referência de estrutura: Figma `qCkRPKTQMKNyqzBN7EztnX`, nó `192:149`. Capas em 7:6, cantos de 18 px; bloco de identificação separado por 10 px, com avatar/nome antes do título e curtidas discretas na mesma linha do criador. Sem copiar ou exibir o corpo do prompt nos cards públicos.
 
 Explorar e perfil usam largura disponível, com 24 px laterais no desktop e 16 px no celular. A biblioteca não recebe essa mudança. Header somente com logo, busca centrada e avatar real com fallback Google/inicial. Campo sem outline externo; sugestões e seleção por teclado continuam visíveis. Somente o envio de uma consulta altera os resultados de Explorar. Três dropdowns estilizados reúnem ordenação, categoria e modelo; não há chips de tipo. No perfil, Seguir/Seguindo e contagens reais substituem Compartilhar perfil. Curtidas e seguidores carregam em lote e mostram falhas e estados pendentes; não apresentar contagens simuladas.
+
+## Editor e publicação
+
+Editor em diálogo nativo de tela inteira, sem rolagem externa: cabeçalho e rodapé persistentes, duas áreas com rolagem própria no desktop e abas de conteúdo no celular. Publicação em três etapas com revisão real de texto e imagens e confirmação explícita. Configurações seguem a tipografia, espaçamento e cores semânticas das páginas internas. A comparação antes/depois tem largura máxima de 540 px para evitar ampliação excessiva.
+
+## Comunidade na landing
+
+Alteração diretamente autorizada em 14/10/2026: seção clara (#fafbfc), texto azul escuro (#102a43), título Instrument Serif e capas 4:3 com metadados fora da imagem. Estilos isolados em `.landing-page .landing-community`; não usar os componentes sociais internos nesta seção. A galeria circular continua automática, sem botão de pausa; mantém a suspensão durante o login e o respeito à preferência de movimento reduzido.

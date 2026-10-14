@@ -122,7 +122,7 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             </div>
           </section>}
 
-          {before && after && <section className="mt-10">
+          {before && after && <section className="prompt-comparison mt-10">
             <div className="mb-4">
               <p className="text-xs uppercase tracking-[0.18em] text-subtle">O efeito do prompt</p>
               <h2 className="mt-2 text-2xl font-medium">Antes e depois</h2>
@@ -130,9 +130,9 @@ export default function PublicPromptPage({ prompt, creatorPrompts = [], relatedP
             </div>
             <ImageCompare beforeSrc={before.url} afterSrc={after.url} beforeAlt={before.label || "Antes"} afterAlt={after.label || "Depois"} aspectRatio={4 / 3} />
           </section>}
-          {before && !after && <section className="mt-8">
+          {before && !after && <section className="prompt-comparison mt-8">
             <h2 className="mb-3 text-lg font-medium">Imagem original</h2>
-            <img src={before.url} alt={before.label || "Imagem antes de aplicar o prompt"} loading="lazy" className="max-h-[480px] w-full rounded-2xl border border-border object-contain" />
+            <img src={before.url} alt={before.label || "Imagem antes de aplicar o prompt"} loading="lazy" className="max-h-[360px] w-full rounded-2xl border border-border object-contain" />
             {before.label && <p className="mt-2 text-sm text-muted">{before.label}</p>}
           </section>}
         </section>

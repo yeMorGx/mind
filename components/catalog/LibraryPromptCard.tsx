@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Copy, Files, Pencil, Star, Trash2, Check, ImageIcon } from "lucide-react";
+import { Copy, Files, Pencil, Star, Trash2, ImageIcon } from "lucide-react";
 import { ActionNode } from "@/components/ui/ActionNode";
 import type { Prompt } from "@/lib/firebase/data";
 
-type Props = { prompt: Prompt; creatorId: string; copied: boolean; publishing: boolean; publicationPending: boolean; onEdit: () => void; onCopy: () => void; onFavorite: () => void; onDuplicate: () => void; onPublication: () => void; onDelete: () => void };
-export default function LibraryPromptCard({ prompt, creatorId, copied, publishing, publicationPending, onEdit, onCopy, onFavorite, onDuplicate, onPublication, onDelete }: Props) {
+type Props = { prompt: Prompt;  onEdit: () => void; onCopy: () => void; onFavorite: () => void; onDuplicate: () => void; onDelete: () => void };
+export default function LibraryPromptCard({ prompt, onEdit, onCopy, onFavorite, onDuplicate, onDelete }: Props) {
   const [failedCover, setFailedCover] = useState<string | null>(null);
   const cover = prompt.images.find(image => image.role === "gallery" || image.role === "after") ?? prompt.images[0];
   const href = `/home/prompts/${encodeURIComponent(prompt.id)}`;
@@ -27,12 +27,10 @@ export default function LibraryPromptCard({ prompt, creatorId, copied, publishin
         <span className={`inline-flex items-center gap-1.5 ${prompt.isPublished ? "text-emerald-700" : "text-subtle"}`}><span aria-hidden="true" className="size-1.5 rounded-full bg-current" />{prompt.isPublished ? "Público" : "Privado"}</span>
         {prompt.isFavorite && <Star size={13} className="ml-auto fill-amber-500 text-amber-600" aria-label="Favorito" />}
       </div>
-      <button type="button" onClick={onCopy} className="mt-4 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 text-sm font-medium hover:bg-surface-hover">{copied ? <Check size={16} /> : <Copy size={16} />}{copied ? "Copiado" : "Copiar prompt"}</button>
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3 text-xs text-muted">
-        <button type="button" disabled={publicationPending} onClick={onPublication} className="min-h-9 rounded-lg px-2 hover:bg-surface-hover disabled:opacity-50">{publishing ? "Salvando…" : prompt.isPublished ? "Tornar privado" : "Publicar prompt"}</button>
+        <Link href={`/home/prompts/${encodeURIComponent(prompt.id)}/publish`} className="inline-flex min-h-11 items-center rounded-lg px-2 hover:bg-surface-hover">{prompt.isPublished?"Gerenciar publicação":"Revisar e publicar"}</Link>
         <button type="button" aria-label={`Excluir ${prompt.title}`} onClick={onDelete} className="grid size-9 place-items-center rounded-lg hover:bg-red-50 hover:text-red-700"><Trash2 size={15} /></button>
       </div>
-      {prompt.isPublished && <Link href={`/share/${creatorId}/${prompt.id}`} className="mt-1 inline-block py-1 text-xs text-muted underline underline-offset-4">Abrir link público</Link>}
     </div>
   </ActionNode>;
 }

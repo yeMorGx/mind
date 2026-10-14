@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Plus, LogOut, UserRound, Compass, Library, Star } from "lucide-react";
+import { Plus, Settings, LogOut, UserRound, Compass, Library, Star } from "lucide-react";
 import HeaderSearch from "@/components/search/HeaderSearch";
 import Logo from "@/components/ui/logo";
 type HeaderProps = {
@@ -39,7 +39,7 @@ export default function Header({ searchValue, onSearchChange, onSearch, profileH
         <button type="button" onClick={onCreate} disabled={!authReady} aria-label="Novo prompt" className={`${profileHref ? "flex" : "hidden sm:flex"} h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50 lg:px-5`}><Plus size={17} /><span className="hidden lg:inline">Novo prompt</span></button>
         {profileHref ? <details ref={account} className="relative" onKeyDown={event => { if (event.key === "Escape") { account.current?.removeAttribute("open"); account.current?.querySelector("summary")?.focus(); } }}>
           <summary aria-label="Menu da conta" className="grid size-10 cursor-pointer list-none place-items-center rounded-full bg-media text-sm font-semibold text-foreground [&::-webkit-details-marker]:hidden"><AccountAvatar key={profileHref} src={photoUrl} fallback={googlePhotoUrl} initials={initials}/></summary>
-          <div className="absolute right-0 top-13 w-56 rounded-2xl border border-border bg-surface p-2"><p className="truncate px-3 py-2 text-xs text-muted">{userName}</p><Link href={profileHref} className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><UserRound size={16} />Meu perfil</Link><button type="button" onClick={onSignOut} className="flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm hover:bg-surface-hover"><LogOut size={16} />Sair da conta</button></div>
+          <div className="absolute right-0 top-13 w-56 rounded-2xl border border-border bg-surface p-2"><p className="truncate px-3 py-2 text-xs text-muted">{userName}</p><Link href={profileHref} className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><UserRound size={16} />Meu perfil</Link><Link href="/home/settings" className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><Settings size={16} />Configurações</Link><button type="button" onClick={onSignOut} className="flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm hover:bg-surface-hover"><LogOut size={16} />Sair da conta</button></div>
         </details> : <button type="button" disabled={!authReady} onClick={onLogin} className="h-10 shrink-0 rounded-full border border-border px-4 text-sm font-medium hover:bg-surface-hover disabled:opacity-50">Entrar</button>}
       </div>
     </div>

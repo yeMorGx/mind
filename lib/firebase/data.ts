@@ -19,7 +19,9 @@ import {
 import { requireFirebaseServices } from "./client";
 import { emptyPromptDetails, readPromptDetails, validatePromptDetails, type PromptDetails } from "@/lib/prompt-media";
 
+export type AccountPreferences = {defaultCategory:string;defaultModel:string;favoritesFirst:boolean};
 export type OnboardingData = {
+  preferences?: AccountPreferences;
   name: string;
   email: string;
   role: string;
