@@ -18,21 +18,44 @@ export async function getOwnProfile(uid: string): Promise<CreatorProfile | null>
   const value = snapshot.data()?.creatorProfile;
   return value ? { ...readProfile(value), badges: await getAccountBadges(uid).catch(() => []) } : null;
 }
-export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
+export type ProfileSaveIntent = "save" | "publish" | "unpublish";
+export class ProfilePublicationError extends Error {
+  constructor(readonly originalError: unknown, readonly published: boolean) {
+    super("O rascunho foi salvo, mas não foi possível atualizar a publicação.");
+    this.name = "ProfilePublicationError";
+  }
+}
+export function profileSaveErrorMessage(error: unknown): string {
+  const draftSaved = error instanceof ProfilePublicationError;
+  const cause = draftSaved ? error.originalError : error;
+  const code = typeof cause === "object" && cause !== null && "code" in cause ? String(cause.code).replace(/^firestore\//, "") : "";
+  const prefix = draftSaved ? "Rascunho salvo. " : "";
+  if (code === "permission-denied") return `${prefix}${draftSaved ? "A publicação está bloqueada pelas permissões do site. A administração precisa liberar essa função." : "O site não permitiu salvar seu perfil. A administração precisa conferir as permissões da conta."}`;
+  if (code === "unauthenticated") return `${prefix}Sua sessão expirou. Entre novamente na conta e tente salvar.`;
+  if (code === "unavailable" || code === "deadline-exceeded") return `${prefix}Não foi possível conectar ao serviço. Confira sua conexão e tente novamente.`;
+  if (code === "resource-exhausted") return `${prefix}O serviço está temporariamente sem capacidade para salvar. Tente novamente mais tarde.`;
+  if (cause instanceof Error && cause.message.startsWith("Informe")) return cause.message;
+  return draftSaved ? error.message : "Não foi possível salvar o perfil. Tente novamente.";
+}
+export async function saveCreatorProfile(uid: string, profile: CreatorProfile, intent: ProfileSaveIntent = "save") {
   const name = profile.name.trim(), bio = profile.bio.trim();
   if (!name || name.length > 80 || bio.length > 1000) throw new Error("Informe um nome de até 80 caracteres e uma bio de até 1.000.");
   const { db } = requireFirebaseServices();
-  const values = { name, bio, published: profile.published, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
-  const previous = await getOwnProfile(uid);
-  if (!profile.published && !previous?.published) {
-    await setDoc(doc(db, "users", uid), { creatorProfile: values }, { merge: true });
-    return;
-  }
+  const values = { name, bio, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
+  const userRef = doc(db, "users", uid);
+  const previous = await getDoc(userRef);
+  const wasPublished = previous.data()?.creatorProfile?.published === true;
+  // Drafts use the existing private document, independently of public collection permissions.
+  await setDoc(userRef, { creatorProfile: { ...values, published: wasPublished } }, { merge: true });
+  if (intent === "save") return { published: wasPublished };
+  const published = intent === "publish";
   const batch = writeBatch(db);
-  batch.set(doc(db, "users", uid), { creatorProfile: values }, { merge: true });
-  if (profile.published) batch.set(doc(db, "creatorProfiles", uid), { ...values, creatorId: uid, updatedAt: serverTimestamp() });
+  batch.set(userRef, { creatorProfile: { ...values, published } }, { merge: true });
+  if (published) batch.set(doc(db, "creatorProfiles", uid), { ...values, published: true, creatorId: uid, updatedAt: serverTimestamp() });
   else batch.delete(doc(db, "creatorProfiles", uid));
-  await batch.commit();
+  try { await batch.commit(); }
+  catch (error) { throw new ProfilePublicationError(error, wasPublished); }
+  return { published };
 }
 export async function setPromptPublication(workspaceId: string, uid: string, promptId: string, published: boolean) {
   const { db } = requireFirebaseServices();

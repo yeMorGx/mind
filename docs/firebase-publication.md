@@ -21,6 +21,7 @@ npx firebase-tools deploy --only firestore:rules --project mind-a9499
 - Perfil: `/u/{uid}`.
 - Prompt: `/share/{uid}/{promptId}`.
 - Perfil e prompts começam privados. Publicar um perfil não publica a biblioteca.
+- **Salvar perfil** grava o rascunho privado, mesmo quando há uma versão pública. **Publicar perfil** ou **Publicar alterações** atualiza a página pública. Se a etapa pública for recusada, o rascunho fica salvo e o estado de publicação anterior é preservado.
 - Tornar um perfil privado oculta todos os seus links públicos. Publicar o perfil novamente restaura os prompts que continuavam publicados.
 - Tornar um prompt privado remove sua cópia pública.
 - Editar um prompt publicado atualiza a cópia pública na mesma operação. Excluir remove ambas as cópias.
