@@ -686,3 +686,34 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
 }
 .site-app .prompt-detail-status:empty { display: none; }
 .site-app .prompt-detail-heading + .prompt-detail-status { margin: 0 0 20px; }
+
+/* Shared model identities: names in the picker, brand marks on prompt cards. */
+.ai-model-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: #fff; color: #17181a; vertical-align: middle; }
+.ai-model-logo > img { width: 22px; height: 22px; object-fit: contain; }
+.ai-model-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.ai-model-label { font-size: 13px; font-weight: 500; }
+.ai-model-trigger { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 45px; padding: 6px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--surface); color: var(--foreground); text-align: left; font-size: 14px; }
+.ai-model-trigger:disabled { opacity: .5; }
+.ai-model-trigger > svg { flex: none; color: var(--muted); }
+.ai-model-selected { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ai-model-selected > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ai-model-popover { position: fixed; inset: auto; margin: 0; padding: 0; border: 1px solid var(--border-color); border-radius: 14px; background: var(--surface); color: var(--foreground); box-shadow: 0 12px 36px #17181a18; overflow: hidden; }
+.ai-model-popover:popover-open { display: flex; flex-direction: column; }
+.ai-model-search { display: flex; flex: none; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border-color); color: var(--muted); }
+.ai-model-search > input { min-width: 0; width: 100%; min-height: 36px; border: 0; border-radius: 6px; padding: 6px; background: var(--surface); color: var(--foreground); font-size: 14px; }
+.ai-model-search > input:focus-visible { outline: 2px solid var(--foreground); outline-offset: 0; }
+.ai-model-options { overflow-y: auto; padding: 6px; min-height: 0; }
+.ai-model-options > button { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 10px; width: 100%; border-radius: 8px; font-size: 14px; text-align: left; overflow-wrap: anywhere; }
+.ai-model-options > button:hover, .ai-model-options > button[aria-pressed="true"] { background: var(--surface-hover); }
+.ai-model-options > button:focus-visible { outline: 2px solid var(--foreground); outline-offset: -2px; }
+.ai-model-option-name { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ai-model-help { padding: 10px 14px; border-top: 1px solid var(--border-color); flex: none; font-size: 11px; line-height: 1.6; color: var(--muted); }
+.settings-fields .ai-model-trigger { margin-top: 1px; }
+.site-app .recommendation-info > .ai-model-logo { margin-top: -2px; }
+.landing-page .community-card-info > .ai-model-logo { display: inline-flex; max-width: none; padding: 0; margin-top: -2px; background: #fff; }
+/* Authorized sky-to-community fade, confined to the landing hero. */
+.landing-page .landing-sky-transition { position: absolute; z-index: 1; pointer-events: none; inset: auto 0 -1px; height: clamp(90px,12vw,160px); background: linear-gradient(to bottom,rgba(250,251,252,0),#fafbfc); }
+@media(max-width:767px) { .landing-page .landing-sky-transition { height: 100px; } }
+.ai-model-search > input { margin: 0; }
+.prompt-editor .ai-model-search > input { border: 0; padding: 6px; }
+.site-app .prompt-detail-tags > .ai-model-name-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 3px; }

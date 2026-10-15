@@ -115,3 +115,9 @@ Alteração diretamente autorizada em 14/10/2026: seção clara (#fafbfc), texto
 ## Hierarquia da página do prompt
 
 Resultados e texto completo formam uma área principal em duas colunas no desktop; até 900 px, resultados, texto e comparação ficam em sequência. Autoria no topo usa foto, nome, @ e emblemas compactos reais. Crachá, instruções e metadados ficam abaixo. As recomendações de “Continue explorando” mostram foto e emblemas do perfil administrativo, com links separados para prompt e criador. Referências pesquisadas e decisões estão em `docs/design/prompt-detail.md`.
+
+## Modelos de IA
+
+Seleção pesquisável com 24 IAs e ferramentas e logos locais da biblioteca LobeHub Icons (MIT). Editor de prompt e preferências usam o mesmo seletor; ele aceita nomes personalizados e preserva valores antigos. Nos cards, exibir somente o logo com nome acessível e tooltip. Modelos personalizados sem marca reconhecida usam um ícone neutro de IA, sem inventar logos. Na página do prompt, o nome completo continua disponível junto ao logo.
+
+Ajuste diretamente autorizado da landing: degradê no fim do céu até o fundo da comunidade, sem alterar a galeria ou o texto da abertura.

@@ -1,4 +1,5 @@
 "use client";
+import AIModelLogo from "@/components/models/AIModelLogo";
 import Link from "next/link";
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
@@ -21,7 +22,7 @@ export default function PublicPromptCard({prompt}:{prompt:Prompt}){
         <span className="truncate text-sm font-medium">{name}</span>
       </Link><LikeButton creatorId={prompt.creatorId} promptId={prompt.id}/></div>
       <Link href={`/p/${prompt.slug}`} className="mt-2 block"><h2 className="line-clamp-2 break-words text-base font-semibold leading-6">{prompt.title}</h2></Link>
-      {prompt.model&&<p className="mt-1 truncate text-xs text-muted">{prompt.model}</p>}
+      {prompt.model&&<div className="mt-2"><AIModelLogo value={prompt.model}/></div>}
     </div>
   </article>;
 }

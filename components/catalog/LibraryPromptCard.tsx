@@ -1,4 +1,5 @@
 "use client";
+import AIModelLogo from "@/components/models/AIModelLogo";
 import { useState } from "react";
 import Link from "next/link";
 import { Copy, Files, Pencil, Star, Trash2, ImageIcon } from "lucide-react";
@@ -23,7 +24,7 @@ export default function LibraryPromptCard({ prompt, onEdit, onCopy, onFavorite, 
     <div className="p-4">
       <Link href={href} className="block"><h2 className="line-clamp-2 break-words text-base font-semibold leading-6">{prompt.title}</h2></Link>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-        {prompt.model && <span className="catalog-model-tag">{prompt.model}</span>}
+        {prompt.model && <AIModelLogo value={prompt.model}/>}
         <span className={`inline-flex items-center gap-1.5 ${prompt.isPublished ? "text-emerald-700" : "text-subtle"}`}><span aria-hidden="true" className="size-1.5 rounded-full bg-current" />{prompt.isPublished ? "Público" : "Privado"}</span>
         {prompt.isFavorite && <Star size={13} className="ml-auto fill-amber-500 text-amber-600" aria-label="Favorito" />}
       </div>

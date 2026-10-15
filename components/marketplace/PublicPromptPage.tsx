@@ -1,4 +1,5 @@
 "use client";
+import AIModelLogo from "@/components/models/AIModelLogo";
 import {useMemo,useState,type ReactNode} from "react";
 import Link from "next/link";
 import {ArrowLeft,ArrowRight,Check,Copy,Share2} from "lucide-react";
@@ -28,7 +29,7 @@ export default function PublicPromptPage({prompt,creatorPrompts=[],relatedPrompt
    <Link href={isPrivate?"/home":"/explore"} className="prompt-detail-back"><ArrowLeft size={16}/>{isPrivate?"Voltar à biblioteca":"Explorar prompts"}</Link>
    <article>
     <header className="prompt-detail-heading">
-     <div className="prompt-detail-title-row"><h1>{prompt.title}</h1><div className="prompt-detail-tags">{prompt.model&&<span>{prompt.model}</span>}{prompt.category&&<span>{prompt.category}</span>}</div></div>
+     <div className="prompt-detail-title-row"><h1>{prompt.title}</h1><div className="prompt-detail-tags">{prompt.model&&<span className="ai-model-name-tag"><AIModelLogo value={prompt.model}/>{prompt.model}</span>}{prompt.category&&<span>{prompt.category}</span>}</div></div>
      <div className="prompt-detail-byline"><CreatorIdentity name={creatorName} avatarUrl={creatorProfile?.avatarUrl||prompt.creatorAvatarUrl} badges={creatorProfile?.badges??prompt.creatorBadges} username={creatorProfile?.username||prompt.creatorSlug} href={profileHref}/><div className="prompt-detail-controls">{!isPrivate&&<><LikeButton creatorId={prompt.creatorId} promptId={prompt.id}/><button type="button" onClick={()=>void sharePage()} className="prompt-detail-share"><Share2 size={16}/><span>Compartilhar</span></button></>}<a href="#prompt-text" className="workflow-button">Usar prompt <ArrowRight size={16}/></a></div></div>
      {actions&&<div className="prompt-detail-owner-actions">{actions}</div>}
     </header>

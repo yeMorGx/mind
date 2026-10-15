@@ -1,4 +1,5 @@
 "use client";
+import AIModelLogo from "@/components/models/AIModelLogo";
 import {useState} from "react";
 import Link from "next/link";
 import {ArrowUpRight,ImageIcon} from "lucide-react";
@@ -14,7 +15,7 @@ export default function PromptCard({prompt}:{prompt:Prompt}){
    {cover&&failed!==cover.url?<img src={cover.url} alt={cover.label||prompt.title} loading="lazy" onError={()=>setFailed(cover.url)}/>:<span><ImageIcon size={24}/>{prompt.description||"Conheça este prompt"}</span>}
    <span className="recommendation-open" aria-hidden="true"><ArrowUpRight size={18}/></span>
   </Link>
-  <div className="recommendation-info"><Link href={`/p/${prompt.slug}`}><h3>{prompt.title}</h3></Link>{prompt.model&&<span className="recommendation-model">{prompt.model}</span>}</div>
+  <div className="recommendation-info"><Link href={`/p/${prompt.slug}`}><h3>{prompt.title}</h3></Link>{prompt.model&&<AIModelLogo value={prompt.model}/>}</div>
   <CreatorIdentity name={prompt.creatorName||"Criador Mind"} avatarUrl={prompt.creatorAvatarUrl} badges={prompt.creatorBadges} href={creatorProfileHref(prompt.creatorId,prompt.creatorSlug)} by/>
  </article>;
 }

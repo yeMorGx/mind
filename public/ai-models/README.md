@@ -1,0 +1,1 @@
+Brand icons from LobeHub Icons (MIT). Source: https://github.com/lobehub/lobe-icons/tree/master/packages/static-svg/icons . Downloaded 2026-10-14. Brand names and logos belong to their respective owners.

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect,useRef,useState } from "react";
+import AIModelPicker from "@/components/models/AIModelPicker";
 import { X } from "lucide-react";
 import type { Prompt } from "@/lib/firebase/data";
 import { UploadDropzone } from "@/components/ui/UploadDropzone";
@@ -32,7 +33,7 @@ export default function PromptDialog({isOpen,prompt,initialTitle="",defaults,pen
       <div className="prompt-editor-body">
         <section className="prompt-editor-primary" aria-label="Texto e detalhes do prompt">
           <label>Título<input autoFocus required maxLength={120} value={title} onChange={event=>setTitle(event.target.value)} placeholder="Ex.: Retrato com luz de estúdio" disabled={locked}/></label>
-          <div className="prompt-editor-metadata"><label>Categoria<input maxLength={80} value={category} onChange={event=>setCategory(event.target.value)} placeholder="Ex.: Retratos" disabled={locked}/></label><label>Modelo / ferramenta<input maxLength={80} value={model} onChange={event=>setModel(event.target.value)} placeholder="Ex.: Midjourney" disabled={locked}/></label></div>
+          <div className="prompt-editor-metadata"><label>Categoria<input maxLength={80} value={category} onChange={event=>setCategory(event.target.value)} placeholder="Ex.: Retratos" disabled={locked}/></label><AIModelPicker value={model} onChange={setModel} disabled={locked}/></div>
           <label className="prompt-editor-content">Prompt<textarea required maxLength={20000} value={content} onChange={event=>setContent(event.target.value)} placeholder="Escreva ou cole seu prompt…" disabled={locked}/><span className="prompt-editor-count">{content.length.toLocaleString("pt-BR")} / 20.000</span></label>
           <label>Descrição e como usar<textarea rows={3} maxLength={500} value={description} onChange={event=>setDescription(event.target.value)} placeholder="Explique o resultado e como usar o prompt." disabled={locked}/></label>
         </section>

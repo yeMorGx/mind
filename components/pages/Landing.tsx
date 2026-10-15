@@ -1,5 +1,6 @@
 "use client";
 
+import AIModelLogo from "@/components/models/AIModelLogo";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -44,10 +45,12 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
 
   return (
     <main className="landing-page">
-    <div className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
+    <div className="landing-hero relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <CloudShader className="h-full w-full" speed={0.4} skyTopColor="#6ca8da" skyBottomColor="#b9ddf3" />
       </div>
+
+      <div aria-hidden="true" className="landing-sky-transition"/>
 
       {/* DARK OVERLAY */}
       <motion.div
@@ -132,7 +135,7 @@ function CommunityCard({prompt}:{prompt:Prompt}){
       <img src={cover.url} alt={cover.label||prompt.title} loading="lazy" onError={()=>setFailed(true)}/>:<p>{prompt.description||"Abra para conhecer este prompt."}</p>}
       <span className="community-open" aria-hidden="true"><ArrowUpRight size={20}/></span>
     </div>
-    <div className="community-card-info"><h3>{prompt.title}</h3>{prompt.model&&<span>{prompt.model}</span>}</div>
+    <div className="community-card-info"><h3>{prompt.title}</h3>{prompt.model&&<AIModelLogo value={prompt.model}/>}</div>
     <p className="community-author">por {prompt.creatorName||"Criador Mind"}</p>
   </Link>;
 }
