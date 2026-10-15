@@ -126,3 +126,8 @@ Ajuste diretamente autorizado da landing: degradê no fim do céu até o fundo d
 ## Perfil, conexões e segurança
 
 Edição do perfil separa prévia de capa/avatar dos campos públicos e mantém emblemas administrativos somente para leitura. Configurações agrupa contas conectadas, MFA, preferências e dados/sessão, sem controles de foto. Referências e decisões: `docs/design/account-settings.md`.
+
+
+## Referências para usar o prompt
+
+Na aba Imagens do editor, resultados/comparação e referências opcionais têm áreas de upload distintas. As referências exibem numeração, descrição editável e remoção. Na página do prompt, a seção abaixo dos resultados oferece prévia com proporção preservada, ordem e botão Baixar referência em cada arquivo. Uma coluna no celular, duas no desktop; estados de download e falha são explícitos. A seção não aparece quando o prompt não tem referências.

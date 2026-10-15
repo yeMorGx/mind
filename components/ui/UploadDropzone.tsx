@@ -7,10 +7,11 @@ import { useRef, useState } from "react";
 import { motion, useAnimationControls, useReducedMotion } from "framer-motion";
 import { Check, LoaderCircle, Upload } from "lucide-react";
 
-export function UploadDropzone({ onFiles, disabled = false, remaining = 8 }: {
+export function UploadDropzone({ onFiles, disabled = false, remaining = 8, label = "Arraste imagens ou clique para selecionar" }: {
   onFiles: (files: File[]) => Promise<void>;
   disabled?: boolean;
   remaining?: number;
+  label?: string;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const busy = useRef(false);
@@ -42,7 +43,7 @@ export function UploadDropzone({ onFiles, disabled = false, remaining = 8 }: {
   }
 
   return <div className="mind-upload">
-    <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" multiple className="sr-only" tabIndex={-1} disabled={locked}
+    <input ref={input} type="file" aria-label={label} accept="image/jpeg,image/png,image/webp" multiple className="sr-only" tabIndex={-1} disabled={locked}
       onChange={(event) => { const files = Array.from(event.target.files ?? []); event.target.value = ""; void accept(files); }} />
     <motion.div animate={shake}>
       {/* A slot of fixed size, so the box can react to a file
@@ -54,7 +55,7 @@ export function UploadDropzone({ onFiles, disabled = false, remaining = 8 }: {
         onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false); }}
         onDrop={(event) => { event.preventDefault(); setOver(false); if (!locked) void accept(Array.from(event.dataTransfer.files)); }}>
         <span className="mind-upload-icon">{phase === "processing" ? <LoaderCircle size={20} className="motion-safe:animate-spin" /> : phase === "done" ? <Check size={20} /> : <Upload size={20} />}</span>
-        <strong>{phase === "processing" ? "Preparando suas imagens…" : remaining <= 0 ? "Limite de imagens atingido" : over ? "Solte as imagens aqui" : "Arraste imagens ou clique para selecionar"}</strong>
+        <strong>{phase === "processing" ? "Preparando suas imagens…" : remaining <= 0 ? "Limite de imagens atingido" : over ? "Solte as imagens aqui" : label}</strong>
         <span>JPEG, PNG ou WebP · até 5 MB por arquivo</span>
       </button>
     </motion.div>

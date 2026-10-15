@@ -54,3 +54,6 @@ Em 14/10/2026, o proprietário autorizou diretamente dois ajustes na landing: re
 O prompt público oferece copiar e usar com ChatGPT/Claude por link com texto, com alternativa de copiar/abrir para textos muito longos. Gemini copia e abre para colar. Imagens precisam ser anexadas pelo usuário. Logos de modelo aparecem sobre a capa em Explorar.
 
 MFA é ativado pelo próprio usuário com QR Code e confirmação TOTP; contas com fator verificado precisam de AAL2 para dados privados e alterações no banco. Vincular GitHub/Discord usa Supabase Auth e depende dos provedores OAuth e da vinculação manual habilitados na administração.
+
+
+O editor permite anexar imagens de referência opcionais em uma área própria, separada de resultados e comparação. As referências são numeradas na ordem de inclusão, preservadas no prompt e na publicação, e podem ser baixadas individualmente na página do prompt. O download utiliza a imagem salva e a extensão real do arquivo. Continua permitido salvar e publicar sem referências; o limite existente de oito imagens é compartilhado por todas as funções.
