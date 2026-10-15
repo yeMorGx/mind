@@ -6,6 +6,7 @@ import { syncLegacyPrompt } from "./public-prompt-sync";
 import { getUsername } from "@/lib/supabase/creators";
 import { normalizeUsername, USERNAME_PATTERN } from "@/lib/usernames";
 import { requireFirebaseServices } from "./client";
+import {readPromptDetails} from "@/lib/prompt-media";
 import { getPrompt, type Prompt } from "./data";
 import type { Prompt as PublicPrompt } from "@/lib/supabase/types";
 import { getAccountBadges, type BadgeKind } from "./badges";
@@ -134,8 +135,8 @@ export async function getPublicCreator(uid: string): Promise<CreatorProfile | nu
 }
 function asPublicPrompt(record: Record<string, unknown>, profile: CreatorProfile): PublicPrompt {
   return {
-    id: String(record.promptId), slug: String(record.promptId), creatorId: String(record.creatorId),
-    creatorName: profile.name, creatorSlug: profile.username ?? "", title: String(record.title), content: String(record.content),
+    ...readPromptDetails(record),id: String(record.promptId), slug: String(record.promptId), creatorId: String(record.creatorId),
+    creatorName: profile.name, creatorSlug: profile.username ?? "", creatorAvatarUrl:profile.avatarUrl,creatorBadges:profile.badges, title: String(record.title), content: String(record.content),
     description: String(record.description ?? ""), category: String(record.category ?? ""), model: String(record.model ?? ""),
     status: "published", isFavorite: false, createdAt: Number(record.createdAt), updatedAt: Number(record.updatedAt),
     images: ((record.images ?? []) as Prompt["images"]).map((image, position) => ({ ...image, position, path: "" })),

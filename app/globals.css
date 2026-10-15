@@ -870,3 +870,49 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
  .site-app .prompt-detail-action-group > .workflow-button, .site-app .prompt-detail-action-group > .prompt-use-ai { flex: 1; }
  .site-app .prompt-detail-action-group summary { width: 100%; padding-inline: 10px; }
 }
+
+/* Prompt identities, previews and discussion: internal pages only. */
+.site-app .creator-identity-text { flex: 1; }
+.site-app .creator-identity-name-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.site-app .creator-identity-name-row > .creator-identity-name { min-width: 0; }
+.site-app .creator-identity-name-row > span:last-child { flex: none; gap: 4px; }
+.site-app .creator-identity > .creator-identity-text { flex: 1; }
+.site-app .prompt-card-creator-row .creator-identity { flex: 1; }
+.site-app .wireframe-prompt-card > .prompt-card-details { background: #f0f0f3; }
+.site-app .prompt-card-summary { margin-top: 8px; font-size: 13px; line-height: 1.6; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.site-app .explore-filter summary, .site-app .catalog-filter-menu > summary { border: 0; background: var(--surface-hover); }
+.site-app .explore-filter[open] summary { background: var(--media); }
+.site-app .prompt-cover-media { width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: inherit; }
+.site-app .prompt-cover-media > img { width: 100%; height: 100%; object-fit: cover; }
+.site-app .prompt-cover-media .catalog-text-preview { height: 100%; }
+.site-app .prompt-video { position: relative; background: var(--media); border-radius: 12px; overflow: hidden; }
+.site-app .prompt-video > video { display: block; width: 100%; max-height: 480px; object-fit: contain; }
+.site-app .prompt-video > p { padding: 24px; font-size: 13px; color: var(--muted); }
+.site-app .prompt-video-hover, .site-app .prompt-video-hover > video { width: 100%; height: 100%; max-height: none; object-fit: cover; border-radius: inherit; }
+.site-app .prompt-video-label, .site-app .prompt-kind-label, .site-app .prompt-cover-position { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 6px; background: #fff; color: #17181a; font-size: 11px; }
+.site-app .prompt-cover-position { left: auto; right: 12px; }
+.prompt-editor-video-section { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); }
+.prompt-editor-video-section > h4 { font-size: 14px; font-weight: 600; }
+.prompt-editor-video-section > p { margin: 8px 0 16px; font-size: 13px; color: var(--muted); line-height: 1.7; }
+.prompt-editor-video-section > label { margin-top: 16px; }
+.prompt-editor-video-section > .prompt-video { margin-top: 16px; }
+.prompt-editor .prompt-video video { width: 100%; max-height: 240px; }
+.site-app .prompt-comments { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border-color); max-width: 840px; }
+.site-app .prompt-comments-heading { display: flex; align-items: center; gap: 10px; }
+.site-app .prompt-comments-heading h2 { font-size: 22px; font-weight: 600; }
+.site-app .prompt-comments-intro { margin: 12px 0 24px; font-size: 14px; line-height: 1.7; color: var(--muted); }
+.site-app .prompt-comments form label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+.site-app .prompt-comments textarea { width: 100%; padding: 16px; background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; font-size: 16px; line-height: 1.7; resize: vertical; }
+.site-app .prompt-comment-compose-actions { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 12px; }
+.site-app .prompt-comment-compose-actions > span { font-size: 12px; color: var(--muted); }
+.site-app .prompt-comment-notice { font-size: 13px; color: var(--muted); margin-top: 12px; }
+.site-app .prompt-comment-notice:empty { display: none; }
+.site-app .prompt-comment-list { margin-top: 24px; }
+.site-app .prompt-comment-list > li { padding: 24px 0; border-top: 1px solid var(--border-color); }
+.site-app .prompt-comment-author { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+.site-app .prompt-comment-author time { font-size: 11px; color: var(--muted); flex: none; padding-top: 4px; }
+.site-app .prompt-comment-body { margin-top: 14px; font-size: 14px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.site-app .prompt-comment-moderation { display: flex; align-items: center; gap: 16px; margin-top: 12px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.site-app .prompt-comment-moderation button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.site-app .prompt-comments-empty { margin: 28px 0; font-size: 14px; color: var(--muted); }
+@media(max-width:480px){.site-app .prompt-comment-author { flex-direction: column; gap: 6px; }.site-app .prompt-comment-author time { padding-left: 46px; }}

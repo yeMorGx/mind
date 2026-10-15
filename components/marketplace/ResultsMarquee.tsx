@@ -20,6 +20,8 @@ function ResultTile({ image, index, onOpen }: {
 }
 
 export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
+  const viewport=useRef<HTMLDivElement>(null);
+  const [paused,setPaused]=useState(false);
   const [dragging, setDragging] = useState(false);
   const gesture = useRef<{ id: number; x: number; scrollLeft: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
@@ -43,6 +45,19 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
     return () => { document.body.style.overflow = previous; };
   }, [opened]);
 
+  useEffect(()=>{
+    if(!multiple||opened||paused||dragging)return;
+    const reduce=window.matchMedia("(prefers-reduced-motion: reduce)");
+    const timer=window.setInterval(()=>{
+      const element=viewport.current;if(!element||document.hidden||reduce.matches||element.scrollWidth<=element.clientWidth+1)return;
+      const cards=Array.from(element.querySelectorAll<HTMLElement>(".results-marquee-card"));
+      const next=cards.find(card=>card.offsetLeft-(cards[0]?.offsetLeft??0)>element.scrollLeft+12);
+      const left=element.scrollLeft>=element.scrollWidth-element.clientWidth-12?0:next?next.offsetLeft-cards[0].offsetLeft:0;
+      element.scrollTo({left,behavior:"smooth"});
+    },3200);
+    return()=>clearInterval(timer);
+  },[multiple,opened,paused,dragging,images.length]);
+
   function step(direction: number) {
     setActive((index) => index === null ? null : (index + direction + images.length) % images.length);
   }
@@ -51,7 +66,7 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
     <div className="mb-3 flex items-center justify-between gap-3">
       <h2 id="prompt-results-heading" className="text-sm font-medium text-muted">Resultados do prompt</h2>
     </div>
-    <div className="results-marquee-viewport" data-dragging={dragging || undefined}
+    <div ref={viewport} onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)} onFocus={()=>setPaused(true)} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget))setPaused(false)}} className="results-marquee-viewport" data-dragging={dragging || undefined}
       role="region" aria-label="Galeria de resultados do prompt" tabIndex={multiple ? 0 : undefined}
       onPointerDown={event => {
         suppressClick.current = false;
@@ -94,7 +109,7 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
         </div>
       </div>
     </div>
-    <p className="mt-3 text-xs text-muted">{multiple ? "Arraste para explorar. Clique em uma imagem para ver o resultado completo." : "Clique na imagem para ver o resultado completo."}</p>
+    <p className="mt-3 text-xs text-muted">{multiple ? "O carrossel avança automaticamente. Passe o mouse ou arraste para explorar; clique para ampliar." : "Clique na imagem para ver o resultado completo."}</p>
 
     <dialog ref={dialog} className="results-lightbox" aria-labelledby="result-viewer-title" onCancel={(event) => { event.preventDefault(); setActive(null); }} onClose={() => setActive(null)}
       onClick={(event) => {

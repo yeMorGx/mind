@@ -57,3 +57,12 @@ MFA é ativado pelo próprio usuário com QR Code e confirmação TOTP; contas c
 
 
 O editor permite anexar imagens de referência opcionais em uma área própria, separada de resultados e comparação. As referências são numeradas na ordem de inclusão, preservadas no prompt e na publicação, e podem ser baixadas individualmente na página do prompt. O download utiliza a imagem salva e a extensão real do arquivo. Continua permitido salvar e publicar sem referências; o limite existente de oito imagens é compartilhado por todas as funções.
+
+
+## Comentários e formatos
+
+Prompts publicados têm comentários com paginação. Envio requer conta e @; exclusão cabe ao autor ou ao criador do prompt. O banco limita dez envios por minuto por pessoa, preserva os IDs públicos entre os backends e aplica MFA às escritas nativas. Comentários deixam de ser legíveis enquanto o prompt não estiver público.
+
+Imagem/texto, Site e Vídeo são tipos do editor. Sites oferecem capturas e link opcional. Vídeos podem ser enviados em MP4/WebM (30 MB) ou informados por link HTTPS direto. Uploads usam o bucket privado `mind-prompt-videos`: o dono acessa enquanto rascunho, visitantes só quando o caminho está associado a uma publicação. URLs de reprodução assinadas duram cinco minutos e são renovadas; retirar a publicação impede novas assinaturas públicas. Links externos seguem a disponibilidade e as permissões do provedor.
+
+Cards alternam imagens ou reproduzem vídeo sem som durante o hover. A página do prompt volta ao carrossel automático, pausável por hover/foco/interação e respeitando movimento reduzido. O botão Ver prompt foi removido do topo. Descrição breve, emblemas na linha do nome e fundo de metadados mais visível se aplicam às páginas internas. A landing permanece protegida.

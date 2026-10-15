@@ -1,15 +1,13 @@
 "use client";
+import PromptCover from "@/components/prompts/PromptCover";
 import AIModelLogo from "@/components/models/AIModelLogo";
-import { useState } from "react";
 import Link from "next/link";
-import { Copy, Files, Pencil, Star, Trash2, ImageIcon } from "lucide-react";
+import { Copy, Files, Pencil, Star, Trash2 } from "lucide-react";
 import { ActionNode } from "@/components/ui/ActionNode";
 import type { Prompt } from "@/lib/firebase/data";
 
 type Props = { prompt: Prompt;  onEdit: () => void; onCopy: () => void; onFavorite: () => void; onDuplicate: () => void; onDelete: () => void };
 export default function LibraryPromptCard({ prompt, onEdit, onCopy, onFavorite, onDuplicate, onDelete }: Props) {
-  const [failedCover, setFailedCover] = useState<string | null>(null);
-  const cover = prompt.images.find(image => image.role === "gallery" || image.role === "after") ?? prompt.images[0];
   const href = `/home/prompts/${encodeURIComponent(prompt.id)}`;
   return <ActionNode title={prompt.title} description="" className="catalog-library-card" actions={[
     { id: "edit", label: `Editar ${prompt.title}`, icon: Pencil, onClick: onEdit },
@@ -18,11 +16,11 @@ export default function LibraryPromptCard({ prompt, onEdit, onCopy, onFavorite, 
     { id: "duplicate", label: `Duplicar ${prompt.title}`, icon: Files, onClick: onDuplicate },
   ]}>
     <Link href={href} aria-label={`Abrir ${prompt.title}`} className="catalog-card-cover">
-      {/* eslint-disable-next-line @next/next/no-img-element -- Existing optimized uploads are data URLs. */}
-      {cover && failedCover !== cover.url ? <img src={cover.url} alt={cover.label || prompt.title} loading="lazy" draggable={false} onError={() => setFailedCover(cover.url)} /> : <div className="catalog-text-preview"><ImageIcon size={24} /><p>{prompt.description || prompt.content}</p></div>}
+      <PromptCover prompt={prompt}/>
     </Link>
     <div className="p-4">
       <Link href={href} className="block"><h2 className="line-clamp-2 break-words text-base font-semibold leading-6">{prompt.title}</h2></Link>
+{(prompt.summary||prompt.description)&&<p className="prompt-card-summary">{prompt.summary||prompt.description}</p>}
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
         {prompt.model && <AIModelLogo value={prompt.model}/>}
         <span className={`inline-flex items-center gap-1.5 ${prompt.isPublished ? "text-emerald-700" : "text-subtle"}`}><span aria-hidden="true" className="size-1.5 rounded-full bg-current" />{prompt.isPublished ? "Público" : "Privado"}</span>

@@ -74,7 +74,7 @@ O perfil mantém a capa, o avatar sobreposto e a grade de publicações. O dono 
 
 O crachá 3D fica dentro do card “Conheça o criador”, com uma cena de até 300 × 310 px. O nome aparece apenas na arte do crachá; os emblemas e o link ficam abaixo. A foto ou inicial serve de fallback sem WebGL.
 
-Resultados de prompts usam uma galeria horizontal manual, sem avanço automático nem imagens duplicadas. É possível arrastar com mouse, deslizar no celular ou usar setas quando a galeria está em foco. Clicar sem arrastar abre a imagem completa. A comparação antes/depois preserva as cores necessárias sobre as fotografias.
+Resultados de prompts usam um carrossel horizontal automático, sem imagens duplicadas, com pausa ao passar o mouse, focar controles, arrastar ou abrir a imagem. A preferência de movimento reduzido desativa o avanço. É possível arrastar com mouse, deslizar no celular ou usar setas quando a galeria está em foco. Clicar sem arrastar abre a imagem completa. A comparação antes/depois preserva as cores necessárias sobre as fotografias.
 
 ## Regras
 
@@ -131,3 +131,12 @@ Edição do perfil separa prévia de capa/avatar dos campos públicos e mantém 
 ## Referências para usar o prompt
 
 Na aba Imagens do editor, resultados/comparação e referências opcionais têm áreas de upload distintas. As referências exibem numeração, descrição editável e remoção. Na página do prompt, a seção abaixo dos resultados oferece prévia com proporção preservada, ordem e botão Baixar referência em cada arquivo. Uma coluna no celular, duas no desktop; estados de download e falha são explícitos. A seção não aparece quando o prompt não tem referências.
+
+
+## Identidade, discussão e formatos de prompt
+
+Nas páginas internas, a identificação de um criador usa foto, nome e emblemas administrativos na mesma linha do nome; o @ fica na linha inferior. Explorar recebe os emblemas em lote, sem confiar nos dados do próprio prompt. A verificação obrigatória do @ ocorre em segundo plano; o diálogo abre somente após confirmar ausência do identificador ou falha de consulta.
+
+Criar/editar oferece Imagem/texto, Site e Vídeo. Descrição breve de até 180 caracteres aparece em até duas linhas nos cards, com fallback para a descrição existente. Sites aceitam capturas e link HTTPS opcional. Vídeos aceitam arquivo MP4/WebM de até 30 MB ou link direto HTTPS; capas reproduzem sem som ao passar o mouse e param ao sair. Cards com vários resultados alternam as imagens ao passar o mouse. Movimento reduzido preserva a capa estática. Abaixo da capa, o bloco de informações usa cinza suave (#f0f0f3). Os controles de filtro não têm borda; a borda da biblioteca permanece.
+
+Comentários ficam antes das recomendações, disponíveis em publicações e na visualização do dono quando o prompt estiver publicado. Visitantes leem; contas autenticadas com @ enviam texto de até 1.500 caracteres. Autor do comentário e criador do prompt podem excluir mediante confirmação. Paginação, carregamento e falhas são explícitos. Não há contagens fictícias.

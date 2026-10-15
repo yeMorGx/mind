@@ -45,10 +45,10 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   const [newPromptVersion, setNewPromptVersion] = useState(0);
   const [loginOpen, setLoginOpen] = useState(false);
   const [error, setError] = useState("");
-  const [headerProfile,setHeaderProfile]=useState<{uid:string;avatar?:string;name?:string}|null>(null);
+  const [headerProfile,setHeaderProfile]=useState<{uid:string;avatar?:string;name?:string;badges?:import("@/lib/firebase/badges").BadgeKind[]}|null>(null);
   const [profileVersion,setProfileVersion]=useState(0);
   const uid=user?.uid;
-  useEffect(()=>{if(!uid)return;let alive=true;void getOwnProfile(uid).then(profile=>{if(alive)setHeaderProfile({uid,avatar:profile?.avatarUrl,name:profile?.name});}).catch(()=>{});return()=>{alive=false;};},[uid,profileVersion]);
+  useEffect(()=>{if(!uid)return;let alive=true;void getOwnProfile(uid).then(profile=>{if(alive)setHeaderProfile({uid,avatar:profile?.avatarUrl,name:profile?.name,badges:profile?.badges});}).catch(()=>{});return()=>{alive=false;};},[uid,profileVersion]);
   useEffect(()=>{const refresh=()=>setProfileVersion(value=>value+1);window.addEventListener("mind:username",refresh);return()=>window.removeEventListener("mind:username",refresh);},[]);
   const library = pathname === "/home";
   const profileHref = user ? `/u/${user.uid}` : undefined;
@@ -88,7 +88,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     <SocialProvider><div className="site-app min-h-screen bg-background text-foreground">
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>
       <Header searchValue={searchValue} onSearchChange={setSearchValue} onSearch={search}
-        profileHref={profileHref} userName={(headerProfile?.uid===uid?headerProfile?.name:undefined) || data.name || user?.displayName || "Minha conta"} photoUrl={headerProfile?.uid===uid?headerProfile?.avatar:undefined} googlePhotoUrl={user?.photoURL || undefined} onLogin={() => setLoginOpen(true)} authReady={authReady}
+        badges={headerProfile?.uid===uid?headerProfile?.badges:[]} profileHref={profileHref} userName={(headerProfile?.uid===uid?headerProfile?.name:undefined) || data.name || user?.displayName || "Minha conta"} photoUrl={headerProfile?.uid===uid?headerProfile?.avatar:undefined} googlePhotoUrl={user?.photoURL || undefined} onLogin={() => setLoginOpen(true)} authReady={authReady}
         onCreate={openNewPrompt} library={library} favorites={activeView === "favorites"} onLibrary={favorites => openLibrary(favorites ? "favorites" : "all")} onExplore={resetFilters} onSignOut={() => void logout()} />
       <div id="conteudo" tabIndex={-1} className="site-content pt-32 md:pt-18">
         {error && <div role="alert" className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pt-5 text-sm text-red-700"><p>{error}</p><button type="button" onClick={() => setError("")} className="underline">Fechar</button></div>}

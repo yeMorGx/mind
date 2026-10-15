@@ -1,3 +1,4 @@
+import type {PromptShowcase} from "@/lib/prompt-showcase";
 import type { BadgeKind } from "@/lib/firebase/badges";
 export type OnboardingData = {
   name: string;
@@ -37,7 +38,7 @@ export type PromptImageInput = {
 
 export type PromptStatus = "draft" | "published";
 
-export type Prompt = {
+export type Prompt = PromptShowcase & {
   id: string;
   slug: string;
   creatorId: string;

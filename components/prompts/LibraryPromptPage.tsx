@@ -73,6 +73,7 @@ export default function LibraryPromptPage({ promptId, startEditing = false }: { 
   }
   const profile = state.profile ?? { name: data.name || user.displayName || "Criador Mind", bio: "", avatarUrl: user.photoURL || "" };
   return <><PublicPromptPage actions={<div className="workflow-actions"><button type="button" className="workflow-button secondary" onClick={()=>setEditing(true)}>Editar prompt</button><Link className="workflow-button" href={`/home/prompts/${encodeURIComponent(promptId)}/publish`}>{prompt.isPublished?"Gerenciar publicação":"Revisar e publicar"}</Link></div>} visibility="private" creatorProfile={profile} creatorHref={`/u/${user.uid}`} prompt={{
+    kind:prompt.kind,summary:prompt.summary,videoUrl:prompt.videoUrl,videoPath:prompt.videoPath,siteUrl:prompt.siteUrl,
     id: prompt.id,
     slug: prompt.id,
     creatorId: user.uid,
@@ -83,7 +84,7 @@ export default function LibraryPromptPage({ promptId, startEditing = false }: { 
     description: prompt.description,
     category: prompt.category,
     model: prompt.model,
-    status: "draft",
+    status: prompt.isPublished?"published":"draft",
     isFavorite: prompt.isFavorite,
     createdAt: prompt.createdAt ?? Number.NaN,
     updatedAt: prompt.updatedAt ?? Number.NaN,

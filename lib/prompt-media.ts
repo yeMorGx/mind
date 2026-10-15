@@ -1,10 +1,18 @@
+export type PromptKind = "image" | "website" | "video";
+export type PromptShowcase = {kind?:PromptKind;summary?:string;videoUrl?:string;videoPath?:string;siteUrl?:string};
+export function safeWebsite(value:string){try{const url=new URL(value);return url.protocol==="https:"&&!url.username&&!url.password&&value.length<=2048;}catch{return false;}}
+export function safeVideo(value:string){return safeWebsite(value)&&/\.(mp4|webm)(\?|$)/i.test(value);}
+export function safeVideoPath(value:string){return /^[A-Za-z0-9_-]{1,128}\/[0-9a-f-]{36}\.(mp4|webm)$/.test(value);}
+export function readShowcase(value:Record<string,unknown>):Required<PromptShowcase>{
+ return {kind:value.kind==="website"||value.kind==="video"?value.kind:"image",summary:String(value.summary??"").slice(0,180),videoUrl:typeof value.videoUrl==="string"&&safeVideo(value.videoUrl)?value.videoUrl:"",videoPath:typeof value.videoPath==="string"&&safeVideoPath(value.videoPath)?value.videoPath:"",siteUrl:typeof value.siteUrl==="string"&&safeWebsite(value.siteUrl)?value.siteUrl:""};
+}
 export type PromptImageRole = "gallery" | "reference" | "before" | "after";
 export type StoredPromptImage = { id: string; url: string; label: string; role: PromptImageRole };
-export type PromptDetails = { description: string; category: string; model: string; images: StoredPromptImage[] };
+export type PromptDetails = PromptShowcase & { description: string; category: string; model: string; images: StoredPromptImage[] };
 export const MAX_PROMPT_IMAGES = 8;
 export const MAX_IMAGE_CHARS = 80_000;
 export const MAX_IMAGES_CHARS = 700_000;
-export const emptyPromptDetails: PromptDetails = { description: "", category: "", model: "", images: [] };
+export const emptyPromptDetails: PromptDetails = { description: "", category: "", model: "", images: [],...readShowcase({}) };
 const roles = new Set(["gallery", "reference", "before", "after"]);
 const imageUrl = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/;
 
@@ -19,13 +27,18 @@ export function readPromptDetails(value: Record<string, unknown>): PromptDetails
     size += image.url.length;
     images.push({ id: String(image.id ?? images.length), url: image.url, label: String(image.label ?? "").slice(0, 120), role: image.role as PromptImageRole });
   }
-  return { description: String(value.description ?? "").slice(0, 500), category: String(value.category ?? "").slice(0, 80), model: String(value.model ?? "").slice(0, 80), images };
+  return { ...readShowcase(value),description: String(value.description ?? "").slice(0, 500), category: String(value.category ?? "").slice(0, 80), model: String(value.model ?? "").slice(0, 80), images };
 }
 
 export function validatePromptDetails(title: string, content: string, details: PromptDetails) {
   if (!title.trim() || !content.trim()) throw new Error("Preencha o título e o conteúdo do prompt.");
   if (title.length > 120 || content.length > 20000) throw new Error("Use até 120 caracteres no título e 20.000 no prompt.");
   if (details.description.length > 500 || details.category.length > 80 || details.model.length > 80) throw new Error("Os detalhes do prompt ultrapassam o limite permitido.");
+  if (details.kind && !["image","website","video"].includes(details.kind)) throw new Error("Escolha o tipo de prompt.");
+  if ((details.summary??"").length>180) throw new Error("Use até 180 caracteres na descrição do card.");
+  if (details.videoUrl&&!safeVideo(details.videoUrl)) throw new Error("Informe um link HTTPS direto para um vídeo MP4 ou WebM.");
+  if (details.videoPath&&!safeVideoPath(details.videoPath)) throw new Error("Envie o vídeo novamente.");
+  if (details.siteUrl&&!safeWebsite(details.siteUrl)) throw new Error("Informe um link HTTPS válido para o site.");
   if (details.images.length > MAX_PROMPT_IMAGES) throw new Error("Adicione até 8 imagens por prompt.");
   let size = 0;
   const ids = new Set<string>();

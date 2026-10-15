@@ -146,7 +146,7 @@ export async function getNativePublicPrompts(uid: string,profile: CreatorProfile
   const { data,error } = await query;
   if (error) throw error;
   return (data ?? []).map(row => { const prompt=asPrompt(row.prompt_id,row.document);return {
-    ...prompt,slug:prompt.id,creatorId:uid,creatorName:profile.name,creatorSlug:profile.username??"",status:"published" as const,
+    ...prompt,slug:prompt.id,creatorId:uid,creatorName:profile.name,creatorSlug:profile.username??"",creatorAvatarUrl:profile.avatarUrl,creatorBadges:profile.badges,status:"published" as const,
     createdAt:prompt.createdAt ?? Number.NaN,updatedAt:prompt.updatedAt ?? Number.NaN,
     images:prompt.images.map((image,position)=>({...image,path:"",position})),
   }; });

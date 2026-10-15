@@ -110,3 +110,10 @@ export async function getSearchedPublicPrompts(term: string): Promise<Prompt[]> 
   const byId = new Map(rows.map(row => [`${row.creator_id}~${row.prompt_id}`,mapRow(row)]));
   return matches.flatMap(row => { const prompt = byId.get(`${row.creator_id}~${row.prompt_id}`); return prompt ? [prompt] : []; });
 }
+
+export async function getCatalogCreatorBadges(ids:string[]) {
+ const client=publicClient();if(!client||!ids.length)return {};
+ const [native,directory]=await Promise.all([client.from("mind_badges").select("public_id,badges").in("public_id",[...new Set(ids)]),client.from("mind_creator_directory").select("public_id,badges").in("public_id",[...new Set(ids)])]);
+ if(native.error)throw native.error;if(directory.error)throw directory.error;
+ return Object.fromEntries([...(directory.data??[]),...(native.data??[])].map(row=>[row.public_id,row.badges as NonNullable<CreatorProfile["badges"]>]));
+}

@@ -1,4 +1,5 @@
 "use client";
+import CreatorBadges from "@/components/ui/CreatorBadges";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -41,8 +42,8 @@ export default function HeaderSearch({ value,onChange,onSearch }: Props) {
   },[]);
   const current = result?.term === term ? result.data : null;
   const suggestions = current ? [
-    ...current.prompts.map(prompt => ({key:`prompt:${prompt.creator_id}:${prompt.prompt_id}`,href:`/p/${prompt.creator_id}~${prompt.prompt_id}`,title:prompt.title,detail:`Prompt · ${prompt.model ? `${prompt.model} · ` : ""}${prompt.creator_name}`,person:false,avatarUrl:""})),
-    ...current.people.map(person => ({key:`person:${person.public_id}`,href:creatorProfileHref(person.public_id,person.username),title:person.name,detail:`@${person.username} · Ver perfil`,person:true,avatarUrl:person.avatar_url || ""})),
+    ...current.prompts.map(prompt => ({key:`prompt:${prompt.creator_id}:${prompt.prompt_id}`,href:`/p/${prompt.creator_id}~${prompt.prompt_id}`,title:prompt.title,detail:["Prompt",prompt.model].filter(Boolean).join(" · "),person:false,avatarUrl:"",badges:[]})),
+    ...current.people.map(person => ({key:`person:${person.public_id}`,href:creatorProfileHref(person.public_id,person.username),title:person.name,detail:`@${person.username} · Ver perfil`,person:true,avatarUrl:person.avatar_url || "",badges:person.badges})),
   ] : [];
   const selected = active >= 0 && active < suggestions.length ? active : -1;
   function submit() { setOpen(false); setActive(-1); onSearch(term); }
@@ -62,7 +63,7 @@ export default function HeaderSearch({ value,onChange,onSearch }: Props) {
         {term.length < 2 ? <p role="status" className="px-4 py-5 text-sm leading-6 text-muted">Busque pelo tema, modelo de IA ou @ do criador. Digite pelo menos 2 caracteres.</p> : !current ? <p role="status" className="px-4 py-5 text-sm text-muted">Buscando sugestões…</p> : <>
           {suggestions.map((item,index) => <Link key={item.key} id={`${listId}-${index}`} role="option" aria-selected={selected === index} href={item.href} onClick={() => { setOpen(false); setActive(-1); }} onPointerMove={() => setActive(index)} className={`header-search-option ${selected === index ? "is-selected" : ""}`}>
             {item.person ? <PersonAvatar name={item.title} src={item.avatarUrl} /> : <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-media text-muted" aria-hidden="true"><Sparkles size={17} /></span>}
-            <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{item.title}</span><span className="mt-0.5 block truncate text-xs text-muted">{item.detail}</span></span><ArrowUpRight size={15} className="shrink-0 text-subtle" />
+            <span className="min-w-0 flex-1"><span className="flex items-center gap-1.5 text-sm font-medium"><span className="truncate">{item.title}</span>{item.person&&<CreatorBadges badges={item.badges} compact/>}</span><span className="mt-0.5 block truncate text-xs text-muted">{item.detail}</span></span><ArrowUpRight size={15} className="shrink-0 text-subtle" />
           </Link>)}
           {!suggestions.length && !current.failed && <p role="status" className="px-4 py-5 text-sm leading-6 text-muted">Nenhum resultado para “{term}”. Tente outro tema ou @.</p>}
           {current.failed && <div role="status" className="px-4 py-4 text-sm text-muted"><p>Não foi possível carregar todas as sugestões.</p><button type="button" onClick={() => setAttempt(value => value + 1)} className="mt-2 underline underline-offset-4">Tentar novamente</button></div>}

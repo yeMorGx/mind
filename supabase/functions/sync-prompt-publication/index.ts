@@ -71,7 +71,10 @@ Deno.serve(async request => {
       if (!item || typeof item.url !== "string" || item.url.length > 80000 || !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/.test(item.url) || !roles.has(String(item.role))) throw new PublicationError("Confira as imagens antes de publicar.", 400);
       return { id: String(item.id).slice(0,128), url: item.url, label: String(item.label ?? "").slice(0,120), role: item.role };
     });
-    const document = { title, content, description: String(record.description ?? "").slice(0,500), category: String(record.category ?? "").slice(0,80), model: String(record.model ?? "").slice(0,80), images, createdAt: record.createdAt ?? Date.now(), updatedAt: record.updatedAt ?? Date.now() };
+    const kind=record.kind==="website"||record.kind==="video"?record.kind:"image";
+    const safeLink=(value:unknown,video=false)=>{if(typeof value!=="string"||value.length>2048)return "";try{const u=new URL(value);return u.protocol==="https:"&&!u.username&&!u.password&&(!video||/\.(mp4|webm)(\?|$)/i.test(value))?value:"";}catch{return ""}};
+    const videoPath=typeof record.videoPath==="string"&&record.videoPath.startsWith(`${uid}/`)&&/^[A-Za-z0-9_-]{1,128}\/[0-9a-f-]{36}\.(mp4|webm)$/.test(record.videoPath)?record.videoPath:"";
+    const document = { kind,summary:String(record.summary??"").slice(0,180),videoPath,videoUrl:safeLink(record.videoUrl,true),siteUrl:safeLink(record.siteUrl),title, content, description: String(record.description ?? "").slice(0,500), category: String(record.category ?? "").slice(0,80), model: String(record.model ?? "").slice(0,80), images, createdAt: record.createdAt ?? Date.now(), updatedAt: record.updatedAt ?? Date.now() };
     if (images.length > 8 || JSON.stringify(document).length > 850000) return reply({ error: "O prompt ultrapassa o limite de imagens." }, 400);
     // Optimistic precondition catches concurrent edits before publishing.
     const flagged = await setFlag(true);

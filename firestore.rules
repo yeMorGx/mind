@@ -46,7 +46,7 @@ service cloud.firestore {
         && publicId == request.auth.uid + '_' + request.resource.data.promptId
         && ownsWorkspace(request.resource.data.workspaceId)
         && exists(/databases/$(database)/documents/workspaces/$(request.resource.data.workspaceId)/prompts/$(request.resource.data.promptId))
-        && request.resource.data.keys().hasOnly(['creatorId', 'workspaceId', 'promptId', 'published', 'title', 'content', 'description', 'category', 'model', 'images', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['creatorId', 'workspaceId', 'promptId', 'published', 'title', 'content', 'description', 'category', 'model', 'images', 'createdAt', 'updatedAt', 'kind', 'summary', 'videoUrl', 'videoPath', 'siteUrl'])
         && request.resource.data.published == true;
       allow delete: if signedIn() && resource.data.creatorId == request.auth.uid;
     }

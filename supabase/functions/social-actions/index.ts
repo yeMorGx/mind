@@ -24,8 +24,14 @@ Deno.serve(async request => {
   } catch { return reply({ error: "Entre novamente na conta para continuar." }, 401); }
   try {
     const raw=await request.text();
-    if(raw.length>2000)return reply({error:"Solicitação inválida."},400);
+    if(raw.length>5000)return reply({error:"Solicitação inválida."},400);
     const body=JSON.parse(raw);
+    if(["comment","delete_comment"].includes(body.kind)){
+      if(typeof body.targetId!=="string"||!/^[A-Za-z0-9_-]{1,128}$/.test(body.targetId)||typeof body.promptId!=="string"||!/^[A-Za-z0-9_-]{1,128}$/.test(body.promptId)||typeof body.id!=="string"||!/^[0-9a-f-]{36}$/.test(body.id)||typeof body.body!=="string"||body.body.length>1500)return reply({error:"Comentário inválido."},400);
+      const {error}=await admin.rpc("mind_write_legacy_comment",{actor_value:uid,target_value:body.targetId,prompt_value:body.promptId,id_value:body.id,body_value:body.body,delete_value:body.kind==="delete_comment"});
+      if(error)return reply({error:"Não foi possível salvar o comentário. Confira sua conta e tente novamente."},400);
+      return reply({saved:true});
+    }
     if(!["follow","like"].includes(body.kind)||typeof body.active!=="boolean"||typeof body.targetId!=="string"||!/^[A-Za-z0-9_-]{1,128}$/.test(body.targetId)||(body.kind==="like"&&(typeof body.promptId!=="string"||!/^[A-Za-z0-9_-]{1,128}$/.test(body.promptId))))return reply({error:"Solicitação inválida."},400);
     const {error}=await admin.rpc("mind_set_legacy_social",{actor_value:uid,kind_value:body.kind,target_value:body.targetId,prompt_value:body.kind==="like"?body.promptId:null,active_value:body.active});
     if(error){const known=["Sua conta já foi migrada","Escolha seu @","Perfil não encontrado","Este prompt não está público","Você não pode seguir"].some(prefix=>error.message.startsWith(prefix));return reply({error:known?error.message:"Não foi possível salvar. Tente novamente."},400);}
