@@ -20,7 +20,7 @@ Mind é um lugar gratuito para criadores e influenciadores de IA publicarem prom
 - Perfil público: capa, avatar sobreposto, identificação e grade visual dos prompts, conforme as referências enviadas pelo proprietário.
 - Prompt: resultados e texto principal; informações complementares abaixo. Crachá 3D dentro do card “Conheça o criador”, com acesso ao perfil.
 
-O dono edita o perfil na própria página pública, pelo botão “Editar perfil”; a antiga rota de configurações redireciona para ela. Backup e migração continuam na seção de edição. Publicações de contas Firebase usam cópias públicas no Supabase, com seleção individual e verificação da propriedade na origem.
+O dono edita o perfil na própria página pública, pelo botão “Editar perfil”; `/home/profile` redireciona para ela. Backup e atualização de acesso ficam em `/home/settings`. Publicações de contas Firebase usam cópias públicas no Supabase, com seleção individual e verificação da propriedade na origem.
 
 ## Tema e navegação
 
@@ -46,6 +46,11 @@ Os editores de criar e editar prompt usam a tela inteira: texto e imagens lado a
 
 Cada prompt tem um fluxo em `/home/prompts/[promptId]/publish`: revisar texto, autor e todas as imagens; confirmar a publicação; copiar o link ao concluir. Retirar uma publicação exige confirmação e preserva o rascunho. O conteúdo é relido antes da confirmação para detectar alterações desde a revisão.
 
-`/home/settings` reúne dados da conta, acesso ao perfil, categoria e ferramenta padrão para novos prompts, favoritos primeiro, exportação dos próprios dados e saída da sessão. Preferências persistem no onboarding privado da conta; a edição de nome, foto, capa e @ continua no perfil público.
+`/home/settings` reúne contas vinculadas para login, MFA com aplicativo autenticador, categoria e ferramenta padrão para novos prompts, favoritos primeiro, exportação dos próprios dados e saída deste navegador. Preferências persistem no onboarding privado da conta; a edição de nome, foto, capa e @ continua no perfil público.
 
 Em 14/10/2026, o proprietário autorizou diretamente dois ajustes na landing: remover o botão de pausa da galeria circular e melhorar a seção de prompts da comunidade. A comunidade usa fundo claro, capas dos resultados, título, autor e busca; o céu, a abertura e os fluxos de login permanecem preservados.
+
+
+O prompt público oferece copiar e usar com ChatGPT/Claude por link com texto, com alternativa de copiar/abrir para textos muito longos. Gemini copia e abre para colar. Imagens precisam ser anexadas pelo usuário. Logos de modelo aparecem sobre a capa em Explorar.
+
+MFA é ativado pelo próprio usuário com QR Code e confirmação TOTP; contas com fator verificado precisam de AAL2 para dados privados e alterações no banco. Vincular GitHub/Discord usa Supabase Auth e depende dos provedores OAuth e da vinculação manual habilitados na administração.

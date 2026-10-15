@@ -46,13 +46,28 @@ export default function AuthCallbackPage() {
           router.replace(requestedPath);
           return;
         }
+        const {data:activeSession}=await supabase.auth.getSession();
+        const assurance = await supabase.auth.mfa.getAuthenticatorAssuranceLevel(activeSession.session?.access_token);
+        if (assurance.error) throw assurance.error;
+        if (assurance.data.nextLevel === "aal2" && assurance.data.currentLevel !== "aal2") {
+          localStorage.setItem("mind-native-session", "1");
+          window.location.replace("/home");
+          return;
+        }
         const expected = sessionStorage.getItem("mind-migration-source");
         const account = await bootstrapAccount(expected ?? undefined);
         sessionStorage.removeItem("mind-migration-source");
+        sessionStorage.removeItem("mind-native-login-attempt");
+        sessionStorage.removeItem("mind-native-login-provider");
         selectNativeSession(account.public_id);
-        window.location.replace(account.onboarding.onboardingComplete ? "/home/profile" : "/register/step-2");
+        const returnTo = sessionStorage.getItem("mind-auth-return-to");
+        sessionStorage.removeItem("mind-auth-return-to");
+        const destination = returnTo === "/home/settings#connections" ? returnTo : "/home/profile";
+        window.location.replace(account.onboarding.onboardingComplete ? destination : "/register/step-2");
       } catch (callbackError) {
-        setError(getSupabaseAuthMessage(callbackError));
+        const provider=sessionStorage.getItem("mind-native-login-provider");
+        const message=callbackError instanceof Error?callbackError.message:"";
+        setError(provider&&message.includes("migração autorizada")?"Entre com sua conta original e conecte este provedor nas configurações antes de usá-lo para login.":getSupabaseAuthMessage(callbackError));
       }
     })();
   }, [router]);

@@ -717,3 +717,147 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
 .ai-model-search > input { margin: 0; }
 .prompt-editor .ai-model-search > input { border: 0; padding: 6px; }
 .site-app .prompt-detail-tags > .ai-model-name-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 3px; }
+
+/* Profile editing stays on the profile. Account settings handle access and connections. */
+.site-app .profile-editor-v2 { margin-top: 32px; border-radius: 16px; background: var(--surface); scroll-margin-top: 96px; }
+.site-app .profile-form-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 28px 32px; border-bottom: 1px solid var(--border-color); }
+.site-app .profile-form-heading h2 { font-size: 24px; font-weight: 600; letter-spacing: -.025em; }
+.site-app .profile-form-heading p { margin-top: 6px; color: var(--muted); font-size: 14px; }
+.site-app .profile-form-content { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 48px; padding: 32px; min-width: 0; }
+.site-app .profile-form-content > section { min-width: 0; }
+.site-app .profile-form-section-heading h3 { font-size: 16px; font-weight: 600; }
+.site-app .profile-form-section-heading p { margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.site-app .profile-form-banner { position: relative; display: grid; place-items: center; height: 180px; margin-top: 24px; border-radius: 14px; background: var(--media); overflow: hidden; }
+.site-app .profile-form-banner > img { width: 100%; height: 100%; object-fit: cover; }
+.site-app .profile-form-banner > span { display: flex; align-items: center; flex-direction: column; gap: 12px; padding-bottom: 30px; font-size: 13px; color: var(--muted); text-align: center; }
+.site-app .profile-image-action { position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 9px 14px; border-radius: 999px; background: var(--surface); color: var(--foreground); font-size: 12px; }
+.site-app .profile-form-avatar-row { position: relative; display: flex; align-items: end; gap: 20px; margin-top: -36px; padding-left: 20px; }
+.site-app .profile-form-avatar { position: relative; display: grid; place-items: center; width: 108px; height: 108px; flex: none; border: 5px solid var(--surface); border-radius: 50%; background: var(--media); }
+.site-app .profile-form-avatar > img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.site-app .profile-form-avatar > span { font-size: 30px; font-weight: 500; }
+.site-app .profile-form-avatar > button { position: absolute; bottom: -2px; right: -2px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); border: 3px solid var(--surface); }
+.site-app .profile-text-action { min-height: 36px; font-size: 13px; font-weight: 500; }
+.site-app .profile-form-avatar-row p { color: var(--muted); font-size: 11px; line-height: 1.6; }
+.site-app .profile-image-removals { display: flex; gap: 20px; margin: 16px 0 0 20px; }
+.site-app .profile-image-removals button { min-height: 36px; color: var(--muted); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.site-app .profile-form-badges { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+.site-app .profile-form-badges h4 { margin-bottom: 12px; font-size: 13px; font-weight: 500; }
+.site-app .profile-form-badges p { margin-top: 10px; font-size: 12px; color: var(--muted); }
+.site-app .profile-form-fields { display: grid; gap: 20px; margin-top: 24px; }
+.site-app .profile-form-fields > label { display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 500; }
+.site-app .profile-form-fields > label input, .site-app .profile-form-fields textarea { width: 100%; min-width: 0; border: 1px solid var(--border-color); border-radius: 10px; background: var(--surface); color: var(--foreground); padding: 12px; font-size: 14px; font-weight: 400; }
+.site-app .profile-form-fields textarea { resize: vertical; line-height: 1.7; }
+.site-app .profile-form-count { text-align: right; color: var(--muted); font-size: 11px; font-weight: 400; }
+.site-app .profile-form-footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 32px; border-top: 1px solid var(--border-color); }
+.site-app .profile-form-footer p { max-width: 65ch; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.site-app .profile-form-footer > div { display: flex; flex: none; gap: 10px; }
+.site-app .profile-editor-admin { border-top: 1px solid var(--border-color); padding: 16px 32px; font-size: 12px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.site-app .account-settings-page { width: 100%; max-width: 1440px; margin: auto; padding: 28px 24px 64px; }
+.site-app .account-settings-page > header h1 { font-size: 36px; font-weight: 600; line-height: 1.2; letter-spacing: -.025em; }
+.site-app .account-settings-page > header p { margin-top: 12px; color: var(--muted); font-size: 14px; }
+.site-app .account-settings-nav { display: flex; gap: 28px; overflow-x: auto; margin-top: 28px; border-bottom: 1px solid var(--border-color); }
+.site-app .account-settings-nav > a { display: inline-flex; align-items: center; min-height: 48px; flex: none; padding: 8px 0; font-size: 13px; color: var(--muted); }
+.site-app .account-settings-nav > a:hover { color: var(--foreground); box-shadow: inset 0 -2px var(--foreground); }
+.site-app .account-settings-section { display: grid; grid-template-columns: minmax(200px,.7fr) minmax(0,2fr); gap: 48px; padding: 36px 0; border-bottom: 1px solid var(--border-color); scroll-margin-top: 96px; }
+.site-app .account-settings-section-intro > svg { margin-bottom: 16px; color: var(--muted); }
+.site-app .account-settings-section-intro h2 { font-size: 18px; font-weight: 600; }
+.site-app .account-settings-section-intro p { max-width: 28ch; margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.site-app .account-settings-section-body { min-width: 0; }
+.site-app .connection-list, .site-app .mfa-settings { background: var(--surface); padding: 24px; border-radius: 14px; }
+.site-app .connection-row { display: flex; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border-color); }
+.site-app .connection-row:first-child { padding-top: 0; }
+.site-app .settings-provider-icon, .site-app .settings-feature-icon { display: grid; flex: none; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--background); }
+.site-app .connection-info { min-width: 0; flex: 1; }
+.site-app .connection-info h3, .site-app .security-status h3 { font-size: 14px; font-weight: 500; }
+.site-app .connection-info p, .site-app .security-status p { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.site-app .connection-row > .workflow-button { flex: none; padding: 9px 16px; font-size: 12px; }
+.site-app .connection-status { display: inline-flex; flex: none; align-items: center; gap: 5px; padding: 5px 9px; background: var(--surface-hover); border-radius: 6px; color: var(--muted); font-size: 11px; }
+.site-app .connection-status.connected { background: #e7f5ee; color: #17663e; }
+.site-app .settings-section-note, .site-app .settings-section-note p { margin-top: 16px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+.site-app .settings-account-email { margin-bottom: 24px; }
+.site-app .settings-account-email > span { display: block; color: var(--muted); font-size: 12px; }
+.site-app .settings-account-email > strong { display: block; margin-top: 8px; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.site-app .settings-account-email > p { margin-top: 6px; color: var(--muted); font-size: 12px; }
+.site-app .security-status { display: flex; align-items: center; gap: 14px; }
+.site-app .security-status > div { flex: 1; }
+.site-app .settings-security-note { display: flex; align-items: start; gap: 8px; color: var(--muted); font-size: 12px; line-height: 1.7; margin-top: 24px; }
+.site-app .settings-security-note svg { margin-top: 3px; flex: none; }
+.site-app .mfa-enrollment { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+.site-app .mfa-enrollment h4, .site-app .mfa-confirm h4 { font-size: 14px; font-weight: 600; }
+.site-app .mfa-enrollment p, .site-app .mfa-confirm p { margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.site-app .mfa-enrollment img { width: 180px; height: 180px; object-fit: contain; margin: 20px 0; }
+.site-app .mfa-enrollment details { font-size: 12px; }
+.site-app .mfa-enrollment summary { cursor: pointer; min-height: 36px; display: flex; align-items: center; }
+.site-app .mfa-enrollment code { display: block; padding: 12px; background: var(--background); border-radius: 8px; overflow-wrap: anywhere; user-select: all; }
+.site-app .mfa-confirm { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+.site-app .mfa-confirm label { display: grid; gap: 8px; width: min(100%,280px); margin-top: 20px; font-size: 12px; }
+.site-app .mfa-confirm input { padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 20px; letter-spacing: .15em; background: var(--surface); }
+.site-app .settings-error { margin-top: 16px; color: #b42318; font-size: 13px; line-height: 1.7; }
+.site-app .settings-success { margin-top: 16px; color: #17663e; font-size: 13px; line-height: 1.7; }
+.site-app .account-settings-section .settings-section { padding: 0; border: 0; }
+.site-app .account-settings-section .settings-section > h2 { font-size: 16px; }
+.site-app .account-settings-section .settings-section p { font-size: 13px; }
+.site-app .settings-data-row { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border-color); }
+.site-app .settings-data-row:first-child { padding-top: 0; }
+.site-app .settings-data-row:last-child { border: 0; }
+.site-app .settings-data-row h3 { font-size: 14px; font-weight: 500; }
+.site-app .settings-data-row p { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.7; }
+.site-app .settings-data-row .workflow-button { flex: none; font-size: 12px; }
+.site-app .settings-feedback { font-size: 12px; line-height: 1.7; color: var(--muted); margin-top: 8px; }
+.site-app .prompt-detail-action-group { display: flex; align-items: center; gap: 8px; }
+.site-app .prompt-detail-action-group > .workflow-button { font-size: 12px; padding: 10px 14px; }
+.site-app .prompt-use-ai { position: relative; }
+.site-app .prompt-use-ai summary { cursor: pointer; list-style: none; font-size: 12px; padding: 10px 14px; }
+.site-app .prompt-use-ai summary::-webkit-details-marker { display: none; }
+.site-app .prompt-use-ai-menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: min(280px,calc(100vw - 32px)); padding: 8px; border: 1px solid var(--border-color); border-radius: 14px; background: var(--surface); box-shadow: 0 12px 32px #17181a14; }
+.site-app .prompt-use-ai-menu h3 { font-size: 12px; color: var(--muted); padding: 8px 10px; }
+.site-app .prompt-use-ai-menu > a { display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 8px 10px; border-radius: 10px; }
+.site-app .prompt-use-ai-menu > a:hover { background: var(--surface-hover); }
+.site-app .prompt-use-ai-menu > a > span:nth-child(2) { flex: 1; }
+.site-app .prompt-use-ai-menu strong { display: block; font-size: 13px; font-weight: 500; }
+.site-app .prompt-use-ai-menu small { display: block; margin-top: 3px; font-size: 11px; color: var(--muted); }
+.site-app .prompt-use-ai-menu > p { padding: 10px; border-top: 1px solid var(--border-color); margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.7; }
+.site-app .prompt-use-ai-feedback { position: absolute; top: calc(100% + 8px); right: 0; z-index: 20; width: min(280px,calc(100vw - 32px)); padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--surface); font-size: 12px; line-height: 1.7; }
+.site-app .catalog-card-cover { position: relative; }
+.site-app .explore-model-logo { position: absolute; right: 12px; bottom: 12px; display: inline-flex; padding: 3px; border-radius: 10px; background: var(--surface); }
+.mfa-challenge { display: grid; place-items: center; min-height: 100dvh; padding: 24px; background: var(--background); color: var(--foreground); }
+.mfa-challenge > form { width: min(100%,400px); }
+.mfa-challenge-icon { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 24px; border-radius: 14px; background: var(--surface-hover); }
+.mfa-challenge h1 { font-size: 28px; font-weight: 600; letter-spacing: -.025em; }
+.mfa-challenge form > p { color: var(--muted); font-size: 14px; line-height: 1.7; margin-top: 12px; }
+.mfa-challenge label { display: grid; gap: 8px; margin-top: 28px; font-size: 13px; }
+.mfa-challenge input { min-width: 0; padding: 14px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--surface); font-size: 24px; letter-spacing: .2em; }
+.mfa-challenge button[type=submit] { width: 100%; margin-top: 20px; }
+.mfa-challenge .settings-error { color: #b42318; }
+.mfa-signout { display: flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 20px; font-size: 13px; color: var(--muted); }
+@media(max-width:1100px) { .site-app .profile-form-content { gap: 32px; padding: 24px; }.site-app .account-settings-section { gap: 32px; grid-template-columns: minmax(180px,.7fr) minmax(0,2fr); } }
+@media(max-width:767px) {
+ .site-app .profile-editor-v2 { scroll-margin-top: 140px; }
+ .site-app .profile-form-heading { padding: 20px; align-items: start; }
+ .site-app .profile-form-heading h2 { font-size: 22px; }
+ .site-app .profile-form-heading p { font-size: 13px; line-height: 1.6; }
+ .site-app .profile-form-content { grid-template-columns: minmax(0,1fr); gap: 32px; padding: 20px; }
+ .site-app .profile-form-banner { height: 160px; }
+ .site-app .profile-form-avatar-row { padding-left: 8px; gap: 12px; }
+ .site-app .profile-form-avatar { width: 92px; height: 92px; }
+ .site-app .profile-form-footer { flex-direction: column; align-items: stretch; padding: 20px; gap: 16px; }
+ .site-app .profile-form-footer > div { justify-content: end; }
+ .site-app .profile-editor-admin { padding: 16px 20px; }
+ .site-app .account-settings-page { padding: 20px 16px 40px; }
+ .site-app .account-settings-page > header h1 { font-size: 28px; }
+ .site-app .account-settings-nav { gap: 20px; }
+ .site-app .account-settings-section { grid-template-columns: minmax(0,1fr); gap: 20px; padding: 28px 0; scroll-margin-top: 140px; }
+ .site-app .account-settings-section-intro > svg { display: none; }
+ .site-app .account-settings-section-intro p { max-width: 60ch; }
+ .site-app .connection-list, .site-app .mfa-settings { padding: 18px; }
+ .site-app .connection-row { gap: 10px; flex-wrap: wrap; }
+ .site-app .connection-info { min-width: 140px; }
+ .site-app .connection-row > .workflow-button, .site-app .connection-row > .connection-status { margin-left: 54px; }
+ .site-app .security-status { flex-wrap: wrap; }
+ .site-app .security-status > .connection-status { margin-left: 58px; }
+ .site-app .settings-data-row { flex-direction: column; align-items: start; gap: 16px; }
+ .site-app .prompt-detail-section-heading { flex-wrap: wrap; gap: 16px; }
+ .site-app .prompt-detail-action-group { width: 100%; }
+ .site-app .prompt-detail-action-group > .workflow-button, .site-app .prompt-detail-action-group > .prompt-use-ai { flex: 1; }
+ .site-app .prompt-detail-action-group summary { width: 100%; padding-inline: 10px; }
+}

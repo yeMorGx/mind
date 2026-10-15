@@ -9,6 +9,7 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 import { setNativeBackend } from "@/lib/backend";
 import { catalogCategory, type CatalogItem } from "@/lib/catalog";
 import { getOwnProfile } from "@/lib/firebase/publication";
+import MFAChallenge from "@/components/auth/MFAChallenge";
 import RequiredUsername from "@/components/profile/RequiredUsername";
 import LoginModal from "@/components/modal/modalLogin";
 import SocialProvider from "@/components/social/SocialProvider";
@@ -33,7 +34,7 @@ export function useCatalogOptions(items: CatalogItem[]) {
   return {categories,models};
 }
 export default function SiteLayout({ children }: { children: ReactNode }) {
-  const { user, authReady, data } = useOnboarding();
+  const { user, authReady, data, mfaRequired } = useOnboarding();
   const pathname = usePathname();
   const router = useRouter();
   const [searchValue, setSearchValue] = useState("");
@@ -72,7 +73,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   async function logout() {
     try {
       const supabase = getSupabaseClient();
-      if (supabase) { const { error } = await supabase.auth.signOut(); if (error) throw error; }
+      if (supabase) { const { error } = await supabase.auth.signOut({scope:"local"}); if (error) throw error; }
       const services = getFirebaseServices();
       if (services) await signOut(services.auth);
       localStorage.removeItem("mind-native-session"); setNativeBackend(false);
@@ -82,6 +83,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   }
   // The landing is protected and does not receive internal navigation or styles.
   if (pathname === "/") return children;
+  if (mfaRequired) return <MFAChallenge onVerified={()=>{window.dispatchEvent(new Event("mind:session"));const target=sessionStorage.getItem("mind-auth-return-to");if(target==="/home/settings#connections"){sessionStorage.removeItem("mind-auth-return-to");router.replace(target);}}} onSignOut={logout} externalError={error}/>;
   return <LayoutContext.Provider value={{ signOut: logout, searchValue, setSearchValue, activeView, category, model, setCategory, setModel, requestLogin: () => setLoginOpen(true), newPromptOpen, newPromptVersion, openNewPrompt, closeNewPrompt: () => setNewPromptOpen(false) }}>
     <SocialProvider><div className="site-app min-h-screen bg-background text-foreground">
       <a href="#conteudo" className="skip-link">Pular para o conteúdo</a>

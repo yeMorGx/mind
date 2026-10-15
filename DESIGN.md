@@ -70,7 +70,7 @@ Action nodes, upload dropzones, editores e lightbox usam os mesmos tokens. Geist
 
 ## Perfis e prompts
 
-O perfil mantém a capa, o avatar sobreposto e a grade de publicações. O dono abre uma seção de edição pelo botão “Editar perfil” na própria página. Backup, administração e migração permanecem nessa seção. `/home/profile` redireciona para o perfil canônico.
+O perfil mantém a capa, o avatar sobreposto e a grade de publicações. O dono abre uma seção de edição pelo botão “Editar perfil” na própria página. Administração de emblemas permanece nessa seção; backup e atualização de acesso ficam em Configurações. `/home/profile` redireciona para o perfil canônico.
 
 O crachá 3D fica dentro do card “Conheça o criador”, com uma cena de até 300 × 310 px. O nome aparece apenas na arte do crachá; os emblemas e o link ficam abaixo. A foto ou inicial serve de fallback sem WebGL.
 
@@ -121,3 +121,8 @@ Resultados e texto completo formam uma área principal em duas colunas no deskto
 Seleção pesquisável com 24 IAs e ferramentas e logos locais da biblioteca LobeHub Icons (MIT). Editor de prompt e preferências usam o mesmo seletor; ele aceita nomes personalizados e preserva valores antigos. Nos cards, exibir somente o logo com nome acessível e tooltip. Modelos personalizados sem marca reconhecida usam um ícone neutro de IA, sem inventar logos. Na página do prompt, o nome completo continua disponível junto ao logo.
 
 Ajuste diretamente autorizado da landing: degradê no fim do céu até o fundo da comunidade, sem alterar a galeria ou o texto da abertura.
+
+
+## Perfil, conexões e segurança
+
+Edição do perfil separa prévia de capa/avatar dos campos públicos e mantém emblemas administrativos somente para leitura. Configurações agrupa contas conectadas, MFA, preferências e dados/sessão, sem controles de foto. Referências e decisões: `docs/design/account-settings.md`.

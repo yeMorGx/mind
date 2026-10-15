@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
-import { FaDiscord } from "react-icons/fa";
+import { FaDiscord, FaGithub } from "react-icons/fa";
 import {
   GoogleAuthProvider,
   OAuthProvider,
@@ -15,11 +15,13 @@ import {
   type UserCredential,
 } from "firebase/auth";
 
+import { selectNativeSession } from "@/lib/backend";
 import Logo from "@/components/ui/logo";
 import { getFirebaseServices } from "@/lib/firebase/client";
 import { ensureUserProfile, getAuthDestination, getFirebaseAuthMessage } from "@/lib/firebase/auth";
-import { isSupabaseConfigured } from "@/lib/supabase/client";
-import { getNativePublicCreator, startAccountMigration } from "@/lib/supabase/mind";
+import { getIdentityProviders } from "@/lib/supabase/identity-providers";
+import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { getNativePublicCreator, restoreNativeAccount, startAccountMigration } from "@/lib/supabase/mind";
 
 type Props = {
   isOpen: boolean;
@@ -36,6 +38,13 @@ export default function LoginModal({
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
+  const [providers, setProviders] = useState<Record<string,boolean>>({});
+  useEffect(()=>{if(!isOpen||!isSupabaseConfigured)return;let active=true;void getIdentityProviders().then(value=>{if(active)setProviders(value);}).catch(()=>{});return()=>{active=false;};},[isOpen]);
+  async function nativeSignIn(provider:"github"|"discord"){
+    setPending(true);setError("");
+    try{const client=getSupabaseClient();if(!client)throw new Error();sessionStorage.removeItem("mind-migration-source");sessionStorage.setItem("mind-native-login-provider",provider);const {error}=await client.auth.signInWithOAuth({provider,options:{redirectTo:`${window.location.origin}/auth/callback`}});if(error)throw error;}
+    catch{setError("Não foi possível abrir este login. Tente novamente mais tarde.");setPending(false);}
+  }
 
   async function finishSignIn(action: () => Promise<UserCredential>) {
     setPending(true);
@@ -45,6 +54,9 @@ export default function LoginModal({
       const credential = await action();
       const migrated = isSupabaseConfigured ? await getNativePublicCreator(credential.user.uid) : null;
       if (migrated?.backend === "supabase") {
+        const restored = await restoreNativeAccount(credential.user.uid);
+        if (restored) { selectNativeSession(restored.public_id); onClose(); router.push("/home"); return; }
+        sessionStorage.removeItem("mind-native-login-attempt");
         await startAccountMigration(credential.user);
         return;
       }
@@ -78,6 +90,7 @@ export default function LoginModal({
   }
 
   function handleDiscordSignIn() {
+    if (providers.discord) return nativeSignIn("discord");
     return finishSignIn(() => {
       const services = getFirebaseServices();
       if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
@@ -207,6 +220,8 @@ export default function LoginModal({
                       <FcGoogle size={22} />
                       Continuar com Google
                     </button>
+
+                    {providers.github&&<button type="button" disabled={pending} onClick={()=>void nativeSignIn("github")} className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface py-2.5 font-medium text-foreground"><FaGithub size={22}/>Continuar com GitHub</button>}
 
                     <button
                       type="button"

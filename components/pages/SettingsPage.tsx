@@ -1,8 +1,11 @@
 "use client";
+import Connections from "@/components/settings/Connections";
+import MFASettings from "@/components/settings/MFASettings";
+import {startAccountMigration} from "@/lib/supabase/mind";
 import AIModelPicker from "@/components/models/AIModelPicker";
-import {useRef,useState} from "react";
+import {useRef,useState,type ReactNode} from "react";
 import Link from "next/link";
-import {ArrowLeft,Download,LogOut} from "lucide-react";
+import {ArrowLeft,Download,LogOut,Link2,ShieldCheck,SlidersHorizontal,Database} from "lucide-react";
 import {useOnboarding} from "@/app/context/OnboardingContext";
 import {useSiteLayout} from "@/components/layout/SiteLayout";
 import {saveOnboardingProgress,type AccountPreferences} from "@/lib/firebase/data";
@@ -21,12 +24,13 @@ export default function SettingsPage(){
   catch{setBackupMessage("Não foi possível baixar seus dados. Confira sua conexão e tente novamente.");}
   finally{backupBusy.current=false;setBackupPending(false);}
  }
- return <main className="workflow-page"><Link href="/home" className="workflow-back"><ArrowLeft size={16}/>Voltar à biblioteca</Link><h1>Configurações</h1><p className="workflow-intro">Sua conta e suas preferências de criação.</p>
- <section className="settings-section"><h2>Sua conta</h2><p><strong className="text-foreground">{data.name||user.displayName||"Sua conta"}</strong><br/>{user.email}</p><p>Nome, foto, capa e @ são editados no seu perfil público.</p><Link href={`/u/${encodeURIComponent(user.uid)}`} className="workflow-button secondary mt-5">Gerenciar perfil</Link></section>
- <PreferencesForm key={user.uid} initial={data.preferences} onSave={async preferences=>{await saveOnboardingProgress(user,{preferences});updateData({preferences});}}/>
- <section className="settings-section"><h2>Seus dados</h2><p>Baixe uma cópia do seu perfil e da biblioteca, incluindo seus prompts e imagens, em JSON.</p><button className="workflow-button secondary mt-5" disabled={backupPending} onClick={()=>void download()}><Download size={16}/>{backupPending?"Preparando download…":"Baixar meus dados"}</button><p role="status">{backupMessage}</p></section>
- <section className="settings-section border-0"><h2>Sessão</h2><p>Saia da sua conta neste navegador.</p><button className="workflow-button secondary mt-5" disabled={logoutPending} onClick={async()=>{setLogoutPending(true);await signOut();setLogoutPending(false);}}><LogOut size={16}/>{logoutPending?"Saindo…":"Sair da conta"}</button></section>
- </main>;
+ return <SettingsFrame>
+ <section id="connections" className="account-settings-section"><div className="account-settings-section-intro"><Link2 size={21}/><h2>Contas conectadas</h2><p>Escolha as contas que você usa para entrar no Mind.</p></div><div className="account-settings-section-body">{user.backend==="supabase"?<Connections/>:<p>Entre novamente com Google para gerenciar as conexões desta conta.</p>}</div></section>
+ <section id="security" className="account-settings-section"><div className="account-settings-section-intro"><ShieldCheck size={21}/><h2>Segurança e acesso</h2><p>Adicione uma etapa de proteção ao seu login.</p></div><div className="account-settings-section-body"><div className="settings-account-email"><span>E-mail da conta</span><strong>{user.email}</strong><p>O e-mail é gerenciado pelo provedor conectado.</p></div>{user.backend==="supabase"?<MFASettings/>:<p className="mt-5 text-sm text-muted">Use o login Google atualizado para configurar o autenticador.</p>}</div></section>
+ <section id="preferences" className="account-settings-section"><div className="account-settings-section-intro"><SlidersHorizontal size={21}/><h2>Preferências</h2><p>Seu jeito de trabalhar na biblioteca.</p></div><div className="account-settings-section-body"><PreferencesForm key={user.uid} initial={data.preferences} onSave={async preferences=>{await saveOnboardingProgress(user,{preferences});updateData({preferences});}}/></div></section>
+ <section id="data" className="account-settings-section"><div className="account-settings-section-intro"><Database size={21}/><h2>Dados e sessão</h2><p>Uma cópia da sua biblioteca, sempre com você.</p></div><div className="account-settings-section-body"><div className="settings-data-row"><div><h3>Exportar seus dados</h3><p>Perfil, prompts e imagens em um arquivo JSON.</p></div><button className="workflow-button secondary" disabled={backupPending} onClick={()=>void download()}><Download size={16}/>{backupPending?"Preparando…":"Baixar meus dados"}</button></div><p role="status" className="settings-feedback">{backupMessage}</p>{user.backend!=="supabase"&&<div className="settings-data-row"><div><h3>Atualizar acesso da conta</h3><p>Depois da autorização do seu backup, confirme a mesma conta Google para concluir a atualização.</p></div><button type="button" className="workflow-button secondary" onClick={()=>void startAccountMigration(user).catch(()=>setBackupMessage("Não foi possível abrir o Google. Tente novamente."))}>Continuar com Google</button></div>}<div className="settings-data-row"><div><h3>Sair deste navegador</h3><p>Sua biblioteca permanece salva na sua conta.</p></div><button className="workflow-button secondary" disabled={logoutPending} onClick={async()=>{setLogoutPending(true);await signOut();setLogoutPending(false);}}><LogOut size={16}/>{logoutPending?"Saindo…":"Sair da conta"}</button></div></div></section>
+ </SettingsFrame>;
+
 }
 export function PreferencesForm({initial,onSave}:{initial?:AccountPreferences;onSave:(values:AccountPreferences)=>Promise<void>}){
  const [category,setCategory]=useState(initial?.defaultCategory??""),[model,setModel]=useState(initial?.defaultModel??""),[favoritesFirst,setFavoritesFirst]=useState(initial?.favoritesFirst??false);
@@ -36,4 +40,8 @@ export function PreferencesForm({initial,onSave}:{initial?:AccountPreferences;on
  <h2>Preferências da biblioteca</h2><p>Preencha novos prompts com seus padrões. Você pode mudar esses campos em cada prompt.</p><div className="settings-fields"><label>Categoria padrão<input maxLength={80} placeholder="Ex.: Retratos" value={category} disabled={pending} onChange={event=>setCategory(event.target.value)}/></label><AIModelPicker label="Modelo / ferramenta padrão" value={model} onChange={setModel} disabled={pending}/></div>
  <label className="mt-6 flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" checked={favoritesFirst} disabled={pending} onChange={event=>setFavoritesFirst(event.target.checked)} className="size-4 accent-primary"/>Mostrar favoritos primeiro na biblioteca</label><button type="submit" disabled={pending} className="workflow-button mt-5">{pending?"Salvando…":"Salvar preferências"}</button><p role="status" className={failed?"!text-red-700":""}>{message}</p>
  </form>;
+}
+
+export function SettingsFrame({children}:{children:ReactNode}){
+ return <main className="account-settings-page"><Link href="/home" className="workflow-back"><ArrowLeft size={16}/>Voltar à biblioteca</Link><header><h1>Configurações</h1><p>Conexões, segurança e preferências da sua conta.</p></header><nav aria-label="Seções das configurações" className="account-settings-nav"><a href="#connections">Conexões</a><a href="#security">Segurança</a><a href="#preferences">Preferências</a><a href="#data">Dados e sessão</a></nav>{children}</main>;
 }

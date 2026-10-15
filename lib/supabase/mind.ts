@@ -11,6 +11,12 @@ export async function bootstrapAccount(expectedPublicId?: string): Promise<Nativ
   if (error) throw new Error(error.message);
   return data as NativeAccount;
 }
+/** Restore an existing authenticated session only when the server confirms the same public account. */
+export async function restoreNativeAccount(publicId: string): Promise<NativeAccount | null> {
+  const { data, error } = await requireSupabaseClient().auth.getSession();
+  if (error || !data.session) return null;
+  try { return await bootstrapAccount(publicId); } catch { return null; }
+}
 export async function startAccountMigration(user: MindUser) {
   sessionStorage.setItem("mind-migration-source", user.uid);
   const { error } = await requireSupabaseClient().auth.signInWithOAuth({ provider: "google", options: {

@@ -14,6 +14,7 @@ export default function PublicPromptCard({prompt}:{prompt:Prompt}){
     <Link href={`/p/${prompt.slug}`} aria-label={`Abrir ${prompt.title}`} className="catalog-card-cover">
       {/* eslint-disable-next-line @next/next/no-img-element -- Published results include optimized data URLs. */}
       {cover&&failedCover!==cover.url?<img src={cover.url} alt={cover.label||prompt.title} loading="lazy" draggable={false} onError={()=>setFailedCover(cover.url)}/>:<div className="catalog-text-preview"><Sparkles size={24}/><p>{prompt.description||"Ver o prompt completo e seus resultados."}</p></div>}
+      {prompt.model&&<span className="explore-model-logo"><AIModelLogo value={prompt.model}/></span>}
     </Link>
     <div className="prompt-card-details">
       <div className="prompt-card-creator-row"><Link href={creatorProfileHref(prompt.creatorId,prompt.creatorSlug)} title={prompt.creatorSlug?`${name} · @${prompt.creatorSlug}`:name} className="prompt-card-creator">
@@ -22,7 +23,6 @@ export default function PublicPromptCard({prompt}:{prompt:Prompt}){
         <span className="truncate text-sm font-medium">{name}</span>
       </Link><LikeButton creatorId={prompt.creatorId} promptId={prompt.id}/></div>
       <Link href={`/p/${prompt.slug}`} className="mt-2 block"><h2 className="line-clamp-2 break-words text-base font-semibold leading-6">{prompt.title}</h2></Link>
-      {prompt.model&&<div className="mt-2"><AIModelLogo value={prompt.model}/></div>}
     </div>
   </article>;
 }

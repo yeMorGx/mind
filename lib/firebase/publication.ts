@@ -1,5 +1,5 @@
 import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where, writeBatch } from "firebase/firestore";
-import { usingSupabase, type MindUser as User } from "@/lib/backend";
+import { usingSupabase, setNativeBackend, selectNativeSession, type MindUser as User } from "@/lib/backend";
 import * as native from "@/lib/supabase/mind";
 import { isSupabaseConfigured, requireSupabaseClient } from "@/lib/supabase/client";
 import { syncLegacyPrompt } from "./public-prompt-sync";
@@ -35,6 +35,7 @@ export function profileSaveErrorMessage(error: unknown): string {
   const message = cause && typeof cause === "object" && "message" in cause ? String(cause.message) : "";
   if (message.startsWith("Este @") || message.startsWith("Use de 3")) return message;
   if (cause instanceof Error && cause.message.startsWith("Informe")) return cause.message;
+  if (cause instanceof Error && cause.message.startsWith("Sua conta já foi migrada")) return "Sua sessão precisa ser renovada. Entre novamente com Google para continuar.";
   if (cause instanceof Error && (cause.message.startsWith("Sua conta já foi migrada") || cause.message.startsWith("Não foi possível atualizar") || cause.message.startsWith("Entre novamente"))) return cause.message;
   return "Não foi possível salvar o perfil. Tente novamente.";
 }
@@ -43,6 +44,10 @@ export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
   const username = normalizeUsername(profile.username ?? "");
   if (!USERNAME_PATTERN.test(username)) throw new Error("Use de 3 a 24 caracteres no @: letras, números e _, começando com uma letra.");
   if (!name || name.length > 80 || bio.length > 1000) throw new Error("Informe um nome de até 80 caracteres e uma bio de até 1.000.");
+  if (!usingSupabase() && isSupabaseConfigured) {
+    const recovered = await native.restoreNativeAccount(uid);
+    if (recovered) { setNativeBackend(true); selectNativeSession(recovered.public_id); }
+  }
   if (usingSupabase()) return native.saveNativeProfile({ name, bio, username, headline: (profile.headline ?? "").trim().slice(0,100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) });
   const { db } = requireFirebaseServices();
   const values = { name, bio, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
