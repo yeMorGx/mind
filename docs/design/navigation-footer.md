@@ -13,7 +13,7 @@ As buscas no Dribbble retornaram conteúdo vazio; Behance e a biblioteca de padr
 
 ## Aplicação
 
-Header flutuante com margem externa, superfície branca e sombra suave. A partir de 100 px de rolagem, reduz a largura máxima de 1520 para 1200 px e a altura de 80 para 64 px no desktop; volta à versão ampla abaixo de 40 px, evitando oscilações no limite. A busca continua centralizada e acessível nos dois estados. No celular, conserva a busca e reduz levemente as dimensões, com navegação inferior independente.
+No topo, o header é completo: largura total, encostado no topo e sem cantos arredondados. A partir de 100 px de rolagem, torna-se flutuante, com margem externa, largura máxima de 1200 px, cantos arredondados e altura reduzida de 80 para 64 px no desktop; volta à versão ampla abaixo de 40 px, evitando oscilações no limite. A busca continua centralizada e acessível nos dois estados. No celular, conserva a busca e reduz levemente as dimensões, com navegação inferior independente.
 
 Dropdowns de Explorar e Biblioteca usam NavigationMenu do Radix já instalado: hover com intenção, clique, setas, Escape e foco. Explorar apresenta comunidade, Imagem e Retrato; Biblioteca oferece Meus prompts, Favoritos e Novo prompt com a autenticação existente. O menu móvel mantém o indicador de página ativa. Movimento reduzido remove transições e entradas.
 

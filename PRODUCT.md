@@ -72,4 +72,6 @@ Ao fim de Explorar, “Explore por categoria” oferece até seis categorias dos
 
 Explorar organiza os cards em masonry com proporções de imagem naturais limitadas, preservando informações e ações. Categoria e modelo têm busca e navegação por teclado; no celular, a gaveta de filtros só altera o catálogo ao aplicar, e fechar cancela o rascunho. “Me surpreenda” escolhe um prompt entre os resultados visíveis. A prévia do criador usa perfil público real e os controles existentes de seguir, com link direto ao perfil. Skeletons indicam carregamento; movimento reduzido preserva capas estáticas. Na página do prompt, sombras na área do texto indicam conteúdo fora da região visível somente quando há overflow. A landing permanece intacta.
 
+O redesign solicitado do modal de login se aplica às páginas internas e à sua abertura sobre a landing, preservando os métodos de autenticação existentes e a apresentação da landing fora do diálogo.
+
 Header interno flutuante que se compacta ao rolar, com dropdowns de descoberta e biblioteca e busca centralizada. Rodapé tipográfico nas páginas de descoberta, biblioteca, perfis e prompts reúne marca, navegação e acesso à conta/criação, respeitando a autenticação. Categorias usam a faixa completa do componente original no hover. A landing não recebe esses componentes.

@@ -154,6 +154,10 @@ SearchSelect usa superfície clara, opções de pelo menos 44 px, seleção vis�
 
 Na página do prompt, ScrollShadow envolve apenas o texto completo: sombras nas bordas indicam conteúdo acima ou abaixo somente quando existe rolagem restante. A região tem nome acessível e foco visível, com altura máxima de `min(480px, 50dvh)` no desktop e 400 px no celular. A landing mantém seus estilos e comportamento.
 
+## Modal de login
+
+O login compartilhado usa uma coluna branca de até 432 px, cantos de 20 px, logo e título centralizados, sem arte lateral ou glow. Provedores sociais precedem os campos rotulados de e-mail e senha; GitHub aparece somente quando habilitado. A senha permite mostrar/ocultar; recuperação, mensagens legíveis e criação de conta mantêm os fluxos existentes. Radix Dialog fornece fechamento por X, Escape ou clique externo, contenção de foco e bloqueio da rolagem; ao fechar, o foco volta ao elemento de origem. No celular, há margens de 12 px e campos de 16 px; movimento reduzido desativa as animações. O pedido de login autoriza este modal também sobre a landing, cujo desenho fora do diálogo é preservado. Referências, contrato e limites da revisão: `docs/design/login-modal.md`.
+
 Em Explorar, capa e informações ficam no mesmo componente, mas visualmente separadas por apenas 4 px. A capa tem cantos de 18 px e o bloco de informações recupera o cinza original (#f0f0f3), com cantos de 16 px e as cores de texto do tema claro. O contêiner comum é transparente; hover e foco em qualquer região mantêm a interação conjunta da capa, preservando os links independentes do prompt, do criador e a curtida. O painel flutuante do criador conserva a superfície clara.
 
 Na página do prompt, a barra de rolagem da galeria de resultados fica oculta. O avanço automático, arraste, toque e navegação por teclado continuam disponíveis.
