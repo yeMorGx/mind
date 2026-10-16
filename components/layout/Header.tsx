@@ -23,6 +23,13 @@ function AccountAvatar({src,fallback,initials}: {src?:string;fallback?:string;in
 export default function Header({ searchValue, onSearchChange, onSearch, profileHref, badges, userName, photoUrl, googlePhotoUrl, onLogin, authReady, onCreate, library, favorites, onLibrary, onExplore, onSignOut }: HeaderProps) {
   const pathname = usePathname();
   const account = useRef<HTMLDetailsElement>(null);
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const update = () => setCompact(previous => window.scrollY > (previous ? 40 : 100));
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
   useEffect(() => { account.current?.removeAttribute("open"); },[pathname]);
   useEffect(() => {
     function close(event: PointerEvent) { if (event.target instanceof Node && !account.current?.contains(event.target)) account.current?.removeAttribute("open"); }
@@ -30,10 +37,10 @@ export default function Header({ searchValue, onSearchChange, onSearch, profileH
     return () => document.removeEventListener("pointerdown",close);
   },[]);
   const initials = userName.trim().split(/\s+/).slice(0,2).map(part => Array.from(part)[0]).join("").toUpperCase();
-  return <header className="site-header showcase-header fixed inset-x-0 top-0 z-40 bg-surface">
+  return <header className="site-header showcase-header floating-site-header fixed inset-x-0 top-0 z-40 bg-surface" data-compact={compact || undefined}>
     <div className="showcase-header-inner">
       <Link href={profileHref ? "/home" : "/explore"} aria-label="Mind — início" className="showcase-brand"><span className="catalog-logo"><Logo /></span></Link>
-      <SiteNavigation explore={pathname === "/explore"} library={library} favorites={favorites} onExplore={onExplore} onLibrary={onLibrary}/>
+      <SiteNavigation explore={pathname === "/explore"} library={library} favorites={favorites} onExplore={onExplore} onLibrary={onLibrary} onCreate={onCreate}/>
       <HeaderSearch value={searchValue} onChange={onSearchChange} onSearch={onSearch} />
       <div className="showcase-account-actions">
         <button type="button" onClick={onCreate} disabled={!authReady} aria-label="Novo prompt" className={`${profileHref ? "flex" : "hidden sm:flex"} h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50 lg:px-5`}><Plus size={17} /><span className="hidden lg:inline">Novo prompt</span></button>
