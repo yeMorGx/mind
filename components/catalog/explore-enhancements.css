@@ -1,7 +1,22 @@
 /* Internal exploration only. The landing keeps its existing presentation. */
 .site-app .explore-page .catalog-grid { display: block; columns: 1; column-gap: 28px; }
-.site-app .explore-page .catalog-public-card { display: inline-block; width: 100%; break-inside: avoid; margin-bottom: 30px; vertical-align: top; }
-.site-app .explore-page .catalog-card-cover { aspect-ratio: var(--prompt-cover-ratio, 4 / 3); }
+.site-app .explore-page .catalog-public-card { display: inline-block; width: 100%; break-inside: avoid; margin-bottom: 30px; vertical-align: top; border-radius: 18px; background: #000; }
+.site-app .explore-page .catalog-card-cover { aspect-ratio: var(--prompt-cover-ratio, 4 / 3); border-radius: 18px 18px 0 0; }
+.site-app .explore-page .catalog-public-card > .prompt-card-details {
+  --foreground: #fff;
+  --muted: #bfc0c8;
+  --surface: #000;
+  --surface-hover: #252525;
+  --media: #303035;
+  --border-color: #3b3b42;
+  margin-top: 0; border-radius: 0 0 18px 18px; background: #000; color: var(--foreground);
+}
+.site-app .explore-page .prompt-card-details .social-like > button.is-liked { color: #ff7ba4; }
+.site-app .explore-page .prompt-card-details :is(a,button):focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.site-app .explore-page .catalog-card-cover:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }
+.site-app .explore-page .catalog-public-card:focus-within .catalog-card-cover img { transform: scale(1.025); }
+@media (hover: hover) { .site-app .explore-page .catalog-public-card:hover .catalog-card-cover img { transform: scale(1.025); } }
+@media (prefers-reduced-motion: reduce) { .site-app .explore-page .catalog-public-card:is(:hover,:focus-within) .catalog-card-cover img { transform: none; } }
 @media (min-width: 640px) { .site-app .explore-page .catalog-grid { columns: 2; } }
 @media (min-width: 1100px) { .site-app .explore-page .catalog-grid { columns: 3; } }
 @media (min-width: 1600px) { .site-app .explore-page .catalog-grid { columns: 4; } }
