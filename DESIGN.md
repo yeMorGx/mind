@@ -58,7 +58,7 @@ O conteúdo conduz a página: imagens e texto do prompt primeiro; identidade, de
 
 ### Catálogo inspirado na referência
 
-O catálogo usa colunas responsivas, capas reais em proporção 4:3, sem borda externa nos cards públicos, e metadados abaixo das imagens com título, autor ou status, modelo quando informado e ação de copiar. A biblioteca conserva as ações animadas de editar, copiar, favoritar e duplicar, além de publicar/tornar privado e excluir. Não há contadores de visualizações ou curtidas inventados. Os estados vazios e falhas de carregamento permanecem explícitos.
+O catálogo usa colunas responsivas e capas reais (proporções variáveis em Explorar), sem borda externa nos cards públicos, e metadados abaixo das imagens com título, autor ou status, modelo quando informado e ação de copiar. A biblioteca conserva as ações animadas de editar, copiar, favoritar e duplicar, além de publicar/tornar privado e excluir. Não há contadores de visualizações ou curtidas inventados. Os estados vazios e falhas de carregamento permanecem explícitos.
 
 ## Cores e componentes
 
@@ -96,13 +96,13 @@ Campo com sugestões em painel ancorado, espera de 250 ms e cancelamento de cons
 
 ## Adaptação para celular
 
-Header de 116 px com marca/conta e busca em largura total; navegação inferior de 64 px mais a área segura. A busca em foco esconde a barra inferior. A raiz reserva espaço para ambas as barras. Filtros abrem em um painel ancorado; a ordenação usa um controle compacto. Campos usam pelo menos 16 px para evitar zoom automático no iPhone. As ações dos cards da biblioteca ficam dentro da capa, com alvos de toque de 44 px, preservando a animação no desktop. A landing fica fora dessas regras.
+Header de 116 px com marca/conta e busca em largura total; navegação inferior de 64 px mais a área segura. A busca em foco esconde a barra inferior. A raiz reserva espaço para ambas as barras. Em Explorar, abaixo de 768 px, Filtros abre uma gaveta inferior com ordenação, categoria e modelo; as escolhas ficam em rascunho até Aplicar filtros, e fechar descarta as alterações. Campos usam pelo menos 16 px para evitar zoom automático no iPhone. As ações dos cards da biblioteca ficam dentro da capa, com alvos de toque de 44 px, preservando a animação no desktop. A landing fica fora dessas regras.
 
 ## Atualização do catálogo a partir do wireframe
 
-Referência de estrutura: Figma `qCkRPKTQMKNyqzBN7EztnX`, nó `192:149`. Capas em 7:6, cantos de 18 px; bloco de identificação separado por 10 px, com avatar/nome antes do título e curtidas discretas na mesma linha do criador. Sem copiar ou exibir o corpo do prompt nos cards públicos.
+Referência de estrutura: Figma `qCkRPKTQMKNyqzBN7EztnX`, nó `192:149`. No perfil, capas em 7:6; em Explorar, proporções naturais limitadas entre 0,8 e 1,85. Ambos mantêm cantos de 18 px; bloco de identificação separado por 10 px, com avatar/nome antes do título e curtidas discretas na mesma linha do criador. Sem copiar ou exibir o corpo do prompt nos cards públicos.
 
-Explorar e perfil usam largura disponível, com 24 px laterais no desktop e 16 px no celular. A biblioteca não recebe essa mudança. Header somente com logo, busca centrada e avatar real com fallback Google/inicial. Campo sem outline externo; sugestões e seleção por teclado continuam visíveis. Somente o envio de uma consulta altera os resultados de Explorar. Três dropdowns estilizados reúnem ordenação, categoria e modelo; não há chips de tipo. No perfil, Seguir/Seguindo e contagens reais substituem Compartilhar perfil. Curtidas e seguidores carregam em lote e mostram falhas e estados pendentes; não apresentar contagens simuladas.
+Explorar e perfil usam largura disponível, com 24 px laterais no desktop e 16 px no celular. A biblioteca não recebe essa mudança. Header somente com logo, busca centrada e avatar real com fallback Google/inicial. Campo sem outline externo; sugestões e seleção por teclado continuam visíveis. Somente o envio de uma consulta altera os resultados de Explorar. No desktop, três seletores reúnem ordenação, categoria e modelo; categoria e modelo têm busca e navegação por teclado. No celular, ficam na gaveta de filtros; não há chips de tipo. No perfil, Seguir/Seguindo e contagens reais substituem Compartilhar perfil. Curtidas e seguidores carregam em lote e mostram falhas e estados pendentes; não apresentar contagens simuladas.
 
 ## Editor e publicação
 
@@ -144,3 +144,12 @@ Comentários ficam antes das recomendações, disponíveis em publicações e na
 ## Categorias ao fim de Explorar
 
 “Explore por categoria” adapta o FlowingMenu de React Bits à paleta clara existente: fundo transparente, texto `foreground`, divisórias `border-color` e faixa `surface-hover`. As linhas têm 116 px no desktop e 88 px até 639 px; títulos longos são truncados visualmente, preservando o nome completo no link. Hover e foco visível revelam uma faixa de texto e imagens reais de resultados (`gallery` ou `after`), quando disponíveis. Os links mantêm seta e indicação da categoria atual. Em dispositivos sem hover e com movimento reduzido, a navegação permanece estática, com foco visível e resposta ao toque. Não há animação de entrada automática. Os estilos da seção ficam restritos a `.site-app .explore-categories`.
+
+
+## Refinamentos de Explorar e leitura do prompt
+
+Explorar usa masonry por colunas (1; 2 a partir de 640 px; 3 a partir de 1100 px; 4 a partir de 1600 px), com 28 px entre colunas e 30 px entre cards. A primeira imagem carregada define a proporção da capa, limitada a 0,8–1,85, com fallback 4:3. Identidade, título, resumo, curtida e logo do modelo permanecem fora ou sobre a capa nas posições existentes; o perfil conserva sua grade. Somente em Explorar, a troca de resultados durante hover ou foco usa PixelTransition finito; movimento reduzido mantém a capa estática. Skeletons sinalizam o carregamento da rota, das imagens e da apresentação do criador, sem animação quando há preferência por movimento reduzido.
+
+SearchSelect usa superfície clara, opções de pelo menos 44 px, seleção visível, busca de categoria/modelo, setas e Enter; mostra estado sem opções. A gaveta móvel mantém Limpar filtros no rascunho até Aplicar filtros e respeita a área segura inferior. CreatorPreview abre onde há hover, carrega o perfil público real e reutiliza Seguir/Seguindo e contagens existentes; o nome continua sendo link direto ao perfil, inclusive no toque. “Me surpreenda” abre aleatoriamente um dos prompts atualmente visíveis e só aparece com resultados disponíveis.
+
+Na página do prompt, ScrollShadow envolve apenas o texto completo: sombras nas bordas indicam conteúdo acima ou abaixo somente quando existe rolagem restante. A região tem nome acessível e foco visível, com altura máxima de `min(480px, 50dvh)` no desktop e 400 px no celular. A landing mantém seus estilos e comportamento.
