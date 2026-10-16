@@ -1,0 +1,38 @@
+.site-app .explore-categories { --category-row-height: 116px; margin-top: clamp(64px, 8vw, 112px); }
+.site-app .explore-categories-heading { margin-bottom: 28px; }
+.site-app .explore-categories-heading h2 {
+  font-size: clamp(24px, 2.5vw, 32px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.site-app .explore-categories-heading p { margin-top: 10px; color: var(--muted); line-height: 1.6; }
+.site-app .explore-categories .flowing-menu { border-block: 1px solid var(--border-color); }
+.site-app .explore-categories .flowing-menu__link { padding-inline: 0; gap: 0; grid-template-columns: 0 minmax(0, 1fr) auto; z-index: 1; }
+.site-app .explore-categories .flowing-menu__label {
+  min-width: 0;
+  max-width: 100%;
+  font-size: clamp(24px, 3.5vw, 48px);
+  letter-spacing: -0.025em;
+}
+.site-app .explore-categories .flowing-menu__label-text { overflow: hidden; text-overflow: ellipsis; }
+.site-app .explore-categories .flowing-menu__end { align-self: stretch; align-items: center; padding-left: 20px; }
+.site-app .explore-categories .flowing-menu__meta { font-size: 14px; opacity: 1; color: var(--muted); }
+.site-app .explore-categories .flowing-menu__arrow { opacity: 1; padding-right: 4px; }
+.site-app .explore-categories .flowing-menu__band { z-index: 0; }
+.site-app .explore-categories .flowing-menu__item[data-current] .flowing-menu__label { opacity: 0; }
+.site-app .explore-categories .flowing-menu__item[data-current] .flowing-menu__end { background: var(--surface-hover); }
+.site-app .explore-categories .flowing-menu__link:focus-visible { outline-color: var(--foreground); outline-offset: -3px; }
+.site-app .explore-categories .flowing-menu__part-text { font-size: clamp(24px, 3.5vw, 48px); font-weight: 500; }
+@media (max-width: 639px) {
+  .site-app .explore-categories { --category-row-height: 88px; margin-top: 56px; }
+  .site-app .explore-categories-heading { margin-bottom: 20px; }
+  .site-app .explore-categories .flowing-menu__meta { display: none; }
+  .site-app .explore-categories .flowing-menu__end { padding-left: 12px; }
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .site-app .explore-categories .flowing-menu__band { display: none; }
+  .site-app .explore-categories .flowing-menu__item[data-current] .flowing-menu__label { opacity: 1; }
+  .site-app .explore-categories .flowing-menu__item[data-current] .flowing-menu__end { background: transparent; }
+  .site-app .explore-categories .flowing-menu__link:active { background: var(--surface-hover); }
+}
