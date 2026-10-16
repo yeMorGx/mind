@@ -577,7 +577,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); ou
 .site-app .prompt-detail-results { grid-column: 1; grid-row: 1; min-width: 0; }
 .site-app .prompt-detail-page .results-marquee { margin-top: 0; }
 .site-app .prompt-detail-page .results-marquee h2 { color: var(--foreground); font-size: 18px; font-weight: 600; }
-.site-app .prompt-detail-page .results-marquee-viewport { margin-top: 20px; }
+.site-app .prompt-detail-page .results-marquee-viewport { margin-top: 20px; scrollbar-width: none; }
+.site-app .prompt-detail-page .results-marquee-viewport::-webkit-scrollbar { display: none; }
 .site-app .prompt-detail-page .results-marquee-group { gap: 8px; }
 .site-app .prompt-detail-page .results-marquee-card { width: auto; max-width: min(540px,70vw); }
 .site-app .prompt-detail-page .results-marquee-media img { width: auto; max-width: 100%; height: 380px; object-fit: contain; }
