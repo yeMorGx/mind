@@ -8,7 +8,7 @@
 }
 .site-app .explore-categories-heading p { margin-top: 10px; color: var(--muted); line-height: 1.6; }
 .site-app .explore-categories .flowing-menu { border-block: 1px solid var(--border-color); }
-.site-app .explore-categories .flowing-menu__link { padding-inline: 0; gap: 0; grid-template-columns: 0 minmax(0, 1fr) auto; z-index: 1; }
+.site-app .explore-categories .flowing-menu__link { padding-inline: 0; gap: 0; grid-template-columns: 0 minmax(0, 1fr) auto; }
 .site-app .explore-categories .flowing-menu__label {
   min-width: 0;
   max-width: 100%;
@@ -19,9 +19,10 @@
 .site-app .explore-categories .flowing-menu__end { align-self: stretch; align-items: center; padding-left: 20px; }
 .site-app .explore-categories .flowing-menu__meta { font-size: 14px; opacity: 1; color: var(--muted); }
 .site-app .explore-categories .flowing-menu__arrow { opacity: 1; padding-right: 4px; }
-.site-app .explore-categories .flowing-menu__band { z-index: 0; }
-.site-app .explore-categories .flowing-menu__item[data-current] .flowing-menu__label { opacity: 0; }
-.site-app .explore-categories .flowing-menu__item[data-current] .flowing-menu__end { background: var(--surface-hover); }
+.site-app .explore-categories .flowing-menu__band { z-index: 1; left: clamp(180px,22vw,280px); right: 144px; }
+/* Keep titles and the action stable; only the middle preview moves between rows. */
+.site-app .explore-categories .flowing-menu__label { opacity: 1; max-width: calc(clamp(180px,22vw,280px) - 24px); }
+.site-app .explore-categories .flowing-menu__end { position: relative; z-index: 2; }
 .site-app .explore-categories .flowing-menu__link:focus-visible { outline-color: var(--foreground); outline-offset: -3px; }
 .site-app .explore-categories .flowing-menu__part-text { font-size: clamp(24px, 3.5vw, 48px); font-weight: 500; }
 @media (max-width: 639px) {
@@ -29,6 +30,7 @@
   .site-app .explore-categories-heading { margin-bottom: 20px; }
   .site-app .explore-categories .flowing-menu__meta { display: none; }
   .site-app .explore-categories .flowing-menu__end { padding-left: 12px; }
+  .site-app .explore-categories .flowing-menu__band { right: 48px; }
 }
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .site-app .explore-categories .flowing-menu__band { display: none; }

@@ -29,8 +29,9 @@ export default function PixelImage({ src, alt, onError, onSize }: {
       layer.dataset.running = "true";
       layer.querySelectorAll<HTMLElement>("span").forEach((tile, index) => {
         const delay = ((index * 37) % 97) * 1.5;
-        animations.push(tile.animate([{ opacity: 0 }, { opacity: 1, offset: 0.28 }, { opacity: 1, offset: 0.62 }, { opacity: 0 }], {
-          duration: 500, delay, easing: "steps(1, end)", fill: "both",
+        // Step each segment: stepping the whole timeline skips both opaque frames.
+        animations.push(tile.animate([{ opacity: 0, easing: "steps(1, end)" }, { opacity: 1, offset: 0.28, easing: "steps(1, end)" }, { opacity: 1, offset: 0.68, easing: "steps(1, end)" }, { opacity: 0 }], {
+          duration: 500, delay, easing: "linear", fill: "both",
         }));
       });
       swap = setTimeout(change, 300);

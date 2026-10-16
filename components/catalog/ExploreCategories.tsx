@@ -42,9 +42,9 @@ export default function ExploreCategories({ prompts, selected, onSelect }: {
       showArrow
       intro={false}
       speed={45}
-      followCursor={0.15}
-      stretch={0.35}
-      magnet={0.1}
+      followCursor={0}
+      stretch={0}
+      magnet={0}
       direction="alternate"
       textColor="var(--foreground)"
       bgColor="transparent"

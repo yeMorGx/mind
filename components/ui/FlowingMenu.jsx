@@ -494,7 +494,7 @@ function FlowingMenu({
 
   useEffect(() => {
     const loop = engine.current;
-    return () => cancelAnimationFrame(loop.raf);
+    return () => { cancelAnimationFrame(loop.raf); loop.raf = 0; };
   }, []);
 
   const onPointerMove = event => {

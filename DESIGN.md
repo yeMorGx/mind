@@ -157,3 +157,7 @@ Na página do prompt, ScrollShadow envolve apenas o texto completo: sombras nas 
 Em Explorar, capa e informações ficam no mesmo componente, mas visualmente separadas por apenas 4 px. A capa tem cantos de 18 px e o bloco de informações recupera o cinza original (#f0f0f3), com cantos de 16 px e as cores de texto do tema claro. O contêiner comum é transparente; hover e foco em qualquer região mantêm a interação conjunta da capa, preservando os links independentes do prompt, do criador e a curtida. O painel flutuante do criador conserva a superfície clara.
 
 Na página do prompt, a barra de rolagem da galeria de resultados fica oculta. O avanço automático, arraste, toque e navegação por teclado continuam disponíveis.
+
+## Navegação e rodapé internos
+
+O header usa navegação compacta com indicador animado da página ativa; a busca permanece centralizada e a barra inferior do celular compartilha o indicador. O rodapé claro reúne marca, criação de prompt, destinos de descoberta e conta, apenas nas páginas de catálogo, biblioteca, perfil e prompt. Títulos e ações das categorias ficam estáveis, com a animação restrita ao centro das linhas. Referências consultadas e decisões: `docs/design/navigation-footer.md`. A landing permanece protegida.

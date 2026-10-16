@@ -1,0 +1,50 @@
+/* Shared chrome for internal pages; the landing never renders these elements. */
+.site-app .showcase-nav { gap: 2px; padding: 4px; border-radius: 16px; }
+.site-app .showcase-nav > .site-nav-item { position: relative; isolation: isolate; justify-content: center; padding: 0 11px; border-radius: 12px; text-decoration: none; transition: color 180ms ease, background-color 180ms ease; }
+.site-app .showcase-nav > .site-nav-item:is(:hover,[aria-current=page]) { color: var(--foreground); text-decoration: none; }
+.site-app .showcase-nav > .site-nav-item[aria-current=page] { background: transparent; }
+.site-app .site-nav-indicator { position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--surface); box-shadow: 0 2px 5px #17181a0f; pointer-events: none; }
+.site-app .site-nav-label { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.site-app .site-nav-label > svg { flex: none; }
+.site-app .showcase-nav > .site-nav-item:not([aria-current=page]):hover { background: #17181a08; }
+@media (min-width: 768px) {
+  .site-app .showcase-nav { background: var(--surface-hover); }
+  .site-app .site-nav-label > svg { display: none; }
+  .site-app .showcase-nav > .site-nav-item { min-height: 36px; font-size: 12px; }
+}
+@media (min-width: 1024px) {
+  .site-app .showcase-header-inner { grid-template-columns: minmax(0,1fr) minmax(240px,min(480px,calc(100vw - 720px))) minmax(0,1fr); }
+}
+@media (min-width: 1360px) { .site-app .site-nav-label > svg { display: block; } }
+@media (max-width: 767px) {
+  .site-app .showcase-nav { border-radius: 0; padding: 4px 8px calc(4px + env(safe-area-inset-bottom, 0px)); gap: 4px; }
+  .site-app .site-nav-label { flex-direction: column; gap: 5px; }
+  .site-app .site-nav-label > svg { width: 20px; height: 20px; }
+  .site-app .site-nav-indicator { background: var(--surface-hover); box-shadow: none; }
+}
+.site-app .site-footer { max-width: 1600px; margin: 40px auto 0; padding: 0 24px; color: var(--foreground); }
+.site-app .site-footer-main { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap: 56px; padding: 56px 0; border-top: 1px solid var(--border-color); }
+.site-app .site-footer-brand { display: inline-flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 650; letter-spacing: -.025em; }
+.site-app .site-footer-brand > span { display: block; width: 42px; height: 42px; }
+.site-app .site-footer-brand svg { width: 100%; height: 100%; }
+.site-app .site-footer-intro > p { max-width: 28ch; margin-top: 20px; font-size: clamp(22px,2.4vw,32px); line-height: 1.3; letter-spacing: -.025em; font-weight: 500; text-wrap: balance; }
+.site-app .site-footer-create { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 20px; font-size: 13px; font-weight: 550; }
+.site-app .site-footer-create svg { transition: transform 180ms ease; }
+.site-app .site-footer-create:hover svg { transform: translate(2px,-2px); }
+.site-app .site-footer-main nav { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.site-app .site-footer-main h2 { margin-bottom: 14px; font-size: 14px; font-weight: 600; }
+.site-app .site-footer-main nav :is(a,button) { display: inline-flex; align-items: center; min-height: 44px; text-align: left; font-size: 13px; color: var(--muted); }
+.site-app .site-footer :is(a,button):hover { color: var(--foreground); }
+.site-app .site-footer nav :is(a,button):hover { text-decoration: underline; text-underline-offset: 5px; }
+.site-app .site-footer :is(a,button):focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; border-radius: 4px; }
+.site-app .site-footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 24px 0 32px; border-top: 1px solid var(--border-color); color: var(--muted); font-size: 12px; }
+.site-app .site-footer-bottom > button { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; }
+@media (max-width: 767px) {
+  .site-app .site-footer { margin-top: 12px; padding: 0 16px calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .site-app .site-footer-main { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 36px 24px; padding: 36px 0; }
+  .site-app .site-footer-intro { grid-column: 1/-1; }
+  .site-app .site-footer-bottom { justify-content: flex-start; gap: 8px 20px; padding-bottom: 0; }
+  .site-app .site-footer-bottom > p:nth-child(2) { order: 3; width: 100%; }
+  .site-app .site-footer-bottom > button { margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .site-app .site-footer-create svg, .site-app .showcase-nav > .site-nav-item { transition: none; } }

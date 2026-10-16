@@ -14,6 +14,7 @@ import RequiredUsername from "@/components/profile/RequiredUsername";
 import LoginModal from "@/components/modal/modalLogin";
 import SocialProvider from "@/components/social/SocialProvider";
 import Header from "./Header";
+import SiteFooter from "./SiteFooter";
 type PromptView = "all" | "favorites";
 
 type LayoutValue = {
@@ -94,6 +95,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         {error && <div role="alert" className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pt-5 text-sm text-red-700"><p>{error}</p><button type="button" onClick={() => setError("")} className="underline">Fechar</button></div>}
         {children}
       </div>
+      {(pathname === "/explore" || pathname === "/home" || pathname.startsWith("/u/") || pathname.startsWith("/p/") || pathname.startsWith("/share/")) && <SiteFooter profileHref={profileHref} onLibrary={value => openLibrary(value ? "favorites" : "all")} onCreate={openNewPrompt} onLogin={() => setLoginOpen(true)}/>}
       <RequiredUsername onLogout={logout} />
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </div></SocialProvider>

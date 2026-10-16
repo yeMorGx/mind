@@ -4,9 +4,11 @@ import type {BadgeKind} from "@/lib/firebase/badges";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Plus, Settings, LogOut, UserRound, Compass, Library, Star } from "lucide-react";
+import { Plus, Settings, LogOut, UserRound } from "lucide-react";
 import HeaderSearch from "@/components/search/HeaderSearch";
 import Logo from "@/components/ui/logo";
+import SiteNavigation from "./SiteNavigation";
+import "./site-chrome.css";
 type HeaderProps = {
   searchValue: string; onSearchChange: (value: string) => void; onSearch: (query?: string) => void;
   badges?:BadgeKind[]; profileHref?: string; userName: string; photoUrl?: string; googlePhotoUrl?: string; onLogin: () => void; authReady: boolean; onCreate: () => void;
@@ -31,11 +33,7 @@ export default function Header({ searchValue, onSearchChange, onSearch, profileH
   return <header className="site-header showcase-header fixed inset-x-0 top-0 z-40 bg-surface">
     <div className="showcase-header-inner">
       <Link href={profileHref ? "/home" : "/explore"} aria-label="Mind — início" className="showcase-brand"><span className="catalog-logo"><Logo /></span></Link>
-      <nav aria-label="Navegação principal" className="showcase-nav">
-        <Link href="/explore" onClick={onExplore} aria-current={pathname === "/explore" ? "page" : undefined}><Compass size={20} className="md:hidden" />Explorar</Link>
-        <button type="button" onClick={() => onLibrary(false)} aria-current={library && !favorites ? "page" : undefined}><Library size={20} className="md:hidden" />Biblioteca</button>
-        <button type="button" onClick={() => onLibrary(true)} aria-current={library && favorites ? "page" : undefined}><Star size={20} className="md:hidden" />Favoritos</button>
-      </nav>
+      <SiteNavigation explore={pathname === "/explore"} library={library} favorites={favorites} onExplore={onExplore} onLibrary={onLibrary}/>
       <HeaderSearch value={searchValue} onChange={onSearchChange} onSearch={onSearch} />
       <div className="showcase-account-actions">
         <button type="button" onClick={onCreate} disabled={!authReady} aria-label="Novo prompt" className={`${profileHref ? "flex" : "hidden sm:flex"} h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50 lg:px-5`}><Plus size={17} /><span className="hidden lg:inline">Novo prompt</span></button>
