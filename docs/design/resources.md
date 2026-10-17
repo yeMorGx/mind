@@ -38,14 +38,15 @@ Contas Firebase usam `resource-actions`, que valida assinatura/issuer/audience/e
 
 ## Estado de ativação
 
-A migração `20261017034641_resource_catalog.sql` e a Edge Function `resource-actions` precisam ser aplicadas ao Mind. As duas conexões MCP disponíveis recusaram acesso ao projeto; o proprietário foi avisado e está reconectando a conta correta. A migração e a função ainda não foram aplicadas nesta sessão. Não anunciar o fluxo publicado como operacional até ativar a infraestrutura.
+A migração `20261017034641_resource_catalog.sql` foi aplicada como `resource_catalog` no Mind em 17/10/2026. A Edge Function `resource-actions` v1 foi publicada e confirmada ACTIVE, com validação interna dos tokens Firebase e `verify_jwt=false` no gateway. As duas conexões dos Apps não tinham acesso; a autenticação OAuth do MCP da CLI permitiu a implantação no projeto correto.
 
+A conferência administrativa confirmou a função de busca e os metadados das tabelas/políticas. O advisor de segurança não apontou achados novos no catálogo; manteve os avisos de tabelas internas de migração sem políticas e de proteção de senhas vazadas desativada. Nenhuma configuração Auth foi alterada por esta entrega.
 A migração anterior `20261015145914_prompt_resources.sql`, do commit pendente ffdb033, refere-se a anexos em prompts e é independente deste catálogo; não é pré-requisito e não deve ser publicada implicitamente.
 
-A entrega segue como PR em rascunho a partir de `origin/master`, excluindo o commit pendente `ffdb033`. O `master` de produção permanece sem esta alteração até que o acesso administrativo ao Mind permita ativar o banco e a função.
+A entrega parte de `origin/master`, excluindo o commit pendente `ffdb033`. O PR foi preparado como rascunho durante o bloqueio e segue para master/Vercel após a ativação da infraestrutura, conforme autorização contínua do proprietário.
 
 ## Evidência e limites
 
 Há 18 capturas em `.impeccable/review`: `resources-{catalog-markdown,catalog-mcp,detail-markdown,detail-mcp,editor-markdown,editor-mcp,review-markdown,review-mcp}-{desktop,mobile}.png` e `resources-unavailable-{desktop,mobile}.png`. As prévias usam componentes reais com conteúdo sintético rotulado, sem criar contas ou fazer escritas. A comparação documental inspecionou catálogo Markdown desktop, detalhe MCP mobile e revisão MCP desktop, além dos componentes e estilos. O revisor aprovou a entrega no escopo das duas correções exigidas: confirmação antes de tornar uma publicação privada e revisão de todos os campos públicos. O estado indisponível informa que a área está sendo preparada e permite tentar novamente, sem simular um catálogo ativo.
 
-As rotas de prévia e a exportação temporária do contexto foram removidas. Após todas as correções, o ESLint dos arquivos alterados terminou sem erros ou avisos, e o build de produção Next.js, incluindo TypeScript, passou. Não há comprovação de login real, escrita, publicação, RLS remoto, busca remota ou ponte Firebase enquanto o acesso administrativo estiver bloqueado. A confirmação de retirada e a revisão completa foram verificadas no código e em prévias, sem acionar uma publicação real.
+As rotas de prévia e a exportação temporária do contexto foram removidas. Após todas as correções, o ESLint dos arquivos alterados terminou sem erros ou avisos, e o build de produção Next.js, incluindo TypeScript, passou. A infraestrutura foi implantada e conferida por metadados e leituras públicas; não há comprovação de login real, escrita de usuário, publicação autenticada, isolamento entre duas contas ou ponte Firebase com sessão real. A confirmação de retirada e a revisão completa foram verificadas no código e em prévias, sem acionar uma publicação real.

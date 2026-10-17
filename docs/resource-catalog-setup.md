@@ -30,4 +30,8 @@ Reutiliza apenas `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_
 
 ## Conferência após ativar
 
-Com contas autorizadas, conferir rascunho privado, publicação e retirada, abertura anônima, busca, perfil, comentários, likes e favoritos. Conferir também que outra conta não consegue editar nem ler rascunhos, e que MFA continua exigido para escritas quando ativo. Nenhum desses fluxos de escrita foi executado nesta sessão, devido à falta de acesso administrativo ao Mind.
+Com contas autorizadas, conferir rascunho privado, publicação e retirada, abertura anônima, busca, perfil, comentários, likes e favoritos. Conferir também que outra conta não consegue editar nem ler rascunhos, e que MFA continua exigido para escritas quando ativo. A migração e a função foram implantadas em 17/10/2026 pelo MCP autenticado da CLI. Nenhum desses fluxos de escrita de usuário foi executado nesta sessão.
+
+## Implantação realizada
+
+Em 17/10/2026: migração `resource_catalog` aplicada e `resource-actions` versão 1 confirmada ACTIVE no projeto Mind. A função mantém `verify_jwt=false` no gateway e a validação criptográfica interna do JWT Firebase. A conferência confirmou tabelas com RLS, políticas de proprietário/publicação e função de busca. A chave OAuth foi usada internamente pela CLI/MCP e não foi incluída no repositório.
