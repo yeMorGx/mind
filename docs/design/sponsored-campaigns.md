@@ -14,7 +14,7 @@ Cards preservam a capa 4:3 com cantos de 18 px e o bloco cinza `#f0f0f3` com can
 
 CRUD e métricas privados passam por sessão verificada e emblema `owner` no servidor; URL e dados recebidos nunca autorizam acesso. Sessão de campanhas independe da ativação do Stripe e respeita MFA nativo. Banco expõe somente campos públicos dentro do período ativo. Eventos são enviados a serviço privado com deduplicação e limite transacional, sem IP bruto nem identificadores de conta. Contagens são estimativas, descritas no painel.
 
-Não foram fornecidos link de afiliado, mídia oficial nem condições do MCPAI. Não se cria anúncio de uma parceria fictícia. A migração remota e as chaves de serviço dependem de acesso administrativo indisponível nesta sessão. O Explorar falha sem anúncio, mantendo o catálogo. Instruções de ativação: `docs/campaigns-setup.md`.
+Não foram fornecidos link de afiliado, mídia oficial nem condições do MCPAI. Não se cria anúncio de uma parceria fictícia. A migração remota foi aplicada pelo MCP autenticado da CLI em 17/10/2026; tabelas, RLS e privilégios das funções foram conferidos. A chave de serviço da Vercel e os fluxos autenticados da conta administradora ainda não foram confirmados. O Explorar falha sem anúncio, mantendo o catálogo. Instruções de ativação: `docs/campaigns-setup.md`.
 
 ## Evidências
 
@@ -33,3 +33,7 @@ Revisão de acabamento em 17/10/2026: **SHIP no escopo de código e interface pr
 Contrato conferido no código de `components/campaigns`, `lib/campaigns`, `app/api/campaigns/[action]/route.ts`, nos catálogos e nas três rotas `/explore`, e na migração específica. A seleção e projeção pública dependem do filtro de status/período por RLS no banco; `CampaignVisibility` acrescenta a guarda de término no cliente. A rota temporária `/campaign-preview` foi removida antes do build final. Nenhum teste de implementação foi executado, conforme a restrição do proprietário. Compilação e análise estática não substituem validação autenticada de CRUD/MFA, métricas ou aplicação remota da migração.
 
 Esta extensão preserva `DESIGN.md` e `.impeccable/design.json`. Há divergência anterior no sidecar: sua narrativa ainda descreve superfícies internas escuras e comunidade escura na landing, enquanto `DESIGN.md` registra o tema claro atual. Também há descrições históricas de header fixo e separação de 10 px no próprio `DESIGN.md`, seguidas das decisões mais recentes de header flutuante e separação de 4 px. Essas divergências foram registradas, sem reparo fora do escopo.
+
+## Ativação do banco
+
+Após a revisão visual, o proprietário concluiu a autenticação da CLI pelo retorno OAuth. A migração `sponsored_campaigns` foi aplicada no Mind, com verificação somente de leitura da configuração e dos privilégios. O advisor informou RLS sem política na tabela privada de eventos, estado intencional de acesso exclusivo pelo serviço; outros avisos existentes fora de campanhas não foram alterados. Nenhuma campanha foi inserida, nem sessão de usuário, métricas de produção ou configuração Stripe foram modificadas.
