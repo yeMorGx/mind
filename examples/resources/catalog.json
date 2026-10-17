@@ -1,0 +1,171 @@
+{
+  "format": "mind-resource-examples",
+  "version": 1,
+  "resources": [
+    {
+      "id": "b1439f45-349c-4e3e-beab-27918880486d",
+      "kind": "markdown",
+      "document": {
+        "title": "DESIGN.md — Interfaces claras para produtos de IA",
+        "summary": "Uma direção visual com tokens, hierarquia, componentes e acessibilidade para orientar a criação de interfaces.",
+        "category": "Design",
+        "coverUrl": "",
+        "description": "Exemplo original do Mind. Um ponto de partida para manter o mesmo design entre telas e orientar ferramentas de IA sem redesenhar o produto a cada pedido.",
+        "instructions": "Baixe o arquivo e salve como DESIGN.md na raiz do projeto. Adapte cores e regras à identidade do seu produto. Peça à ferramenta de IA para ler o arquivo antes de implementar uma tela. Ele serve como referência; não altera o projeto sozinho.",
+        "license": "MIT — conteúdo original deste exemplo.",
+        "credits": "Exemplo de demonstração criado para o Mind. Não representa uma documentação oficial das ferramentas citadas.",
+        "fileName": "DESIGN.md",
+        "content": "# Interface clara para produtos de IA\n\nEste é um exemplo de direção visual. Adapte os valores à identidade do seu produto antes de usar.\n\n## Objetivo\n\nAjude a pessoa a descobrir conteúdo, entender o que ele faz e escolher uma ação. A interface deve deixar o resultado em evidência e manter a navegação previsível.\n\n## Cores\n\nUse tokens semânticos para evitar cores diferentes em cada tela:\n\n```css\n:root {\n  --background: #fafafa;\n  --surface: #ffffff;\n  --foreground: #17181a;\n  --muted: #565660;\n  --border: #dedee5;\n  --primary: #17181a;\n  --primary-foreground: #ffffff;\n}\n```\n\nReserve cores de destaque para estados e conteúdo. Não dependa apenas de cor para comunicar erro, seleção ou sucesso.\n\n## Tipografia e hierarquia\n\n- Use uma família sem serifa na interface.\n- Títulos devem ser curtos e explicar o conteúdo da seção.\n- Texto de leitura deve ter aproximadamente 65 a 75 caracteres por linha.\n- Use fonte monoespaçada somente em código, comandos e configurações.\n- Nome, foto e emblemas pertencem ao mesmo grupo de autoria; o @ aparece em uma segunda linha.\n\n## Espaçamento e componentes\n\n- Trabalhe com uma escala de 4, 8, 12, 16, 24, 32 e 48 pixels.\n- Elementos do mesmo grupo ficam próximos; seções diferentes recebem mais espaço.\n- Cards usam cantos de 16 pixels, imagem acima e informações abaixo.\n- Cada área tem uma ação principal. Ações secundárias não devem competir com ela.\n- Formulários têm labels visíveis e instruções específicas junto ao campo.\n\n## Responsividade\n\nNo celular, empilhe conteúdo em uma coluna. Não reduza o texto inteiro para caber. Garanta que menus, filtros e ações possam ser usados por toque, sem depender de hover.\n\n## Estados obrigatórios\n\nPara cada componente, considere carregamento, vazio, erro, sucesso, foco e ação em andamento. Um erro deve explicar como continuar; uma ação em andamento deve impedir envios repetidos.\n\n## Acessibilidade\n\n- Mantenha contraste de pelo menos 4,5:1 no texto comum.\n- Preserve foco visível e ordem de navegação coerente.\n- Dê nome acessível aos botões que mostram apenas ícone.\n- Respeite a preferência por movimento reduzido.\n- Permita ler e operar a página sem animação.\n\n## Como pedir uma implementação\n\n“Leia DESIGN.md, identifique os componentes que já existem e implemente a tela seguindo esta direção. Explique quais decisões você reaproveitou e quais estados foram considerados.”\n",
+        "clients": [
+          "Claude Code",
+          "Codex",
+          "Cursor"
+        ],
+        "developer": "",
+        "website": "",
+        "repository": "",
+        "documentation": "",
+        "transport": "remote",
+        "remoteUrl": "",
+        "command": "",
+        "args": "",
+        "config": "",
+        "authentication": "",
+        "permissions": "",
+        "pricing": ""
+      }
+    },
+    {
+      "id": "e85b6ee6-1ade-4614-bc50-96775e677094",
+      "kind": "markdown",
+      "document": {
+        "title": "SKILL.md — Revisão de interfaces antes de publicar",
+        "summary": "Um fluxo de revisão para encontrar problemas reais de hierarquia, acessibilidade e experiência no celular.",
+        "category": "Design",
+        "coverUrl": "",
+        "description": "Exemplo de skill em Markdown, com frontmatter, critérios de uso, procedimento e formato de entrega. O foco é revisar o que já existe e justificar cada recomendação com evidência.",
+        "instructions": "Crie uma pasta chamada revisar-interface na área de skills do seu agente e coloque SKILL.md dentro dela. No Claude Code, uma opção de projeto é .claude/skills/revisar-interface/SKILL.md. Confira a localização exigida pelo seu cliente. Peça uma revisão de uma tela e indique a rota ou arquivo.",
+        "license": "MIT — conteúdo original deste exemplo.",
+        "credits": "Exemplo de demonstração criado para o Mind. Adapte as instruções e a instalação ao agente utilizado.",
+        "fileName": "SKILL.md",
+        "content": "---\nname: revisar-interface\ndescription: Revise a clareza, a acessibilidade e o comportamento responsivo de uma interface existente, preservando sua identidade visual.\n---\n\n# Revisar uma interface antes de publicar\n\nExemplo de skill para projetos web. Adapte o fluxo ao seu ambiente e às ferramentas disponíveis.\n\n## Quando usar\n\nUse quando a pessoa pedir uma revisão de uma tela, de um formulário ou de um fluxo já implementado. O objetivo é encontrar problemas concretos e propor mudanças pequenas e justificadas.\n\n## Contexto necessário\n\nAntes da revisão, identifique:\n\n1. Qual tarefa a pessoa quer concluir.\n2. Quem usa a tela e em quais dispositivos.\n3. Qual arquivo ou rota representa a implementação atual.\n4. Quais decisões visuais precisam ser preservadas.\n\nSe essas informações estiverem no projeto, leia-as antes de perguntar.\n\n## Procedimento\n\n### 1. Observe a tela real\n\nQuando houver acesso à aplicação, observe uma largura de computador e uma de celular. Aguarde o conteúdo carregar. Se não houver acesso, diferencie observações de código de observações visuais.\n\n### 2. Confira a hierarquia\n\nLocalize título, conteúdo principal e ação principal. Verifique se a pessoa consegue entender a tarefa sem ler toda a tela e se informações relacionadas aparecem juntas.\n\n### 3. Confira interação e acessibilidade\n\n- Campos têm labels visíveis?\n- Controles recebem foco por teclado?\n- Um botão com apenas ícone tem nome acessível?\n- Erros apontam o campo e uma forma de recuperação?\n- Existe feedback durante o envio?\n- A função continua disponível sem hover?\n- Conteúdo importante é cortado no celular?\n\n### 4. Organize os achados\n\nPara cada problema, registre o local, o comportamento observado, o impacto e uma correção proposta. Diferencie falhas que impedem uma tarefa de preferências estéticas.\n\n### 5. Corrija dentro do escopo\n\nQuando a implementação estiver autorizada, preserve componentes, dados e convenções existentes. Não transforme uma revisão pontual em um redesign geral. Execute testes somente quando isso tiver sido solicitado ou autorizado.\n\n## Formato de entrega\n\n```markdown\n## Resumo\n\nTarefa revisada e evidência disponível.\n\n## Problemas\n\n- Local: componente ou trecho da tela.\n- Observado: o que aconteceu.\n- Impacto: por que isso atrapalha a tarefa.\n- Correção: mudança concreta sugerida ou aplicada.\n\n## Limites\n\nO que não foi possível conferir e qual evidência ainda falta.\n```\n\nNão invente capturas, métricas, resultados de testes ou validações que não foram realizadas.\n",
+        "clients": [
+          "Claude Code",
+          "Codex"
+        ],
+        "developer": "",
+        "website": "",
+        "repository": "",
+        "documentation": "",
+        "transport": "remote",
+        "remoteUrl": "",
+        "command": "",
+        "args": "",
+        "config": "",
+        "authentication": "",
+        "permissions": "",
+        "pricing": ""
+      }
+    },
+    {
+      "id": "1eddc02b-d802-40fc-9271-b67249492baa",
+      "kind": "markdown",
+      "document": {
+        "title": "CLAUDE.md — Um guia de colaboração para o seu projeto",
+        "summary": "Instruções sobre contexto, implementação, dados e entrega para ajudar o Claude a trabalhar no seu repositório.",
+        "category": "Desenvolvimento",
+        "coverUrl": "",
+        "description": "Exemplo de instruções de projeto para o Claude Code. Orienta o agente a ler o contexto real, respeitar o design e preservar dados, evitando suposições sobre scripts e estrutura.",
+        "instructions": "Salve CLAUDE.md na raiz do repositório e adapte o texto ao seu projeto antes de usar com Claude Code. Você também pode aproveitar as orientações em outras ferramentas, no formato de instruções que cada uma suporta. Este arquivo não instala dependências nem executa comandos.",
+        "license": "MIT — conteúdo original deste exemplo.",
+        "credits": "Exemplo original de demonstração do Mind; não é um arquivo oficial da Anthropic.",
+        "fileName": "CLAUDE.md",
+        "content": "# Orientações para colaborar neste projeto\n\nEste é um exemplo de CLAUDE.md para um projeto web. Ajuste estas instruções à estrutura e às decisões reais do seu repositório.\n\n## Comece pelo contexto\n\nLeia o README, o package.json e as instruções aplicáveis à pasta que será alterada. Se houver um DESIGN.md, use-o como referência visual. Confira o estado do Git antes de editar e preserve alterações que já estavam presentes.\n\n## Entenda a tarefa\n\nIdentifique o resultado esperado e os arquivos envolvidos. Faça escolhas rotineiras com base nas convenções do projeto. Pergunte quando faltar uma decisão que afete o comportamento, os dados ou o escopo.\n\n## Implementação\n\n- Reutilize componentes e funções existentes antes de criar novas abstrações.\n- Preserve rotas, contratos de API e formatos de dados que já estejam em uso.\n- Separe conteúdo de apresentação quando isso facilitar a manutenção.\n- Trate carregamento, vazio, erro e sucesso nos fluxos assíncronos.\n- Use labels e nomes acessíveis nos controles.\n- Garanta que funções importantes também possam ser usadas no celular.\n\n## Dados e autenticação\n\nNão coloque credenciais no código nem em exemplos públicos. Valide entradas no servidor e respeite a autorização de cada usuário. Não use uma chave administrativa no frontend. Migrações devem preservar dados existentes e ter um objetivo definido.\n\n## Dependências\n\nAntes de instalar uma biblioteca, confira se o projeto já resolve a necessidade. Explique por que a nova dependência é necessária e mantenha o arquivo de lock atualizado.\n\n## Conferência\n\nConsulte os scripts disponíveis no package.json. Não invente comandos de build, lint ou teste. Execute testes somente quando a pessoa tiver pedido ou autorizado. Informe quais verificações realmente foram executadas e seus limites.\n\n## Entrega\n\nDescreva o que mudou, onde mudou e como foi conferido. Avise quando uma alteração depender de configuração externa. Não afirme que um fluxo está funcionando de ponta a ponta se apenas a compilação ou uma leitura pública foi conferida.\n\nPublicações, merges e mudanças em serviços externos seguem a autorização dada pela pessoa responsável pelo projeto.\n\n## Exemplo de pedido\n\n“Adicione a tela de configurações reutilizando o design e a autenticação existentes. Antes de editar, leia as instruções do repositório. Ao terminar, resuma os arquivos alterados e as verificações realizadas.”\n",
+        "clients": [
+          "Claude Code"
+        ],
+        "developer": "",
+        "website": "",
+        "repository": "",
+        "documentation": "",
+        "transport": "remote",
+        "remoteUrl": "",
+        "command": "",
+        "args": "",
+        "config": "",
+        "authentication": "",
+        "permissions": "",
+        "pricing": ""
+      }
+    },
+    {
+      "id": "d654ac6a-6d06-46a0-8fc4-4e1e07ee0aaa",
+      "kind": "mcp",
+      "document": {
+        "title": "GitHub MCP — Entenda um repositório com a sua IA",
+        "summary": "Consulte código, issues e pull requests usando o servidor MCP oficial do GitHub, configurado para leitura.",
+        "category": "Desenvolvimento",
+        "coverUrl": "",
+        "description": "Exemplo de cadastro de um MCP real. O servidor oficial do GitHub oferece ferramentas para explorar repositórios e acompanhar o trabalho da equipe. A configuração deste exemplo ativa o modo de leitura; não é um servidor criado pelo Mind.",
+        "instructions": "1. Consulte o guia de instalação do seu cliente no repositório oficial.\n2. Adicione o servidor remoto e mantenha o cabeçalho X-MCP-Readonly: true.\n3. No VS Code com suporte ao GitHub, siga o fluxo OAuth documentado. Em outros clientes, use um token pessoal com acesso somente aos repositórios necessários.\n4. O JSON deste exemplo usa o formato mcpServers e uma variável GITHUB_TOKEN; configure a credencial localmente, conforme o suporte do seu cliente. O VS Code usa a chave servers em vez de mcpServers. Não publique seu token no Mind.\n5. Experimente: “Resuma as issues abertas e indique quais arquivos ajudam a entender este projeto.”",
+        "license": "Servidor: MIT. Consulte a licença e os termos do GitHub para uso do serviço hospedado.",
+        "credits": "Desenvolvido pelo GitHub. Cadastro de exemplo do Mind, com texto próprio e links para a documentação oficial consultada em 17/10/2026.",
+        "fileName": "",
+        "content": "",
+        "clients": [
+          "Claude Code",
+          "Codex",
+          "Cursor",
+          "VS Code"
+        ],
+        "developer": "GitHub",
+        "website": "https://github.com/github/github-mcp-server",
+        "repository": "https://github.com/github/github-mcp-server",
+        "documentation": "https://github.com/github/github-mcp-server/blob/main/docs/server-configuration.md",
+        "transport": "remote",
+        "remoteUrl": "https://api.githubcopilot.com/mcp/",
+        "command": "",
+        "args": "",
+        "config": "{\n  \"mcpServers\": {\n    \"github\": {\n      \"type\": \"http\",\n      \"url\": \"https://api.githubcopilot.com/mcp/\",\n      \"headers\": {\n        \"X-MCP-Readonly\": \"true\",\n        \"Authorization\": \"Bearer ${GITHUB_TOKEN}\"\n      }\n    }\n  }\n}",
+        "authentication": "OAuth nos clientes com integração compatível; token pessoal do GitHub nos demais. A variável de exemplo deve ser configurada localmente.",
+        "permissions": "Acesso limitado às permissões da sua conta ou token. O cabeçalho X-MCP-Readonly desativa ferramentas de escrita nesta configuração.",
+        "pricing": "Servidor open source. O acesso ao serviço remoto e ao cliente de IA pode depender de planos, políticas da organização e limites do GitHub."
+      }
+    },
+    {
+      "id": "59439dd9-5250-48d7-9c41-086c2bd236ee",
+      "kind": "mcp",
+      "document": {
+        "title": "Supabase MCP — Explore seu banco com contexto",
+        "summary": "Consulte a estrutura do banco e a documentação do Supabase pelo servidor MCP oficial, em modo de leitura.",
+        "category": "Dados",
+        "coverUrl": "",
+        "description": "Exemplo de cadastro do servidor MCP hospedado do Supabase. Pode ajudar a entender tabelas e procurar documentação durante o desenvolvimento. A URL desta publicação habilita apenas os grupos database e docs e o modo read_only; não conecta automaticamente o Mind ao seu banco.",
+        "instructions": "1. Adicione a URL remota no cliente de IA compatível. No Claude Code, use claude mcp add --scope project --transport http supabase \"https://mcp.supabase.com/mcp?read_only=true&features=database,docs\".\n2. Conclua o login OAuth na conta Supabase da organização que você usa.\n3. Para limitar a um projeto, acrescente &project_ref=SEU_PROJECT_REF à URL, substituindo pelo identificador real do projeto.\n4. O JSON usa o formato mcpServers do Claude Code; adapte o formato conforme a documentação do seu cliente.\n5. Experimente: “Explique as relações entre estas tabelas sem alterar o banco.”\nO cadastro no Mind divulga a integração; a instalação e a autorização são feitas no seu próprio cliente.",
+        "license": "Servidor: Apache-2.0. O serviço hospedado também segue os termos do Supabase.",
+        "credits": "Desenvolvido pelo projeto Supabase MCP. Cadastro de exemplo do Mind, com texto próprio e documentação oficial consultada em 17/10/2026.",
+        "fileName": "",
+        "content": "",
+        "clients": [
+          "Claude Code",
+          "Codex",
+          "Cursor",
+          "VS Code",
+          "Gemini CLI"
+        ],
+        "developer": "Supabase",
+        "website": "https://supabase.com",
+        "repository": "https://github.com/supabase-community/supabase-mcp",
+        "documentation": "https://supabase.com/docs/guides/getting-started/mcp",
+        "transport": "remote",
+        "remoteUrl": "https://mcp.supabase.com/mcp?read_only=true&features=database,docs",
+        "command": "",
+        "args": "",
+        "config": "{\n  \"mcpServers\": {\n    \"supabase\": {\n      \"type\": \"http\",\n      \"url\": \"https://mcp.supabase.com/mcp?read_only=true&features=database,docs\"\n    }\n  }\n}",
+        "authentication": "OAuth da conta Supabase. O fluxo hospedado aceita clientes com registro dinâmico; a documentação descreve alternativas para outros ambientes.",
+        "permissions": "Consultas executadas em modo de leitura. O acesso continua limitado pela conta Supabase autorizada; use project_ref para restringir a um projeto.",
+        "pricing": "Servidor open source. Banco, recursos do projeto e cliente de IA seguem seus próprios planos e limites; confira os preços do Supabase."
+      }
+    }
+  ]
+}
