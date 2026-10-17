@@ -1,4 +1,5 @@
 "use client";
+import {AnimatedCheckbox} from "@/components/ui/animated-checkbox";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useOnboarding } from "@/app/context/OnboardingContext";
@@ -33,7 +34,7 @@ export default function BadgesPage() {
       <button disabled={pending} type="button" onClick={() => void load()} className="rounded-xl border border-border px-5 py-3 disabled:opacity-40">Carregar conta</button>
       {loadedUid === uid.trim() && loadedUid && <><CreatorBadges badges={badges} labeled />
         {badges.includes("owner") ? <p className="text-muted">O selo e as permissões do fundador são gerenciados exclusivamente no servidor.</p> : <>
-          {(["verified", "moderator", "creator", "partner"] as BadgeKind[]).map(kind => <label key={kind} className="flex items-start gap-3 rounded-xl border border-border p-4"><input type="checkbox" checked={badges.includes(kind)} onChange={event => setBadges(values => event.target.checked ? [...values, kind] : values.filter(value => value !== kind))} className="mt-1" /><span><span className="block font-medium">{badgeInfo[kind].label}</span><span className="mt-1 block text-sm text-muted">{badgeInfo[kind].description}</span></span></label>)}
+          {(["verified", "moderator", "creator", "partner"] as BadgeKind[]).map(kind => <AnimatedCheckbox key={kind} className="rounded-xl border border-border p-4" checked={badges.includes(kind)} onChange={event => setBadges(values => event.target.checked ? [...values, kind] : values.filter(value => value !== kind))}><span><span className="block font-medium">{badgeInfo[kind].label}</span><span className="mt-1 block text-sm text-muted">{badgeInfo[kind].description}</span></span></AnimatedCheckbox>)}
           <button disabled={pending} type="button" onClick={() => void save()} className="rounded-xl bg-primary px-5 py-3 text-primary-foreground disabled:opacity-40">{pending ? "Salvando…" : "Salvar emblemas"}</button>
         </>}
       </>}

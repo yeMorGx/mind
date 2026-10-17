@@ -1,4 +1,5 @@
 "use client";
+import {AnimatedCheckbox} from "@/components/ui/animated-checkbox";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Send } from "lucide-react";
@@ -25,7 +26,7 @@ export default function ContactPage({ kind, enterprise = false }: { kind: "caree
    {!careers && <label>Investimento previsto (opcional)<select name="budget" defaultValue=""><option value="">Prefiro conversar</option>{["Até R$ 1.000", "De R$ 1.000 a R$ 5.000", "De R$ 5.000 a R$ 15.000", "Acima de R$ 15.000"].map(value => <option key={value}>{value}</option>)}</select></label>}
    <label>{careers ? "Como você gostaria de contribuir?" : "O que você tem em mente?"}<textarea name="message" rows={6} required minLength={20} maxLength={5000} placeholder={careers ? "Conte sobre sua experiência e o que gostaria de fazer no Mind." : "Descreva a proposta, o objetivo e os prazos que você tem em mente."}/><span className="contact-field-note">De 20 a 5.000 caracteres.</span></label>
    <div className="contact-trap" aria-hidden="true"><label>Deixe em branco<input name="extra" tabIndex={-1} autoComplete="off" maxLength={200}/></label></div>
-   <label className="contact-consent"><input type="checkbox" name="consent" required/><span>Autorizo o Mind a usar estes dados para avaliar e responder à minha solicitação.</span></label>
+   <AnimatedCheckbox className="contact-consent" name="consent" required title="Autorizo o Mind a usar estes dados para avaliar e responder à minha solicitação."/>
    {error && <p className="billing-error" role="alert">{error}</p>}
    <button type="submit" className="workflow-button" disabled={busy || available !== true}><Send size={16}/>{busy ? "Enviando…" : careers ? "Enviar candidatura" : "Enviar proposta"}</button>
   </form>}</div>

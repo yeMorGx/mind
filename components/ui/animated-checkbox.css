@@ -1,0 +1,9 @@
+.animated-checkbox { position:relative; display:flex; align-items:center; gap:12px; min-height:44px; cursor:pointer; color:var(--foreground); }
+.animated-checkbox > input[type="checkbox"], .site-app .animated-checkbox > input[type="checkbox"] { position:absolute; left:0; top:50%; transform:translateY(-50%); z-index:1; width:22px; height:22px; margin:0; opacity:0; cursor:inherit; }
+.animated-checkbox-box { display:flex; align-items:center; justify-content:center; width:20px; height:20px; flex:none; border:1.5px solid var(--muted); border-radius:6px; background:transparent; color:var(--background); transition:background .2s,border-color .2s; }
+.animated-checkbox-box svg { width:100%; height:100%; }
+.animated-checkbox > input:checked + .animated-checkbox-box { background:var(--foreground); border-color:var(--foreground); }
+.animated-checkbox > input:focus-visible + .animated-checkbox-box { outline:2px solid var(--foreground); outline-offset:4px; }
+.animated-checkbox[data-disabled] { opacity:.55; cursor:not-allowed; }
+.animated-checkbox-label { min-width:0; font-size:inherit; line-height:1.6; }
+@media(prefers-reduced-motion:reduce) { .animated-checkbox-box { transition:none; } }

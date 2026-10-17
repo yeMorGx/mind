@@ -1,4 +1,5 @@
 "use client";
+import {AnimatedCheckbox} from "@/components/ui/animated-checkbox";
 /* eslint-disable @next/next/no-img-element -- Locally optimized uploaded covers use data URLs. */
 import { ResourceClientIdentity } from "./ResourceClients";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -577,9 +578,7 @@ function ResourceEditorSession({
                 <legend>Ferramentas compatíveis</legend>
                 <p>Selecione apenas as que você conferiu.</p>
                 {RESOURCE_CLIENTS.map((value) => (
-                  <label key={value}>
-                    <input
-                      type="checkbox"
+                  <AnimatedCheckbox key={value}
                       checked={doc.clients.includes(value)}
                       onChange={(event) =>
                         update(
@@ -589,9 +588,9 @@ function ResourceEditorSession({
                             : doc.clients.filter((item) => item !== value),
                         )
                       }
-                    />
+                    >
                     <ResourceClientIdentity value={value}/>
-                  </label>
+                  </AnimatedCheckbox>
                 ))}
               </fieldset>
               <Field label="Licença / condições de uso *">

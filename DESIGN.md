@@ -169,3 +169,7 @@ Na página do prompt, a barra de rolagem da galeria de resultados fica oculta. O
 ## Navegação e rodapé internos
 
 O header flutua com margem externa e se compacta em largura e altura ao rolar, mantendo a busca centralizada. Dropdowns de Explorar/Biblioteca oferecem atalhos e descrições; no celular, a navegação inferior mantém o indicador de página ativa. O rodapé usa painel claro, chamada tipográfica, ação circular e marca Mind em escala grande, com os destinos reais de descoberta e conta. As categorias preservam o componente completo: durante hover, a faixa preenche a linha inteira, sem reservar áreas fixas para título ou ação. Referências consultadas e decisões: `docs/design/navigation-footer.md`. A landing permanece protegida.
+
+## MFA e celebração de assinatura
+
+MFA usa QRCode do Spell UI em preto sobre branco com margem de segurança e CodeSlots do React Bits para seis dígitos. Checkboxes compartilham o traçado animado do Spell UI, com semântica e validação nativas. No retorno do checkout confirmado pelo servidor, TearTicket aparece sozinho no centro da tela, sem card ao redor, com arte fotográfica existente, logo real do Mind, primeiro nome da conta e plano na ponta destacável; apresenta a assinatura e permite destacar a ponta por arraste ou teclado antes de “Plano ativado!”. Fechar/continuar sem animação permanece disponível. Referências, adaptações e limites: `docs/design/mfa-and-subscription-components.md`.

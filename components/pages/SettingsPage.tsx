@@ -1,4 +1,5 @@
 "use client";
+import {AnimatedCheckbox} from "@/components/ui/animated-checkbox";
 import Connections from "@/components/settings/Connections";
 import MFASettings from "@/components/settings/MFASettings";
 import {startAccountMigration} from "@/lib/supabase/mind";
@@ -39,7 +40,7 @@ export function PreferencesForm({initial,onSave}:{initial?:AccountPreferences;on
  const busy=useRef(false);
  return <form className="settings-section" onSubmit={async event=>{event.preventDefault();if(busy.current)return;busy.current=true;setPending(true);setMessage("");setFailed(false);try{await onSave({defaultCategory:category.trim(),defaultModel:model.trim(),favoritesFirst});setMessage("Preferências salvas.");}catch{setFailed(true);setMessage("Não foi possível salvar. Confira sua conexão e tente novamente.");}finally{busy.current=false;setPending(false);}}}>
  <h2>Preferências da biblioteca</h2><p>Preencha novos prompts com seus padrões. Você pode mudar esses campos em cada prompt.</p><div className="settings-fields"><label>Categoria padrão<input maxLength={80} placeholder="Ex.: Retratos" value={category} disabled={pending} onChange={event=>setCategory(event.target.value)}/></label><AIModelPicker label="Modelo / ferramenta padrão" value={model} onChange={setModel} disabled={pending}/></div>
- <label className="mt-6 flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" checked={favoritesFirst} disabled={pending} onChange={event=>setFavoritesFirst(event.target.checked)} className="size-4 accent-primary"/>Mostrar favoritos primeiro na biblioteca</label><button type="submit" disabled={pending} className="workflow-button mt-5">{pending?"Salvando…":"Salvar preferências"}</button><p role="status" className={failed?"!text-red-700":""}>{message}</p>
+ <AnimatedCheckbox className="mt-6 text-sm" checked={favoritesFirst} disabled={pending} onChange={event=>setFavoritesFirst(event.target.checked)} title="Mostrar favoritos primeiro na biblioteca"/><button type="submit" disabled={pending} className="workflow-button mt-5">{pending?"Salvando…":"Salvar preferências"}</button><p role="status" className={failed?"!text-red-700":""}>{message}</p>
  </form>;
 }
 

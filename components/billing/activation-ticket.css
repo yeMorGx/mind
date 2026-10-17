@@ -1,0 +1,30 @@
+.activation-dialog { width:min(640px,calc(100vw - 24px)); max-height:calc(100dvh - 24px); margin:auto; padding:28px 20px; border:0; background:transparent; color:#17181a; overflow:visible; }
+.activation-dialog::backdrop { background:#fafafae8; }
+.activation-close { position:fixed; right:20px; top:20px; display:grid; place-items:center; width:44px; height:44px; border-radius:50%; }
+.activation-close:hover { background:#eeedf3; }
+.activation-heading { text-align:center; }
+.activation-heading h2 { font-size:32px; line-height:1.2; font-weight:600; letter-spacing:-.025em; text-wrap:balance; }
+.activation-heading p { margin:12px auto 0; max-width:48ch; font-size:14px; line-height:1.7; color:#565660; }
+.activation-ticket-stage { display:flex; justify-content:center; padding:20px 4px; }
+.activation-ticket-stage[hidden] { display:none; }
+.activation-ticket-stage .tear-ticket__image { object-position:center 72%; }
+.activation-ticket-stage .tear-ticket__plane { filter:drop-shadow(0 20px 24px #17181a24); }
+.activation-ticket-copy { position:relative; height:100%; }
+.activation-art-signature { position:absolute; left:24px; top:22px; display:flex; align-items:center; gap:9px; color:white; }
+.activation-art-signature > span:last-child { font-size:23px; font-weight:600; letter-spacing:-.035em; }
+.activation-mark { position:relative; width:34px; height:36px; display:block; overflow:hidden; }
+.activation-mark svg { position:absolute; width:76px; height:76px; top:-17px; left:-20px; }
+.activation-ticket-footer { position:absolute; bottom:0; left:0; width:100%; min-height:62px; padding:10px 22px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.activation-ticket-footer > span:first-child { font-size:15px; font-weight:500; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.activation-confirmed { display:flex; align-items:center; gap:5px; flex:none; font-size:11px; color:#bfc1c8; }
+.activation-stub { height:100%; padding:28px 22px 22px; display:flex; flex-direction:column; align-items:flex-start; }
+.activation-stub-brand { color:#bfc1c8; font-size:14px; font-weight:500; }
+.activation-stub strong { font-size:30px; font-weight:600; line-height:1.2; letter-spacing:-.03em; margin-top:6px; }
+.activation-member-label { font-size:13px; line-height:1.6; margin-top:12px; color:#bfc1c8; }
+.activation-tear-hint { margin-top:auto; display:flex; flex-direction:column; gap:10px; font-size:12px; color:#e6f4dd; }
+.activation-actions { display:grid; justify-items:center; gap:8px; }
+.activation-actions > button:not(.workflow-button) { min-height:44px; padding:10px 16px; text-decoration:underline; text-underline-offset:4px; font-size:13px; }
+.activation-complete { display:grid; place-items:center; width:88px; height:88px; margin:36px auto; border-radius:50%; background:#d9f3c8; }
+.activation-dialog button:focus-visible { outline:2px solid #17181a; outline-offset:3px; }
+.activation-screenreader, .activation-keyboard-skip:not(:focus-visible) { position:absolute; width:1px; height:1px; padding:0!important; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+@media(max-width:540px) { .activation-dialog { padding:24px 8px; }.activation-heading h2 { font-size:27px; }.activation-ticket-stage { padding:28px 0; } }

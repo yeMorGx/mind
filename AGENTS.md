@@ -17,3 +17,7 @@ Confira o resultado do deploy automático da Vercel para o commit enviado. Se ho
 A landing (`/`) deve manter sua apresentação original, sem o header ou a sidebar das páginas internas. Não alterar seu layout, cores, textos ou comportamento sem solicitação explícita do proprietário.
 
 A autorização precisa mencionar diretamente a landing. Pedidos gerais para ajustar o site inteiro, temas, header ou sidebar não autorizam mudanças nela, inclusive alterações indiretas por componentes ou estilos compartilhados.
+
+## Checkboxes
+
+Use `components/ui/animated-checkbox.tsx` (AnimatedCheckbox, baseado no Spell UI) para novos checkboxes. Preserve `name`, `required`, estados controlados, validação e comportamento de teclado; não substitua por um elemento clicável sem input nativo.

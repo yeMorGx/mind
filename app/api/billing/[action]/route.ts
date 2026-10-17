@@ -19,7 +19,13 @@ export async function POST(request: Request, context: Context) {
   const body = await readBody(request);
   if (action === "status") {
    const result = await admin.rpc("mind_billing_status", { actor }); databaseError(result.error);
-   return Response.json({ ...result.data, canManageInquiries: await isOwner(actor) }, { headers: noStore });
+   // Stable per subscription/plan, scoped to the authenticated account; renewals do not replay the ticket.
+   let activationId: string | null = null;
+   if (result.data?.enabled && result.data.plan !== "free" && ["active", "trialing"].includes(result.data.status)) {
+    const subscription = await admin.from("mind_subscriptions").select("subscription_id").eq("actor_id", actor).maybeSingle(); databaseError(subscription.error);
+    if (subscription.data?.subscription_id) activationId = `${subscription.data.subscription_id}:${result.data.plan}`;
+   }
+   return Response.json({ ...result.data, activationId, canManageInquiries: await isOwner(actor) }, { headers: noStore });
   }
   if (action === "prompt" || action === "unlock") {
    const creator = typeof body.creatorId === "string" ? body.creatorId : "", prompt = typeof body.promptId === "string" ? body.promptId : "";
