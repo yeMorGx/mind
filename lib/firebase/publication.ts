@@ -135,7 +135,7 @@ export async function getPublicCreator(uid: string): Promise<CreatorProfile | nu
 }
 function asPublicPrompt(record: Record<string, unknown>, profile: CreatorProfile): PublicPrompt {
   return {
-    ...readPromptDetails(record),id: String(record.promptId), slug: String(record.promptId), creatorId: String(record.creatorId),
+    ...readPromptDetails(record),requiresUnlock:record.requires_unlock===true,id: String(record.promptId), slug: String(record.promptId), creatorId: String(record.creatorId),
     creatorName: profile.name, creatorSlug: profile.username ?? "", creatorAvatarUrl:profile.avatarUrl,creatorBadges:profile.badges, title: String(record.title), content: String(record.content),
     description: String(record.description ?? ""), category: String(record.category ?? ""), model: String(record.model ?? ""),
     status: "published", isFavorite: false, createdAt: Number(record.createdAt), updatedAt: Number(record.updatedAt),
@@ -145,9 +145,9 @@ function asPublicPrompt(record: Record<string, unknown>, profile: CreatorProfile
 export async function getCreatorPrompts(uid: string, profile: CreatorProfile) {
   if (profile.backend === "supabase") return native.getNativePublicPrompts(uid, profile);
   if (profile.backend === "directory") {
-    const { data, error } = await requireSupabaseClient().from("mind_directory_prompts").select("creator_id,prompt_id,document").eq("creator_id", uid);
+    const { data, error } = await requireSupabaseClient().from("mind_directory_prompts").select("*").eq("creator_id", uid);
     if (error) throw error;
-    return (data ?? []).map(row => asPublicPrompt({ ...row.document, creatorId: row.creator_id, promptId: row.prompt_id }, profile)).sort((a,b) => b.createdAt-a.createdAt);
+    return (data ?? []).map(row => asPublicPrompt({ ...row.document, requires_unlock:row.requires_unlock, creatorId: row.creator_id, promptId: row.prompt_id }, profile)).sort((a,b) => b.createdAt-a.createdAt);
   }
   const { db } = requireFirebaseServices();
   const result = await getDocs(query(collection(db, "publicPrompts"), where("creatorId", "==", uid), where("published", "==", true)));
@@ -156,9 +156,9 @@ export async function getCreatorPrompts(uid: string, profile: CreatorProfile) {
 export async function getSharedPrompt(uid: string, promptId: string, profile: CreatorProfile) {
   if (profile.backend === "supabase") return (await native.getNativePublicPrompts(uid, profile, promptId))[0] ?? null;
   if (profile.backend === "directory") {
-    const { data, error } = await requireSupabaseClient().from("mind_directory_prompts").select("document").eq("creator_id", uid).eq("prompt_id", promptId).maybeSingle();
+    const { data, error } = await requireSupabaseClient().from("mind_directory_prompts").select("*").eq("creator_id", uid).eq("prompt_id", promptId).maybeSingle();
     if (error) throw error;
-    return data ? asPublicPrompt({ ...data.document, creatorId: uid, promptId }, profile) : null;
+    return data ? asPublicPrompt({ ...data.document, requires_unlock:data.requires_unlock, creatorId: uid, promptId }, profile) : null;
   }
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "publicPrompts", `${uid}_${promptId}`));

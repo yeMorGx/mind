@@ -141,12 +141,12 @@ export async function getNativePublicCreator(uid: string): Promise<CreatorProfil
   return directory.data ? {...directory.data.profile,username:await getUsername(uid),backend:"directory",badges:directory.data.badges} : null;
 }
 export async function getNativePublicPrompts(uid: string,profile: CreatorProfile,id?: string) {
-  let query = requireSupabaseClient().from("mind_public_prompts").select("prompt_id,document").eq("creator_id",uid);
+  let query = requireSupabaseClient().from("mind_public_prompts").select("*").eq("creator_id",uid);
   if (id) query=query.eq("prompt_id",id);
   const { data,error } = await query;
   if (error) throw error;
   return (data ?? []).map(row => { const prompt=asPrompt(row.prompt_id,row.document);return {
-    ...prompt,slug:prompt.id,creatorId:uid,creatorName:profile.name,creatorSlug:profile.username??"",creatorAvatarUrl:profile.avatarUrl,creatorBadges:profile.badges,status:"published" as const,
+    ...prompt,requiresUnlock:row.requires_unlock===true,slug:prompt.id,creatorId:uid,creatorName:profile.name,creatorSlug:profile.username??"",creatorAvatarUrl:profile.avatarUrl,creatorBadges:profile.badges,status:"published" as const,
     createdAt:prompt.createdAt ?? Number.NaN,updatedAt:prompt.updatedAt ?? Number.NaN,
     images:prompt.images.map((image,position)=>({...image,path:"",position})),
   }; });

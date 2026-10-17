@@ -268,7 +268,10 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
             pathname === "/home" ||
             pathname.startsWith("/u/") ||
             pathname.startsWith("/p/") ||
-            pathname.startsWith("/share/")) && (
+            pathname.startsWith("/share/") ||
+            pathname === "/plans" ||
+            pathname === "/work-with-us" ||
+            pathname === "/business") && (
             <SiteFooter
               profileHref={profileHref}
               onLibrary={(value) => openLibrary(value ? "favorites" : "all")}

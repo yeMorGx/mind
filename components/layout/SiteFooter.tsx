@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
 import Logo from "@/components/ui/logo";
+import "@/components/billing/billing.css";
 
 export default function SiteFooter({
   profileHref,
@@ -39,7 +40,7 @@ export default function SiteFooter({
             </span>
           </button>
         </div>
-        <div className="site-footer-main">
+        <div className="site-footer-main site-footer-main-contact">
           <p>
             Um lugar para compartilhar os prompts por trás dos seus resultados.
           </p>
@@ -57,6 +58,8 @@ export default function SiteFooter({
           </nav>
           <nav aria-label="Conta no rodapé">
             <h2>Sua conta</h2>
+            <Link href="/plans">Planos</Link>
+            <Link href="/home/billing">Minha assinatura</Link>
             {profileHref ? (
               <>
                 <Link href={profileHref}>Meu perfil</Link>
@@ -70,6 +73,11 @@ export default function SiteFooter({
             <button type="button" onClick={onCreate}>
               Criar um prompt
             </button>
+          </nav>
+          <nav aria-label="Contato no rodapé">
+            <h2>Conecte-se</h2>
+            <Link href="/work-with-us">Trabalhe conosco</Link>
+            <Link href="/business">Para empresas</Link>
           </nav>
         </div>
         <Link

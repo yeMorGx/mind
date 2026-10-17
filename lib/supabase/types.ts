@@ -44,6 +44,7 @@ export type Prompt = PromptShowcase & {
   creatorId: string;
   creatorName: string;
   creatorSlug: string;
+  requiresUnlock?: boolean;
   creatorAvatarUrl?: string;
   creatorBadges?: BadgeKind[];
   title: string;

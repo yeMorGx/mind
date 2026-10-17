@@ -7,9 +7,9 @@ function publicClient() {
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   return url && key ? createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}) : null;
 }
-type Row={creator_id:string;prompt_id:string;document:Record<string,unknown>;mind_creators:{profile:CreatorProfile}};
-const selection="creator_id,prompt_id,document,mind_creators(profile)";
-const directorySelection="creator_id,prompt_id,document,mind_creator_directory(profile)";
+type Row={creator_id:string;prompt_id:string;requires_unlock?:boolean;document:Record<string,unknown>;mind_creators:{profile:CreatorProfile}};
+const selection="*,mind_creators(profile)";
+const directorySelection="*,mind_creator_directory(profile)";
 type DirectoryRow=Omit<Row,"mind_creators">&{mind_creator_directory:{profile:CreatorProfile}};
 function directoryRow(row:DirectoryRow):Row { return {...row,mind_creators:row.mind_creator_directory}; }
 function millis(value:unknown) {
@@ -20,7 +20,7 @@ function millis(value:unknown) {
 function mapRow(row:Row):Prompt {
   const details=readPromptDetails(row.document);
   return {id:row.prompt_id,slug:`${row.creator_id}~${row.prompt_id}`,creatorId:row.creator_id,creatorName:row.mind_creators.profile.name,creatorSlug:"",
-    title:String(row.document.title??""),content:String(row.document.content??""),...details,status:"published",isFavorite:false,
+    requiresUnlock:row.requires_unlock===true,title:String(row.document.title??""),content:String(row.document.content??""),...details,status:"published",isFavorite:false,
     createdAt:millis(row.document.createdAt),updatedAt:millis(row.document.updatedAt),images:details.images.map((image,position)=>({...image,position,path:""}))};
 }
 export async function getPublicPrompts(limit=24):Promise<Prompt[]> {

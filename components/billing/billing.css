@@ -1,0 +1,106 @@
+/* Internal billing and contact surfaces. The landing does not import this file. */
+.site-app .billing-page { width:100%; max-width:1600px; margin-inline:auto; padding:40px 24px 64px; }
+.site-app .billing-page h1 { font-size:clamp(30px,3.3vw,48px); line-height:1.14; font-weight:600; letter-spacing:-.035em; text-wrap:balance; }
+.site-app .billing-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:32px; margin:18px 0 36px; }
+.site-app .billing-heading > div > p { max-width:62ch; font-size:15px; line-height:1.8; color:var(--muted); margin-top:18px; }
+.site-app .billing-text-link { display:inline-flex; align-items:center; gap:8px; font-size:13px; min-height:44px; flex:none; }
+.site-app .billing-frequency { display:inline-flex; gap:4px; padding:4px; border-radius:12px; background:var(--media); margin-bottom:28px; }
+.site-app .billing-frequency button { min-height:44px; padding:10px 18px; font-size:13px; border-radius:9px; }
+.site-app .billing-frequency button[aria-pressed="true"] { background:var(--surface); color:var(--foreground); }
+.site-app .billing-frequency button span { margin-left:6px; color:#395d52; font-size:11px; font-weight:600; }
+.site-app .billing-plans-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; align-items:stretch; }
+.site-app .billing-plan { border:1px solid var(--border-color); border-radius:16px; padding:28px 22px; background:var(--surface); min-width:0; }
+.site-app .billing-plan-featured { background:var(--media); border-color:var(--foreground); }
+.site-app .billing-plan h2 { font-size:21px; font-weight:600; letter-spacing:-.02em; }
+.site-app .billing-plan-audience { margin-top:9px; font-size:13px; color:var(--muted); line-height:1.7; min-height:44px; }
+.site-app .billing-price { display:flex; flex-wrap:wrap; align-items:baseline; gap:5px 9px; margin-top:28px; }
+.site-app .billing-price strong { font-size:clamp(28px,2.6vw,36px); font-weight:600; line-height:1.15; letter-spacing:-.035em; }
+.site-app .billing-price > span { font-size:12px; color:var(--muted); }
+.site-app .billing-price-note { font-size:12px; line-height:1.8; color:var(--muted); margin:12px 0 22px; min-height:44px; }
+.site-app .billing-plan > .workflow-button { width:100%; display:flex; justify-content:center; font-size:13px; min-height:46px; }
+.site-app .billing-plan > ul { display:flex; flex-direction:column; gap:17px; margin-top:26px; }
+.site-app .billing-plan > ul > li { display:flex; align-items:flex-start; gap:10px; font-size:13px; line-height:1.7; }
+.site-app .billing-plan > ul svg { flex:none; margin-top:3px; }
+.site-app .billing-enterprise-note { margin-top:26px; font-size:13px; line-height:1.8; color:var(--muted); }
+.site-app .billing-explained { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr); gap:80px; margin-top:72px; padding-top:40px; border-top:1px solid var(--border-color); }
+.site-app .billing-explained h2 { font-size:28px; font-weight:600; line-height:1.3; letter-spacing:-.025em; max-width:21ch; }
+.site-app .billing-explained p { color:var(--muted); font-size:14px; line-height:1.9; margin-top:18px; max-width:55ch; }
+.site-app .billing-explained dl { display:grid; gap:26px; }
+.site-app .billing-explained dt { font-size:14px; font-weight:600; }
+.site-app .billing-explained dd { color:var(--muted); font-size:13px; line-height:1.8; margin-top:7px; }
+.site-app .billing-notice { padding:15px 18px; border-radius:12px; background:var(--media); color:var(--muted); font-size:13px; line-height:1.8; margin-block:18px 24px; }
+.site-app .billing-error { padding:13px 16px; background:#fff0ee; border-radius:10px; color:#9c2923; font-size:13px; line-height:1.8; margin-block:16px; overflow-wrap:anywhere; }
+.site-app .billing-account { max-width:1120px; }
+.site-app .billing-account-panel { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:28px; padding:30px; border-radius:16px; background:var(--surface); border:1px solid var(--border-color); }
+.site-app .billing-account-panel h2 { font-size:25px; font-weight:600; margin:14px 0 8px; }
+.site-app .billing-account-panel p,.site-app .billing-usage p { font-size:13px; color:var(--muted); line-height:1.8; }
+.site-app .billing-page .resource-actions,.site-app .prompt-unlock-panel .resource-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+.site-app .billing-usage { margin-top:38px; padding:28px 0; }
+.site-app .billing-usage h2 { font-size:16px; font-weight:500; }
+.site-app .billing-usage > strong { font-size:30px; font-weight:600; display:block; margin:16px 0; letter-spacing:-.02em; }
+.site-app .billing-usage progress { width:100%; max-width:520px; height:7px; display:block; margin-bottom:18px; appearance:none; border-radius:99px; overflow:hidden; background:var(--media); }
+.site-app .billing-usage progress::-webkit-progress-bar { background:var(--media); }
+.site-app .billing-usage progress::-webkit-progress-value { background:var(--foreground); }
+.site-app .billing-usage progress::-moz-progress-bar { background:var(--foreground); }
+.site-app .prompt-unlock-panel { background:var(--media); border-radius:14px; padding:28px; margin-top:22px; }
+.site-app .prompt-unlock-panel h3 { font-size:20px; line-height:1.4; font-weight:600; margin-top:16px; max-width:35ch; }
+.site-app .prompt-unlock-panel > p { font-size:14px; line-height:1.8; color:var(--muted); margin:12px 0 22px; max-width:64ch; }
+.site-app .prompt-unlock-panel .billing-balance { font-size:12px; }
+.site-app .billing-access-choice { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:14px; min-height:44px; }
+.site-app .billing-access-choice input { accent-color:var(--foreground); width:18px; height:18px; }
+.site-app .billing-page :is(a,button,input,textarea,select):focus-visible,.site-app .prompt-unlock-panel :is(a,button):focus-visible { outline:2px solid var(--foreground); outline-offset:4px; }
+.site-app .billing-page button:disabled { opacity:.5; cursor:not-allowed; }
+.site-app .contact-page { max-width:1280px; }
+.site-app .contact-layout { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:80px; align-items:start; margin-top:32px; }
+.site-app .contact-introduction { position:sticky; top:128px; }
+.site-app .contact-introduction h1 { max-width:15ch; }
+.site-app .contact-introduction > p { font-size:15px; line-height:1.9; color:var(--muted); margin-top:24px; max-width:44ch; }
+.site-app .contact-introduction ul { display:flex; flex-direction:column; gap:16px; margin-top:34px; }
+.site-app .contact-introduction li { display:flex; align-items:center; gap:10px; font-size:13px; line-height:1.7; }
+.site-app .contact-introduction li svg { flex:none; }
+.site-app .contact-introduction .contact-data-note { font-size:12px; margin-top:42px; max-width:48ch; }
+.site-app .contact-form-panel { border:1px solid var(--border-color); border-radius:16px; background:var(--surface); padding:30px; min-width:0; }
+.site-app .contact-form-panel h2 { font-size:23px; font-weight:600; letter-spacing:-.02em; margin-bottom:26px; }
+.site-app .contact-form-panel label { display:flex; flex-direction:column; gap:9px; font-size:13px; line-height:1.7; margin-bottom:22px; }
+.site-app .contact-field-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; }
+.site-app .contact-form-panel :is(input:not([type="checkbox"]),select,textarea) { min-width:0; width:100%; padding:12px 14px; border:1px solid var(--border-color); border-radius:10px; background:var(--background); color:var(--foreground); font:inherit; min-height:46px; }
+.site-app .contact-form-panel input::placeholder,.site-app .contact-form-panel textarea::placeholder { color:var(--muted); }
+.site-app .contact-form-panel textarea { resize:vertical; min-height:150px; }
+.site-app .contact-form-panel .contact-consent { flex-direction:row; align-items:flex-start; gap:10px; font-size:12px; color:var(--muted); line-height:1.8; }
+.site-app .contact-consent input { accent-color:var(--foreground); flex:none; width:17px; height:17px; margin-top:3px; }
+.site-app .contact-field-note { color:var(--muted); font-size:11px; }
+.site-app .contact-trap { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.site-app .contact-success > h2 { margin-top:20px; margin-bottom:12px; }
+.site-app .contact-success p { font-size:14px; line-height:1.9; color:var(--muted); }
+.site-app .contact-reference { font-size:11px!important; overflow-wrap:anywhere; margin:20px 0; }
+.site-app .inquiry-list { display:grid; gap:20px; }
+.site-app .inquiry-list > article { border:1px solid var(--border-color); border-radius:14px; padding:26px; background:var(--surface); }
+.site-app .inquiry-heading { display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:14px; }
+.site-app .inquiry-heading :is(span,time,p) { font-size:12px; color:var(--muted); }
+.site-app .inquiry-heading h2 { font-size:20px; font-weight:600; margin-top:8px; }
+.site-app .inquiry-message { white-space:pre-wrap; overflow-wrap:anywhere; max-width:75ch; line-height:1.9; font-size:14px; margin-top:20px; }
+.site-app .site-footer-main.site-footer-main-contact { grid-template-columns:1.6fr repeat(3,minmax(0,1fr)); gap:32px; }
+@media(max-width:1199px) {
+ .site-app .billing-plans-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .site-app .contact-layout { gap:40px; }
+}
+@media(max-width:767px) {
+ .site-app .billing-page { padding:28px 16px 42px; }
+ .site-app .billing-heading { flex-direction:column; gap:14px; margin-bottom:26px; }
+ .site-app .billing-heading > div > p { font-size:14px; }
+ .site-app .billing-explained { grid-template-columns:minmax(0,1fr); gap:30px; margin-top:42px; }
+ .site-app .billing-account-panel { padding:22px; }
+ .site-app .contact-layout { grid-template-columns:minmax(0,1fr); gap:32px; margin-top:20px; }
+ .site-app .contact-introduction { position:static; }
+ .site-app .contact-introduction h1 { max-width:22ch; }
+ .site-app .contact-introduction .contact-data-note { margin-top:24px; }
+ .site-app .contact-form-panel { padding:22px 18px; }
+ .site-app .contact-form-panel :is(input:not([type="checkbox"]),select,textarea) { font-size:16px; }
+ .site-app .site-footer-main.site-footer-main-contact { grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+ .site-app .prompt-unlock-panel { padding:22px; }
+}
+@media(max-width:540px) {
+ .site-app .billing-plans-grid,.site-app .contact-field-grid { grid-template-columns:minmax(0,1fr); }
+ .site-app .billing-plan { padding:26px 22px; }
+ .site-app .billing-plan-audience,.site-app .billing-price-note { min-height:0; }
+}

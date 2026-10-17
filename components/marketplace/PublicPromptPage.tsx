@@ -1,12 +1,13 @@
 "use client";
 import PromptVideo from "@/components/prompts/PromptVideo";
 import PromptComments from "@/components/prompts/PromptComments";
-import PromptUseAI from "@/components/prompts/PromptUseAI";
+import PromptContent from "@/components/billing/PromptContent";
+import PromptAccessSettings from "@/components/billing/PromptAccessSettings";
 import PromptReferences from "@/components/prompts/PromptReferences";
 import AIModelLogo from "@/components/models/AIModelLogo";
 import {useMemo,useState,type ReactNode} from "react";
 import Link from "next/link";
-import {ArrowLeft,ArrowRight,Check,Copy,Share2} from "lucide-react";
+import {ArrowLeft,ArrowRight,Share2} from "lucide-react";
 import {ImageCompare} from "@/components/ui/ImageCompare";
 import PromptCard from "./PromptCard";
 import ResultsMarquee from "./ResultsMarquee";
@@ -15,19 +16,17 @@ import CreatorIdentity from "@/components/profile/CreatorIdentity";
 import {LikeButton} from "@/components/social/SocialControls";
 import type {Prompt} from "@/lib/supabase/types";
 import type {CreatorProfile} from "@/lib/firebase/publication";
-import ScrollShadow from "@/components/ui/ScrollShadow";
 import "./scroll-shadow.css";
 /* eslint-disable @next/next/no-img-element -- Published uploads include optimized data URLs. */
 export default function PublicPromptPage({prompt,creatorPrompts=[],relatedPrompts=[],visibility="public",actions,creatorHref,creatorProfile}:{prompt:Prompt;creatorPrompts?:Prompt[];relatedPrompts?:Prompt[];visibility?:"public"|"private";actions?:ReactNode;creatorHref?:string;creatorProfile?:CreatorProfile}){
  const isPrivate=visibility==="private";
- const [copied,setCopied]=useState(false),[message,setMessage]=useState(""),[copyError,setCopyError]=useState("");
+ const [message,setMessage]=useState("");
  const displayedImages=useMemo(()=>prompt.images.filter(image=>image.role==="gallery"||image.role==="after"),[prompt.images]);
  const before=prompt.images.find(image=>image.role==="before"),after=prompt.images.find(image=>image.role==="after");
  const references=prompt.images.filter(image=>image.role==="reference");
  const creatorName=creatorProfile?.name||prompt.creatorName||"Criador Mind";
  const profileHref=creatorHref||`/u/${encodeURIComponent(prompt.creatorId)}`;
  const formatDate=(timestamp:number)=>Number.isFinite(timestamp)?new Intl.DateTimeFormat("pt-BR",{day:"numeric",month:"short",year:"numeric",timeZone:"America/Sao_Paulo"}).format(timestamp):"Não informada";
- async function copyPrompt(){try{await navigator.clipboard.writeText(prompt.content);setCopied(true);setCopyError("");window.setTimeout(()=>setCopied(false),1800);}catch{setCopyError("Não foi possível copiar automaticamente. Selecione o texto do prompt para copiar.");}}
  async function sharePage(){try{const url=window.location.href;if(navigator.share){await navigator.share({title:prompt.title,url});setMessage("Página compartilhada.");}else{await navigator.clipboard.writeText(url);setMessage("Link copiado para compartilhar.");}}catch(error){if(error instanceof Error&&error.name==="AbortError")return;setMessage("Não foi possível compartilhar o link. Tente novamente.");}}
  const moreByCreator=creatorPrompts.map(item=>({...item,creatorAvatarUrl:creatorProfile?.avatarUrl||item.creatorAvatarUrl,creatorBadges:creatorProfile?.badges??item.creatorBadges,creatorSlug:creatorProfile?.username||item.creatorSlug}));
  return <main className="prompt-detail-page">
@@ -42,7 +41,7 @@ export default function PublicPromptPage({prompt,creatorPrompts=[],relatedPrompt
     {message&&<p className="prompt-detail-status" role="status">{message}</p>}
     <div className="prompt-detail-main">
      <div className="prompt-detail-results">{prompt.kind==="video"&&(prompt.videoPath||prompt.videoUrl)?<section><h2 className="mb-4 text-lg font-semibold">Resultado do prompt</h2><PromptVideo path={prompt.videoPath} url={prompt.videoUrl} poster={displayedImages[0]?.url}/></section>:displayedImages.length?<ResultsMarquee images={displayedImages}/>:<div className="prompt-detail-no-images"><h2>Um prompt para experimentar</h2><p>O criador ainda não adicionou imagens de resultado.</p></div>}</div>
-     <section id="prompt-text" className="prompt-detail-copy" aria-labelledby="prompt-text-heading"><div className="prompt-detail-section-heading"><h2 id="prompt-text-heading">O prompt</h2><div className="prompt-detail-action-group"><button type="button" className="workflow-button secondary" onClick={()=>void copyPrompt()}>{copied?<Check size={16}/>:<Copy size={16}/>} {copied?"Copiado":"Copiar prompt"}</button><PromptUseAI content={prompt.content} hasImages={prompt.images.length>0}/></div></div>{prompt.description&&<p className="prompt-detail-description">{prompt.description}</p>}{prompt.kind==="website"&&prompt.siteUrl&&<a href={prompt.siteUrl} target="_blank" rel="noopener noreferrer" className="workflow-button secondary mt-4">Visitar site gerado <ArrowRight size={16}/></a>}<ScrollShadow label="Texto completo do prompt" className="prompt-text-scroll"><pre>{prompt.content}</pre></ScrollShadow><p className="prompt-detail-copy-note">{isPrivate?"Seu prompt na biblioteca. Só você tem acesso a esta página.":"Grátis para visualizar, copiar e experimentar."}</p><p role="status" className="prompt-detail-status">{copyError}</p><span role="status" className="sr-only">{copied?"Prompt copiado para a área de transferência.":""}</span></section>
+     <section id="prompt-text" className="prompt-detail-copy" aria-labelledby="prompt-text-heading">{prompt.description&&<p className="prompt-detail-description">{prompt.description}</p>}{prompt.kind==="website"&&prompt.siteUrl&&<a href={prompt.siteUrl} target="_blank" rel="noopener noreferrer" className="workflow-button secondary mt-4">Visitar site gerado <ArrowRight size={16}/></a>}<PromptContent content={prompt.content} creatorId={prompt.creatorId} promptId={prompt.id} locked={!isPrivate&&prompt.requiresUnlock===true} hasImages={prompt.images.length>0} isPrivate={isPrivate}/></section>
      {(before||references.length>0)&&<div className="prompt-detail-media-notes">
       {before&&<section className="prompt-comparison" aria-labelledby="comparison-heading"><h2 id="comparison-heading">{after?"Antes e depois":"Imagem original"}</h2>{after?<><p>Arraste a divisória para comparar o resultado.</p><ImageCompare beforeSrc={before.url} afterSrc={after.url} beforeAlt={before.label||"Antes"} afterAlt={after.label||"Depois"}/></>:<img src={before.url} alt={before.label||"Imagem original"} loading="lazy" className="prompt-original-image"/>}</section>}
       {references.length>0&&<PromptReferences images={references}/>}
@@ -51,7 +50,8 @@ export default function PublicPromptPage({prompt,creatorPrompts=[],relatedPrompt
     <div className="prompt-detail-support">
      <section id="creator" className="prompt-detail-creator" aria-labelledby="creator-heading"><h2 id="creator-heading">Conheça o criador</h2>{creatorProfile?<CreatorLanyard profile={creatorProfile} href={profileHref}/>:<div className="py-8"><CreatorIdentity name={creatorName} avatarUrl={prompt.creatorAvatarUrl} badges={prompt.creatorBadges} href={profileHref}/></div>}{moreByCreator.length>0&&<a href="#creator-prompts" className="prompt-detail-more-creator">Mais prompts deste criador <ArrowRight size={16}/></a>}</section>
      <section className="prompt-detail-how" aria-labelledby="how-to-heading"><h2 id="how-to-heading">Como usar</h2><ol><li><span>1</span><div><h3>Copie o prompt</h3><p>Use o botão acima para copiar o texto completo.</p></div></li><li><span>2</span><div><h3>Abra {prompt.model||"sua ferramenta de IA"}</h3><p>Cole o texto.{references.length?" Baixe as referências acima e anexe na ordem indicada pelo criador.":before?" Adicione a imagem original se a ferramenta permitir.":""}</p></div></li><li><span>3</span><div><h3>Faça do seu jeito</h3><p>Adapte os detalhes ao seu objetivo e gere o resultado.</p></div></li></ol><p className="prompt-detail-disclaimer">Os resultados podem variar conforme o modelo, a versão e as configurações.</p></section>
-     <section className="prompt-detail-about" aria-labelledby="about-heading"><h2 id="about-heading">Sobre este prompt</h2><dl>{[["Ferramenta",prompt.model||"Não informada"],["Categoria",prompt.category||"Não informada"],["Acesso",isPrivate?"Sua biblioteca":"Público e gratuito"],["Criado em",formatDate(prompt.createdAt)],...(prompt.updatedAt>prompt.createdAt?[["Atualizado em",formatDate(prompt.updatedAt)]]:[])].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section>
+     <section className="prompt-detail-about" aria-labelledby="about-heading"><h2 id="about-heading">Sobre este prompt</h2><dl>{[["Ferramenta",prompt.model||"Não informada"],["Categoria",prompt.category||"Não informada"],["Acesso",isPrivate?"Sua biblioteca":prompt.requiresUnlock?"Disponível por desbloqueio":"Livre para todos"],["Criado em",formatDate(prompt.createdAt)],...(prompt.updatedAt>prompt.createdAt?[["Atualizado em",formatDate(prompt.updatedAt)]]:[])].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section>
+     {prompt.status==="published"&&<PromptAccessSettings creatorId={prompt.creatorId} promptId={prompt.id}/>}
     </div>
    </article>
    {(!isPrivate||prompt.status==="published")&&<PromptComments key={`${prompt.creatorId}:${prompt.id}`} creatorId={prompt.creatorId} promptId={prompt.id}/>}

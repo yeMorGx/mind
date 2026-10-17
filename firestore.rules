@@ -40,7 +40,12 @@ service cloud.firestore {
     }
 
     match /publicPrompts/{publicId} {
-      allow read: if resource.data.published == true;
+      // Before enabling the SQL paywall, set /billing/features.enabled=true.
+      // Existing public Firestore snapshots then remain readable only by their owner.
+      allow read: if (signedIn() && resource.data.creatorId == request.auth.uid)
+        || (resource.data.published == true
+          && (!exists(/databases/$(database)/documents/billing/features)
+            || get(/databases/$(database)/documents/billing/features).data.enabled != true));
       allow create, update: if signedIn()
         && request.resource.data.creatorId == request.auth.uid
         && publicId == request.auth.uid + '_' + request.resource.data.promptId
