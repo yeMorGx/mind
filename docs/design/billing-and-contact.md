@@ -67,3 +67,12 @@ Nos arquivos longos de página inteira no celular, a barra inferior fixa aparece
 ESLint e build de produção Next passaram após as correções, e as oito capturas foram refeitas no build de produção. As capturas sustentam a comparação visual dos estados de visitante. O veredito final da revisão foi **“Ship for the disabled rollout”**. O revisor considerou resolvidos os dois achados de estado de conta por inspeção do código; nenhuma sessão autenticada foi usada para demonstrá-los. Não foram verificados pagamentos, cobranças, submissões, fluxos autenticados, execução de migração ou testes de implementação.
 
 `DESIGN.md` e `.impeccable/design.json` permanecem preservados: esta documentação descreve a extensão no sistema existente. Nenhum reparo de drift do sistema de design integra esta entrega.
+
+
+## Indicador de uso no header
+
+O header interno mostra um badge compacto de uso ao lado de “Novo prompt” para contas conectadas. O numerador é o total de novos desbloqueios usados e o denominador é a cota: por exemplo, `Uso 1/2` no Free. Planos ilimitados mostram o símbolo de infinito; saldo esgotado usa um destaque âmbar discreto. O link abre `/home/billing`, e a descrição acessível informa plano, saldo e renovação. No celular e em larguras intermediárias o rótulo Uso é ocultado, preservando ícone e contagem.
+
+O indicador consulta a configuração e o saldo reais. Atualiza ao desbloquear um prompt, consultar a assinatura, navegar, voltar à aba e a cada minuto enquanto visível; aproxima a atualização quando a cota renova. Trocar de conta limpa o estado. Com limites desligados, mostra “Uso livre”; falhas mostram um traço e orientam abrir a assinatura para atualizar. Visitantes não recebem saldo fictício. O header não é renderizado na landing.
+
+A prévia visual do badge foi conferida no header real em 1440, 1024 e 390 px, usando estados ilustrativos identificados na rota temporária (removida antes do build). As capturas locais estão em `.impeccable/review/usage`; não representam uma conta autenticada nem comprovam consumo real de créditos.

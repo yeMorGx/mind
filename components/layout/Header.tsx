@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Creator images include optimized data URLs and external account avatars. */
+import UsageBadge from "@/components/billing/UsageBadge";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import type { BadgeKind } from "@/lib/firebase/badges";
 import Link from "next/link";
@@ -131,6 +132,7 @@ export default function Header({
           onSearch={onSearch}
         />
         <div className="showcase-account-actions">
+          <UsageBadge/>
           <button
             type="button"
             onClick={onCreate}

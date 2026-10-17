@@ -1,0 +1,13 @@
+.site-app .header-usage-badge {
+ display:inline-flex; align-items:center; justify-content:center; gap:7px;
+ flex:none; min-height:40px; padding:9px 12px; border-radius:999px;
+ background:var(--media); color:var(--foreground); font-size:12px; font-weight:500;
+ line-height:20px; white-space:nowrap; text-decoration:none;
+}
+.site-app .header-usage-badge:hover { background:var(--surface-hover); }
+.site-app .header-usage-badge:focus-visible { outline:2px solid var(--foreground); outline-offset:3px; }
+.site-app .header-usage-value { display:inline-flex; align-items:center; font-variant-numeric:tabular-nums; font-weight:600; }
+.site-app .header-usage-badge[data-exhausted] { background:#fff0e4; color:#88420f; }
+.site-app .header-usage-badge[data-exhausted]:hover { background:#ffe8d5; }
+@media (max-width:1279px) { .site-app .header-usage-badge { gap:5px; padding-inline:10px; } .site-app .header-usage-label { display:none; } }
+@media (max-width:767px) { .site-app .header-usage-badge { min-height:40px; padding-inline:10px; } }
