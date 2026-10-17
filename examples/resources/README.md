@@ -37,3 +37,5 @@ Consultadas em 17/10/2026:
 - https://github.com/supabase-community/supabase-mcp
 
 GitHub MCP usa licença MIT; Supabase MCP usa Apache-2.0. Os nomes e marcas pertencem aos seus respectivos titulares. Os três Markdown e os textos descritivos originais deste pacote são disponibilizados sob MIT, conforme LICENSE. Não é uma publicação oficial do GitHub, Supabase ou Anthropic.
+
+Para adicionar somente os dois MCPs pela conta conectada: [Publicar GitHub e Supabase](https://mind-lemon.vercel.app/home/resources/examples?kind=mcp).

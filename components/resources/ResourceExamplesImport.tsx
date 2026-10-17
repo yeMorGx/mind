@@ -5,11 +5,14 @@ import { ArrowLeft, Check, FileCode2, Loader2, Plug } from "lucide-react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useSiteLayout } from "@/components/layout/SiteLayout";
 import { publishResourceExamples, resourceExamples, type ExampleImportResult } from "@/lib/resource-examples";
-import { resourceError } from "@/lib/resources";
+import { resourceError, type ResourceKind } from "@/lib/resources";
 import MarkdownContent from "./MarkdownContent";
 import "./resources.css";
 
-function ImportSession() {
+function ImportSession({ kind }: { kind?: ResourceKind }) {
+  const examples = kind ? resourceExamples.filter(example => example.kind === kind) : resourceExamples;
+  const title = kind === "mcp" ? "Dois MCPs para a sua conta" : kind === "markdown" ? "Três arquivos Markdown para a sua conta" : "Cinco exemplos para a sua conta";
+  const description = kind === "mcp" ? "GitHub e Supabase, com configurações, instruções e links oficiais." : kind === "markdown" ? "DESIGN.md, SKILL.md e CLAUDE.md, com conteúdo e instruções de uso." : "Três arquivos Markdown e dois MCPs, com conteúdo, instruções e links oficiais.";
   const { user, authReady } = useOnboarding();
   const { requestLogin } = useSiteLayout();
   const locked = useRef(false);
@@ -23,7 +26,7 @@ function ImportSession() {
     setBusy(true);
     setError("");
     try {
-      await publishResourceExamples(user, setResults);
+      await publishResourceExamples(user, setResults, kind);
       setDone(true);
     } catch (failure) {
       setError(`${resourceError(failure)} Os itens já adicionados foram preservados; você pode tentar novamente.`);
@@ -33,12 +36,12 @@ function ImportSession() {
     }
   }
   if (!authReady) return <main className="catalog-page resource-library"><p role="status" className="py-12 text-center text-muted">Carregando sua conta…</p></main>;
-  if (!user) return <main className="catalog-page resource-library"><div className="catalog-empty"><h1>Adicione os exemplos à sua conta.</h1><p>Entre no Mind para publicar os três arquivos Markdown e os dois MCPs com a sua autoria.</p><button type="button" onClick={requestLogin}>Entrar na conta</button></div></main>;
+  if (!user) return <main className="catalog-page resource-library"><div className="catalog-empty"><h1>Adicione os exemplos à sua conta.</h1><p>Entre no Mind para adicionar estes exemplos à sua conta.</p><button type="button" onClick={requestLogin}>Entrar na conta</button></div></main>;
   const publicCount = results.filter(item => item.status === "published").length;
   return <main className="catalog-page resource-library">
     <Link href="/home/resources" className="resource-back"><ArrowLeft size={16}/>Arquivos e MCPs</Link>
-    <div className="explore-heading"><div><h1 className="text-2xl font-semibold tracking-tight">Cinco exemplos para a sua conta</h1><p className="mt-3 max-w-2xl text-sm leading-7 text-muted">Três arquivos Markdown e dois MCPs, com conteúdo, instruções e links oficiais. Ao confirmar, eles ficam públicos no seu perfil e nos catálogos.</p></div></div>
-    <div className="resource-library-list">{resourceExamples.map(example => {
+    <div className="explore-heading"><div><h1 className="text-2xl font-semibold tracking-tight">{title}</h1><p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{description} Ao confirmar, eles ficam públicos no seu perfil e nos catálogos.</p></div></div>
+    <div className="resource-library-list">{examples.map(example => {
       const result = results.find(item => item.exampleId === example.id);
       const doc = example.document;
       return <article key={example.id}>
@@ -51,12 +54,12 @@ function ImportSession() {
         </div></details>
       </article>;
     })}</div>
-    <div className="mt-8 max-w-3xl" aria-live="polite">{busy && <p role="status" className="mb-4 text-sm text-muted">Publicando exemplos: {results.length} de {resourceExamples.length} concluídos…</p>}{done && <p role="status" className="mb-4 text-sm leading-7">Importação concluída: {publicCount} {publicCount === 1 ? "exemplo público" : "exemplos públicos"} na sua conta.{results.length > publicCount && " Os rascunhos que já existiam foram preservados."}</p>}{error && <p role="alert" className="resource-error">{error}</p>}</div>
-    <div className="resource-actions mt-6">{!done && <button type="button" disabled={busy} className="workflow-button" onClick={() => void publish()}>{busy ? <><Loader2 size={16} className="animate-spin motion-reduce:animate-none"/>Publicando…</> : error ? "Tentar novamente" : "Publicar os 5 exemplos na minha conta"}</button>}{done && <Link href="/home/resources" className="workflow-button">Ver meus arquivos e MCPs</Link>}<Link href={`/u/${user.uid}`} className="workflow-button secondary">Ver meu perfil</Link></div>
+    <div className="mt-8 max-w-3xl" aria-live="polite">{busy && <p role="status" className="mb-4 text-sm text-muted">Publicando exemplos: {results.length} de {examples.length} concluídos…</p>}{done && <p role="status" className="mb-4 text-sm leading-7">Importação concluída: {publicCount} {publicCount === 1 ? "exemplo público" : "exemplos públicos"} na sua conta.{results.length > publicCount && " Os rascunhos que já existiam foram preservados."}</p>}{error && <p role="alert" className="resource-error">{error}</p>}</div>
+    <div className="resource-actions mt-6">{!done && <button type="button" disabled={busy} className="workflow-button" onClick={() => void publish()}>{busy ? <><Loader2 size={16} className="animate-spin motion-reduce:animate-none"/>Publicando…</> : error ? "Tentar novamente" : `Publicar os ${examples.length} ${kind === "mcp" ? "MCPs" : kind === "markdown" ? "arquivos" : "exemplos"} na minha conta`}</button>}{done && <Link href="/home/resources" className="workflow-button">Ver meus arquivos e MCPs</Link>}<Link href={`/u/${user.uid}`} className="workflow-button secondary">Ver meu perfil</Link></div>
     <p className="mt-4 text-xs leading-6 text-muted">A importação pode ser retomada. Exemplos já adicionados à conta mantêm o conteúdo e o estado de publicação existentes.</p>
   </main>;
 }
-export default function ResourceExamplesImport() {
+export default function ResourceExamplesImport({ kind }: { kind?: ResourceKind }) {
   const { user } = useOnboarding();
-  return <ImportSession key={user?.uid ?? "visitor"}/>;
+  return <ImportSession key={`${user?.uid ?? "visitor"}:${kind ?? "all"}`} kind={kind}/>;
 }

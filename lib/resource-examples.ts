@@ -21,12 +21,13 @@ async function accountExampleId(publicId: string, exampleId: string) {
 }
 
 /** Called only by the signed-in user's explicit publication action. */
-export async function publishResourceExamples(user: MindUser, onProgress: (results: ExampleImportResult[]) => void) {
-  for (const example of resourceExamples) validateResource(example.kind, example.document, true);
+export async function publishResourceExamples(user: MindUser, onProgress: (results: ExampleImportResult[]) => void, kind?: ResourceKind) {
+  const examples = kind ? resourceExamples.filter(example => example.kind === kind) : resourceExamples;
+  for (const example of examples) validateResource(example.kind, example.document, true);
   await ensureCreatorProfile(user);
   const own = new Map((await listOwnResources(user)).map(item => [item.id, item]));
   const results: ExampleImportResult[] = [];
-  for (const example of resourceExamples) {
+  for (const example of examples) {
     const id = await accountExampleId(user.uid, example.id);
     let existing = own.get(id);
     let created = false;
