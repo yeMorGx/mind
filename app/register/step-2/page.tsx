@@ -1,145 +1,48 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
+import CreatorSetupForm, { type CreatorSetupValues } from "@/components/onboarding/CreatorSetupForm";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useOnboardingGuard } from "@/lib/use-onboarding-guard";
 import { saveOnboardingProgress } from "@/lib/firebase/data";
+import { ensureCreatorProfile, getOwnProfile, saveCreatorProfile, profileSaveErrorMessage } from "@/lib/firebase/publication";
+import { getUsername } from "@/lib/supabase/creators";
 
-const roles = [
-  {
-    emoji: "💻",
-    title: "Desenvolvedor",
-    description: "Crio aplicações e sistemas",
-  },
-  {
-    emoji: "🎨",
-    title: "Designer",
-    description: "Design, UI e experiência",
-  },
-  {
-    emoji: "📈",
-    title: "Marketing",
-    description: "Campanhas e crescimento",
-  },
-  {
-    emoji: "🎓",
-    title: "Estudante",
-    description: "Aprendizado e estudos",
-  },
-  {
-    emoji: "🏢",
-    title: "Empresário",
-    description: "Negócios e gestão",
-  },
-  {
-    emoji: "✨",
-    title: "Outro",
-    description: "Outra atividade",
-  },
-];
-
-export default function Step2Page() {
+export default function CreatorStep() {
   const router = useRouter();
   const { user, ready } = useOnboardingGuard();
   const { data, updateData } = useOnboarding();
-  const [error, setError] = useState("");
-  const [pending, setPending] = useState(false);
+  const [identity, setIdentity] = useState<{ uid: string; username: string } | null>(null);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const uid = user?.uid;
+  useEffect(() => {
+    if (!ready || !uid) return;
+    let alive = true;
+    void getUsername(uid).then(username => {
+      if (alive) { setIdentity({ uid, username: username ?? "" }); setError(false); }
+    }).catch(() => { if (alive) setError(true); });
+    return () => { alive = false; };
+  }, [uid, ready, attempt]);
 
-  async function selectRole(role: string) {
-    if (!user) return;
-    setPending(true);
-    setError("");
+  async function save(values: CreatorSetupValues) {
+    if (!user) throw new Error("Entre novamente para continuar.");
     try {
-      await saveOnboardingProgress(user, { role });
-      updateData({ role });
-      router.push("/register/step-3");
-    } catch {
-      setError("Não foi possível salvar sua resposta. Tente novamente.");
-    } finally {
-      setPending(false);
-    }
+      await ensureCreatorProfile(user);
+      const current = await getOwnProfile(user.uid);
+      await saveCreatorProfile(user.uid, { ...current, name: values.name, bio: current?.bio ?? "", username: values.username });
+      await saveOnboardingProgress(user, { name: values.name, role: values.role });
+      updateData({ name: values.name, role: values.role });
+      window.dispatchEvent(new Event("mind:username"));
+      router.push("/register/step-4");
+    } catch (error) { throw new Error(profileSaveErrorMessage(error)); }
   }
 
-  if (!ready) {
-    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">Carregando cadastro...</main>;
-  }
-
-  return (
-    <main className="min-h-[calc(100dvh-4.5rem)] bg-background text-foreground flex items-center justify-center px-6">
-      <div className="w-full max-w-3xl">
-
-        {/* progresso */}
-        <div className="mb-10">
-          <p className="text-sm text-muted">
-            Passo 2 de 7
-          </p>
-
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-foreground/10">
-            <div className="h-full w-[28%] rounded-full bg-primary" />
-          </div>
-        </div>
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 20,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-        >
-          <h1 className="text-4xl font-bold">
-            O que você faz?
-          </h1>
-
-          <p className="mt-3 text-muted">
-            Isso nos ajuda a personalizar sua experiência.
-          </p>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-
-            {roles.map((role) => (
-              <button
-                key={role.title}
-                disabled={pending}
-                onClick={() => void selectRole(role.title)}
-                className={`
-                  rounded-2xl
-                  border
-                  border-border
-                  bg-foreground/[0.03]
-                  p-5
-                  text-left
-                  transition
-                  hover:border-foreground/30
-                  hover:bg-foreground/[0.06]
-                  hover:scale-[1.02]
-                  disabled:cursor-wait
-                  disabled:opacity-60
-                  ${data.role === role.title ? "border-foreground/30 bg-foreground/[0.08]" : ""}
-                `}
-              >
-                <div className="text-3xl">
-                  {role.emoji}
-                </div>
-
-                <h3 className="mt-4 font-semibold">
-                  {role.title}
-                </h3>
-
-                <p className="mt-1 text-sm text-muted">
-                  {role.description}
-                </p>
-              </button>
-            ))}
-
-          </div>
-          {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
-        </motion.div>
-      </div>
-    </main>
-  );
+  return <OnboardingLayout step={2}>
+    {ready && user && identity && identity.uid === uid ? <CreatorSetupForm key={user.uid} publicId={user.uid} initialName={data.name || user.displayName || ""} initialUsername={identity.username} initialRole={data.role} save={save}/> : <>
+      <h1>Seu perfil de criador.</h1>
+      {error ? <div className="onboarding-status"><p role="alert">Não foi possível carregar seu @. Tente novamente.</p><button type="button" className="onboarding-back" onClick={() => { setError(false); setAttempt(value => value + 1); }}>Tentar novamente</button></div> : <p role="status" className="onboarding-status">Carregando seu perfil…</p>}
+    </>}
+  </OnboardingLayout>;
 }

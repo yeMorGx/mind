@@ -69,12 +69,7 @@ export async function ensureUserProfile(user: User) {
 export async function getAuthDestination(user: User) {
   const profile = await ensureUserProfile(user);
   if (profile?.onboardingComplete) return "/home";
-  if (!profile?.role) return "/register/step-2";
-  if (!profile?.usageType) return "/register/step-4";
-  if (profile.usageType === "team" && !profile.teamName) {
-    return "/register/step-5";
-  }
-  return "/register/step-7";
+  return "/register/step-2";
 }
 
 export function getFirebaseAuthMessage(error: unknown) {

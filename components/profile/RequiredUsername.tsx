@@ -23,7 +23,7 @@ export default function RequiredUsername({ onLogout }: { onLogout: () => Promise
   }, [uid, attempt]);
   useEffect(() => { const refresh = () => setAttempt(value => value + 1); window.addEventListener("mind:username", refresh); return () => window.removeEventListener("mind:username", refresh); }, []);
   const current = identity?.uid === uid ? identity : null;
-  const blocked = Boolean(user && authReady && !profileLoading && !pathname.startsWith("/auth/") && current && (current.error || !current.username));
+  const blocked = Boolean(user && authReady && !profileLoading && !pathname.startsWith("/auth/") && pathname !== "/register" && !pathname.startsWith("/register/") && current && (current.error || !current.username));
   useEffect(() => {
     const element = dialog.current; if (!element) return;
     if (blocked && !element.open) element.showModal();

@@ -17,6 +17,7 @@ import {
   type Timestamp,
 } from "firebase/firestore";
 import { requireFirebaseServices } from "./client";
+import { getUsername } from "@/lib/supabase/creators";
 import { emptyPromptDetails, readPromptDetails, validatePromptDetails, type PromptDetails } from "@/lib/prompt-media";
 
 export type AccountPreferences = {defaultCategory:string;defaultModel:string;favoritesFirst:boolean};
@@ -68,6 +69,7 @@ export async function createWorkspaceForUser(
   user: User,
   data: OnboardingData,
 ) {
+  if (!await getUsername(user.uid)) throw new Error("Escolha seu @ na etapa de perfil antes de concluir o cadastro.");
   if (!data.role) throw new Error("Volte e escolha uma profissão.");
   if (!data.usageType) throw new Error("Volte e escolha como você pretende usar o Mind.");
   if (data.usageType === "team" && !data.teamName.trim()) {

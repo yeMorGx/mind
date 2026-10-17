@@ -2,102 +2,36 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
 import { useOnboarding } from "@/app/context/OnboardingContext";
+import { useSiteLayout } from "@/components/layout/SiteLayout";
 import { createEmailPasswordAccount, getFirebaseAuthMessage } from "@/lib/firebase/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { data, updateData, user, authReady, profileLoading, firebaseConfigured } = useOnboarding();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [pending, setPending] = useState(false);
-
-  useEffect(() => {
-    if (!authReady || !user || profileLoading) return;
-    if (data.onboardingComplete) router.replace("/home");
-    else if (!data.role) router.replace("/register/step-2");
-    else if (!data.usageType) router.replace("/register/step-4");
-    else if (data.usageType === "team" && !data.teamName) router.replace("/register/step-5");
-    else router.replace("/register/step-7");
-  }, [authReady, data, profileLoading, router, user]);
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    if (!name.trim()) {
-      setError("Digite seu nome.");
-      return;
-    }
+  const { requestLogin } = useSiteLayout();
+  const [name,setName] = useState(""), [email,setEmail] = useState(""), [password,setPassword] = useState("");
+  const [showPassword,setShowPassword] = useState(false), [error,setError] = useState(""), [pending,setPending] = useState(false);
+  useEffect(() => { if (authReady && user && !profileLoading) router.replace(data.onboardingComplete ? "/home" : "/register/step-2"); },[authReady,user,profileLoading,data.onboardingComplete,router]);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); if (pending) return; setError("");
+    if (!name.trim()) { setError("Digite seu nome."); return; }
     setPending(true);
-
-    try {
-      const user = await createEmailPasswordAccount(name, email, password);
-      updateData({ name: name.trim(), email: user.email ?? email.trim() });
-      router.push("/register/step-2");
-    } catch (submitError) {
-      setError(getFirebaseAuthMessage(submitError));
-    } finally {
-      setPending(false);
-    }
+    try { const account = await createEmailPasswordAccount(name,email,password); updateData({name:name.trim(),email:account.email ?? email.trim()}); router.push("/register/step-2"); }
+    catch (error) { setError(getFirebaseAuthMessage(error)); } finally { setPending(false); }
   }
-
-  return (
-    <OnboardingLayout step={1}>
-      <h1 className="text-4xl font-bold">Crie sua conta</h1>
-      <p className="mt-2 text-muted">
-        Vamos começar com algumas informações.
-      </p>
-
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        <input
-          autoComplete="name"
-          required
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Nome"
-          className="w-full rounded-xl border border-border bg-foreground/5 p-4 outline-none focus:border-foreground/30"
-        />
-        <input
-          autoComplete="email"
-          required
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="Email"
-          className="w-full rounded-xl border border-border bg-foreground/5 p-4 outline-none focus:border-foreground/30"
-        />
-        <input
-          autoComplete="new-password"
-          required
-          minLength={6}
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="Senha (mínimo de 6 caracteres)"
-          className="w-full rounded-xl border border-border bg-foreground/5 p-4 outline-none focus:border-foreground/30"
-        />
-
-        {!firebaseConfigured && (
-          <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm text-amber-800">
-            Configure as variáveis Firebase no arquivo .env.local para habilitar o cadastro.
-          </p>
-        )}
-        {error && (
-          <p role="alert" className="rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-700">
-            {error}
-          </p>
-        )}
-
-        <button
-          disabled={pending || !firebaseConfigured}
-          className="mt-4 w-full rounded-xl bg-primary py-4 font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {pending ? "Criando conta..." : "Continuar"}
-        </button>
-      </form>
-    </OnboardingLayout>
-  );
+  return <OnboardingLayout step={1}>
+    <h1>Crie sua conta.</h1><p className="onboarding-description">Suas ideias merecem um lugar próprio.<br/>Vamos preparar o seu.</p>
+    <form onSubmit={submit} className="onboarding-form" aria-busy={pending}>
+      <div className="onboarding-field"><label htmlFor="register-name">Seu nome</label><input id="register-name" autoComplete="name" required maxLength={80} disabled={pending} value={name} onChange={event=>setName(event.target.value)} placeholder="Como você se chama?"/></div>
+      <div className="onboarding-field"><label htmlFor="register-email">E-mail</label><input id="register-email" autoComplete="email" type="email" required disabled={pending} value={email} onChange={event=>setEmail(event.target.value)} placeholder="voce@exemplo.com"/></div>
+      <div className="onboarding-field"><label htmlFor="register-password">Crie uma senha</label><div className="onboarding-password"><input id="register-password" autoComplete="new-password" type={showPassword?"text":"password"} required minLength={6} disabled={pending} value={password} onChange={event=>setPassword(event.target.value)} placeholder="Pelo menos 6 caracteres"/><button type="button" aria-label={showPassword?"Ocultar senha":"Mostrar senha"} aria-pressed={showPassword} onClick={()=>setShowPassword(value=>!value)}>{showPassword?<EyeOff size={18}/>:<Eye size={18}/>}</button></div></div>
+      {!firebaseConfigured && <p className="onboarding-error">O cadastro por e-mail está indisponível neste momento. Tente outra forma de acesso.</p>}
+      {error && <p role="alert" className="onboarding-error">{error}</p>}
+      <button className="onboarding-submit" disabled={pending||!authReady||!firebaseConfigured}>{pending?"Criando sua conta…":<>Criar conta <ArrowRight size={17}/></>}</button>
+      <button type="button" className="onboarding-back justify-center" onClick={requestLogin}>Ver outras formas de acesso</button>
+    </form>
+  </OnboardingLayout>;
 }

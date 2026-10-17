@@ -74,4 +74,6 @@ Explorar organiza os cards em masonry com proporções de imagem naturais limita
 
 O redesign solicitado do modal de login se aplica às páginas internas e à sua abertura sobre a landing, preservando os métodos de autenticação existentes e a apresentação da landing fora do diálogo.
 
+O cadastro reúne quatro etapas: conta, perfil com nome/@ exclusivo e atividade, biblioteca individual ou equipe, e conclusão. O @ é validado no fluxo existente de perfis e exigido antes de criar a biblioteca; a conclusão consulta o @ e exige cadastro completo. Ícone, origem e e-mails da equipe são opcionais, e nenhum convite é enviado. Dados anteriores e autenticação são preservados; as antigas etapas 3, 5, 6 e 7 redirecionam para a configuração da biblioteca.
+
 Header interno flutuante que se compacta ao rolar, com dropdowns de descoberta e biblioteca e busca centralizada. Rodapé tipográfico nas páginas de descoberta, biblioteca, perfis e prompts reúne marca, navegação e acesso à conta/criação, respeitando a autenticação. Categorias usam a faixa completa do componente original no hover. A landing não recebe esses componentes.
