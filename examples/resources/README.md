@@ -11,6 +11,12 @@ Conteúdo de demonstração para as novas áreas do Mind. Não inclui contas, to
 - `mcps/supabase.mcp.json`: configuração do Supabase MCP em modo de leitura.
 - `catalog.json`: cinco registros com títulos, resumos, categorias e instruções no formato dos documentos do Mind. Os IDs foram gerados uma única vez para identificar estes exemplos; não há autor atribuído nem estado de publicação neste arquivo.
 
+## Publicar os cinco exemplos pela própria conta
+
+Abra https://mind-lemon.vercel.app/home/resources/examples com a sua conta conectada. Confira os conteúdos e clique em **Publicar os 5 exemplos na minha conta**. A página usa a autenticação e as permissões normais do Mind; não exige acesso administrativo ao Supabase e não publica ao abrir o link.
+
+Cada conta recebe identificadores próprios e estáveis para os exemplos. Repetir a importação preserva os itens existentes e permite retomar uma importação incompleta. Rascunhos existentes não são republicados automaticamente. A autoria é sempre a conta conectada.
+
 ## Adicionar pelo Mind
 
 1. Abra Arquivos Markdown → Novo arquivo e importe um dos `.md`.
