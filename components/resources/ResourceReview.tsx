@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element -- Reviews the creator's optimized cover before publication. */
+import ResourceClients from "./ResourceClients";
 import CreatorIdentity from "@/components/profile/CreatorIdentity";
 import {
   resourceConfiguration,
@@ -88,7 +89,7 @@ export default function ResourceReview({
         <dl className="resource-review-facts">
           <div>
             <dt>Ferramentas compatíveis</dt>
-            <dd>{doc.clients.join(", ") || "Nenhuma informada"}</dd>
+            <dd><ResourceClients clients={doc.clients} empty="Nenhuma informada"/></dd>
           </div>
           <div>
             <dt>Licença / condições de uso</dt>

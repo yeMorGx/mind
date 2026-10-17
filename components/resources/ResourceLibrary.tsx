@@ -1,4 +1,5 @@
 "use client";
+import ResourceClients from "./ResourceClients";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FileCode2, Plug, Plus } from "lucide-react";
@@ -205,6 +206,7 @@ function ResourceLibrarySession() {
                   {item.kind === "markdown" ? item.document.fileName : "MCP"} ·{" "}
                   {item.status === "draft" ? "Rascunho privado" : "Publicado"}
                 </p>
+                <ResourceClients clients={item.document.clients} compact/>
               </div>
               {tab !== "saved" && (
                 <div className="resource-library-actions">

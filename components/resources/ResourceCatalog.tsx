@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { useSiteLayout } from "@/components/layout/SiteLayout";
 import SearchSelect from "@/components/ui/SearchSelect";
 import type { CatalogResource, ResourceKind } from "@/lib/resources";
+import { ResourceClientIdentity } from "./ResourceClients";
 import ResourceCard from "./ResourceCard";
 import ResourceTabs from "./ResourceTabs";
 import "../catalog/explore-enhancements.css";
@@ -94,7 +95,7 @@ export default function ResourceCatalog({
               onChange={setClient}
               options={[
                 { value: "", label: "Todas as ferramentas" },
-                ...clients.map((value) => ({ value, label: value })),
+                ...clients.map((value) => ({ value, label: value, icon: <ResourceClientIdentity value={value} iconOnly/> })),
               ]}
             />
             <SearchSelect

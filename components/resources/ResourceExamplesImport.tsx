@@ -1,4 +1,5 @@
 "use client";
+import ResourceClients from "./ResourceClients";
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, FileCode2, Loader2, Plug } from "lucide-react";
@@ -50,7 +51,7 @@ function ImportSession({ kind }: { kind?: ResourceKind }) {
         {result && <Link href={result.status === "published" ? `/resources/${result.resourceId}` : `/home/resources/${result.resourceId}/edit`} className="workflow-button secondary">{result.status === "published" ? "Ver publicação" : "Ver rascunho"}</Link>}
         <details className="basis-full rounded-xl bg-surface p-5"><summary className="cursor-pointer text-sm font-medium">Conferir conteúdo e instruções</summary><div className="mt-5 max-w-3xl text-sm leading-7">
           {example.kind === "markdown" ? <MarkdownContent content={doc.content}/> : <><h3 className="font-semibold">Desenvolvedor: {doc.developer}</h3><p className="mt-3">{doc.description}</p><a className="mt-3 inline-block underline underline-offset-4" href={doc.documentation} target="_blank" rel="noopener noreferrer">Documentação oficial</a><pre className="resource-source mt-4 rounded-xl bg-media p-4">{doc.config}</pre><p className="mt-3">Autenticação: {doc.authentication}</p><p className="mt-3">Permissões: {doc.permissions}</p><p className="mt-3">Custo: {doc.pricing}</p></>}
-          <h3 className="mt-6 font-semibold">Como usar</h3><p className="mt-2 whitespace-pre-wrap">{doc.instructions}</p><p className="mt-4">Ferramentas: {doc.clients.join(", ")}</p><p className="mt-3">Licença: {doc.license}</p><p className="mt-3 text-muted">{doc.credits}</p>
+          <h3 className="mt-6 font-semibold">Como usar</h3><p className="mt-2 whitespace-pre-wrap">{doc.instructions}</p><div className="mt-4"><p className="mb-2">Ferramentas compatíveis</p><ResourceClients clients={doc.clients}/></div><p className="mt-3">Licença: {doc.license}</p><p className="mt-3 text-muted">{doc.credits}</p>
         </div></details>
       </article>;
     })}</div>

@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Locally optimized uploaded covers use data URLs. */
+import { ResourceClientIdentity } from "./ResourceClients";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -589,7 +590,7 @@ function ResourceEditorSession({
                         )
                       }
                     />
-                    {value}
+                    <ResourceClientIdentity value={value}/>
                   </label>
                 ))}
               </fieldset>

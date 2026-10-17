@@ -1,4 +1,5 @@
 "use client";
+import ResourceClients from "./ResourceClients";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -332,7 +333,7 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
               </div>
               <div>
                 <dt>Compatível com</dt>
-                <dd>{doc.clients.join(", ") || "Consulte as instruções"}</dd>
+                <dd><ResourceClients clients={doc.clients}/></dd>
               </div>
               <div>
                 <dt>Atualizado em</dt>
