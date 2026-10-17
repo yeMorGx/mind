@@ -1,3 +1,4 @@
+import {getCampaignSlots} from "@/lib/campaigns/server";
 import { getPublicResources } from "@/lib/supabase/resource-server";
 import type { Metadata } from "next";
 import ExploreCatalog from "@/components/catalog/ExploreCatalog";
@@ -25,11 +26,13 @@ export default async function Page({
   const category = (typeof params.category === "string" ? params.category : "")
     .trim()
     .slice(0, 120);
+  const campaignRequest = !query && !category ? getCampaignSlots("prompts") : Promise.resolve({hero:null,card:null});
   const result = await (
     query ? getSearchedPublicPrompts(query) : getPublicPrompts(60)
   )
     .then((prompts) => ({ prompts, loadFailed: false }))
     .catch(() => ({ prompts: [], loadFailed: true }));
+  const campaign = await campaignRequest;
   const resources =
     query && !query.startsWith("@")
       ? await getPublicResources(undefined, query).catch(() => [])
@@ -44,6 +47,8 @@ export default async function Page({
   ]);
   return (
     <ExploreCatalog
+      campaign={campaign.hero}
+      sponsoredCard={campaign.card}
       resources={resources}
       {...result}
       searchQuery={query}

@@ -1,4 +1,7 @@
 "use client";
+import SponsoredCard from "@/components/campaigns/SponsoredCard";
+import SponsoredHero from "@/components/campaigns/SponsoredHero";
+import type {PublicCampaign} from "@/lib/campaigns/types";
 import { useEffect, useMemo, useState } from "react";
 import {
   useCatalogOptions,
@@ -19,11 +22,15 @@ import { useRouter } from "next/navigation";
 import "./explore-enhancements.css";
 export default function ExploreCatalog({
   prompts,
+  campaign = null,
+  sponsoredCard = null,
   loadFailed = false,
   searchQuery = "",
   initialCategory = "",
   resources = [],
 }: {
+  campaign?: PublicCampaign|null;
+  sponsoredCard?: PublicCampaign|null;
   resources?: CatalogResource[];
   prompts: Prompt[];
   loadFailed?: boolean;
@@ -68,6 +75,7 @@ export default function ExploreCatalog({
   );
   return (
     <main className="catalog-page explore-page min-h-[calc(100dvh-4.5rem)]">
+      {!searchQuery && !category && !model && campaign && <SponsoredHero key={campaign.id} campaign={campaign}/>}
       <ResourceTabs active="prompts" />
       <div className="explore-heading">
         <div>
@@ -118,6 +126,7 @@ export default function ExploreCatalog({
           </div>
         ) : visible.length ? (
           <div className="catalog-grid">
+            {!searchQuery && !category && !model && sponsoredCard && <SponsoredCard key={`sponsor:${sponsoredCard.id}`} campaign={sponsoredCard}/>}
             {visible.map((prompt) => (
               <PublicPromptCard
                 key={`${prompt.creatorId}:${prompt.id}`}

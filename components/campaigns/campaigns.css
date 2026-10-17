@@ -1,0 +1,285 @@
+.site-app .sponsored-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  margin: 0 0 36px;
+  padding: 28px;
+  border-radius: 16px;
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+.site-app .sponsored-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 4px 12px 4px 4px;
+  min-width: 0;
+}
+.site-app .sponsored-disclosure {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0;
+  flex: none;
+}
+.site-app .sponsored-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  min-width: 0;
+}
+.site-app .sponsored-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+.site-app .sponsored-brand > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.site-app .sponsored-brand img,
+.site-app .sponsored-brand-initial {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 7px;
+  object-fit: contain;
+}
+.site-app .sponsored-brand-initial {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+}
+.site-app .sponsored-hero h2 {
+  font-size: clamp(25px, 2.6vw, 38px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  max-width: 24ch;
+  overflow-wrap: anywhere;
+}
+.site-app .sponsored-description {
+  margin-top: 14px;
+  max-width: 58ch;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.site-app .sponsored-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 11px 18px;
+  margin-top: 22px;
+  border-radius: 10px;
+  background: var(--foreground);
+  color: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+}
+.site-app a.sponsored-cta:hover svg {
+  transform: translate(2px, -2px);
+}
+.site-app .sponsored-cta svg {
+  transition: transform 0.2s ease-out;
+}
+.site-app .sponsored-note {
+  margin-top: 14px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 60ch;
+}
+.site-app .sponsored-media {
+  position: relative;
+  align-self: stretch;
+  min-width: 0;
+  width: 100%;
+  min-height: 270px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--media);
+}
+.site-app .sponsored-cover,
+.site-app .sponsored-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.site-app .sponsored-media-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  min-height: 270px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.site-app .sponsored-media-caption {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: 10px;
+  pointer-events: none;
+}
+.site-app .sponsored-play {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: 12px;
+}
+@media (min-width: 1600px) {
+  .site-app .sponsored-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  }
+  .site-app .sponsored-media {
+    max-height: 340px;
+  }
+}
+@media (max-width: 767px) {
+  .site-app .sponsored-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding: 22px;
+    margin-bottom: 28px;
+  }
+  .site-app .sponsored-copy {
+    padding: 0;
+  }
+  .site-app .sponsored-media {
+    min-height: 0;
+    aspect-ratio: 16/9;
+  }
+  .site-app .sponsored-hero h2 {
+    font-size: 28px;
+  }
+  .site-app .sponsored-note {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-app .sponsored-cta svg {
+    transition: none;
+  }
+}
+.site-app .sponsored-card {
+  break-inside: avoid;
+  min-width: 0;
+}
+.site-app .sponsored-card .catalog-card-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 4/3;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.site-app .sponsored-card .catalog-card-cover > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.site-app .sponsored-card-label {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 9px;
+  background: var(--surface);
+  color: var(--foreground);
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.site-app .sponsored-card-advertiser {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.site-app .sponsored-card-advertiser > img,
+.site-app .sponsored-card-initial {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.site-app .sponsored-card-initial {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+}
+.site-app .sponsored-card-advertiser > span:not(.sponsored-card-initial) {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.site-app .sponsored-card-affiliate {
+  color: var(--muted);
+  margin-top: 10px;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.site-app .sponsored-card-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+}
+.site-app .sponsored-card-video[data-playing] {
+  opacity: 1;
+}
+.site-app .sponsored-card-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--media);
+  color: var(--muted);
+  font-size: 12px;
+}
+.site-app .campaign-card-preview {
+  max-width: 400px;
+}
+.site-app .sponsored-card > .prompt-card-details {
+  margin-top: 4px;
+  border-radius: 16px;
+  background: #f0f0f3;
+  color: var(--foreground);
+}

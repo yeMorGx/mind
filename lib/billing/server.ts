@@ -33,7 +33,7 @@ export async function readBody(request: Request, max = 12000) {
  catch { throw new ServiceError("Confira os dados enviados."); }
 }
 const firebaseKeys = createRemoteJWKSet(new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"));
-export async function identity(request: Request) {
+export async function identity(request: Request, sessionRpc: "mind_billing_session" | "mind_campaign_session" = "mind_billing_session") {
  const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
  if (!token || token.length > 16000) throw new ServiceError("Entre na sua conta para continuar.", 401);
  const backend = request.headers.get("x-mind-backend");
@@ -53,7 +53,8 @@ export async function identity(request: Request) {
   const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { headers: { Authorization: `Bearer ${token}` } } });
   const user = await client.auth.getUser(token);
   if (user.error || !user.data.user) throw new ServiceError("Sua sessão expirou. Entre novamente.", 401);
-  const account = await client.rpc("mind_billing_session");
+  const account = await client.rpc(sessionRpc);
+  if (sessionRpc === "mind_campaign_session" && account.error?.code === "PGRST202") throw new ServiceError("Campanhas ainda não estão configuradas no banco.", 503);
   if (account.error || !account.data) throw new ServiceError("Confirme o login e o autenticador, se estiver ativado.", 403);
   actor = account.data;
  } else throw new ServiceError("Entre novamente para confirmar sua sessão.", 401);

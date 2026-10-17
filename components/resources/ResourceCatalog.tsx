@@ -1,4 +1,6 @@
 "use client";
+import SponsoredCard from "@/components/campaigns/SponsoredCard";
+import type {PublicCampaign} from "@/lib/campaigns/types";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -12,11 +14,13 @@ import "../catalog/explore-enhancements.css";
 import "./resources.css";
 export default function ResourceCatalog({
   kind,
+  campaign = null,
   resources,
   query = "",
   failed = false,
 }: {
   kind: ResourceKind;
+  campaign?: PublicCampaign|null;
   resources: CatalogResource[];
   query?: string;
   failed?: boolean;
@@ -120,6 +124,7 @@ export default function ResourceCatalog({
         </div>
       ) : visible.length ? (
         <div className="catalog-grid">
+          {!query && !category && !client && campaign && <SponsoredCard key={`sponsor:${campaign.id}`} campaign={campaign}/>}
           {visible.map((resource) => (
             <ResourceCard key={resource.id} resource={resource} />
           ))}
