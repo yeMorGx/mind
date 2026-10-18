@@ -1,5 +1,6 @@
 import { apiError, assertOrigin, billingEnabled, databaseError, identity, isOwner, noStore, priceId, readBody, ServiceError, siteUrl, stripeClient } from "@/lib/billing/server";
 import { PLANS, type Cadence, type PaidPlan } from "@/lib/billing/plans";
+import { checkoutAppearance } from "@/lib/billing/checkout-appearance";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ action: string }> };
@@ -69,12 +70,18 @@ export async function POST(request: Request, context: Context) {
    const current = await admin.from("mind_subscriptions").select("customer_id").eq("actor_id", actor).single(); databaseError(current.error);
    customer = current.data!.customer_id;
   }
+  // Reuse an open checkout for this reservation, including sessions created before a branding update.
+  const expiresAt = Math.floor(new Date(reserved.data.expiresAt).getTime() / 1000);
+  const openSessions = await stripe.checkout.sessions.list({ customer: customer!, status: "open", limit: 100 });
+  const existingSession = openSessions.data.find(value => value.client_reference_id === actor && value.metadata?.mind_actor_id === actor && value.expires_at === expiresAt);
+  if (existingSession?.url) return Response.json({ url: existingSession.url }, { headers: noStore });
   const session = await stripe.checkout.sessions.create({
+   ...checkoutAppearance(cadence),
    mode: "subscription", customer: customer!, client_reference_id: actor,
    line_items: [{ price, quantity: 1 }],
    metadata: { mind_actor_id: actor }, subscription_data: { metadata: { mind_actor_id: actor } },
    success_url: `${siteUrl()}/home/billing?checkout=success`, cancel_url: `${siteUrl()}/plans?checkout=canceled`,
-   expires_at: Math.floor(new Date(reserved.data.expiresAt).getTime() / 1000),
+   expires_at: expiresAt,
    locale: "pt-BR", billing_address_collection: "auto",
   }, { idempotencyKey: `mind-checkout-v1:${reserved.data.key}` });
   if (session.status !== "open" || !session.url) throw new ServiceError("Este checkout já foi concluído ou expirou. Confira sua assinatura e tente novamente.", 409);

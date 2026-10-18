@@ -76,3 +76,11 @@ O header interno mostra um badge compacto de uso ao lado de “Novo prompt” pa
 O indicador consulta a configuração e o saldo reais. Atualiza ao desbloquear um prompt, consultar a assinatura, navegar, voltar à aba e a cada minuto enquanto visível; aproxima a atualização quando a cota renova. Trocar de conta limpa o estado. Com limites desligados, mostra “Uso livre”; falhas mostram um traço e orientam abrir a assinatura para atualizar. Visitantes não recebem saldo fictício. O header não é renderizado na landing.
 
 A prévia visual do badge foi conferida no header real em 1440, 1024 e 390 px, usando estados ilustrativos identificados na rota temporária (removida antes do build). As capturas locais estão em `.impeccable/review/usage`; não representam uma conta autenticada nem comprovam consumo real de créditos.
+
+## Checkout hospedado — acabamento
+
+O pagamento permanece no Checkout hospedado da Stripe. Novas sessões recebem a marca Mind, ícone PNG derivado da logo vetorial existente, fundo `#fafafa`, botão `#17181a`, controles arredondados e fonte Inter, suportada pela Stripe. A personalização está em `lib/billing/checkout-appearance.ts` e não modifica a landing ou a marca global da conta Stripe.
+
+O resumo usa as descrições reais dos produtos Plus/Premium. O botão é explicitamente de assinatura; o texto informa renovação mensal/anual e gerenciamento em Minha assinatura. Preços, ciclos, autenticação, webhooks e concessão de benefícios permanecem iguais. Uma sessão já aberta para a mesma reserva é reutilizada, preservando pagamentos em andamento e a idempotência após atualizações visuais.
+
+A verificação visual usa sessões de prévia não concluídas em produção, sem e-mail, cartão, cliente ou assinatura, encerradas após a captura. Nenhuma compra é realizada durante essa inspeção.
