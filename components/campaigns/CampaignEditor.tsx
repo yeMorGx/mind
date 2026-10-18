@@ -34,6 +34,7 @@ const empty: CampaignDraft = {
   image_alt: "",
   video_url: "",
   cta_label: "Conhecer",
+  coupon_code: "",
   target_url: "",
   starts_at: null,
   ends_at: null,
@@ -55,7 +56,7 @@ export function CampaignEditor({
 }) {
   const [draft, setDraft] = useState<CampaignDraft>(() =>
     initial
-      ? { ...initial }
+      ? { ...empty, ...initial }
       : { ...empty, starts_at: new Date().toISOString() },
   );
   const [stage, setStage] = useState<"edit" | "review">("edit"),
@@ -430,6 +431,20 @@ export function CampaignEditor({
             </div>
             <div className="campaign-form-section">
               <h2>Destino e período</h2>
+              {field(
+                "Código de cupom (opcional)",
+                <input
+                  maxLength={48}
+                  value={draft.coupon_code}
+                  disabled={locked}
+                  onChange={(event) => update("coupon_code", event.target.value)}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  placeholder="Ex.: MIND10"
+                />,
+                "Aparece no card para copiar e usar no site do anunciante. Não é aplicado à assinatura do Mind.",
+              )}
               {field(
                 "Texto do botão",
                 input("cta_label", 32, "Conhecer a ferramenta"),

@@ -82,6 +82,9 @@ export function sanitizeCampaign(raw: unknown, status: string): CampaignDraft {
     description = text("description", 220),
     cta_label = text("cta_label", 32),
     image_alt = text("image_alt", 160);
+  const coupon_code = value.coupon_code == null ? "" : text("coupon_code", 48);
+  if (/[\u0000-\u001f\u007f]/.test(coupon_code))
+    throw new ServiceError("O cupom não pode conter quebras de linha ou caracteres de controle.");
   if (name.length < 2)
     throw new ServiceError("Dê um nome à campanha para encontrá-la depois.");
   if (!["affiliate", "sponsored"].includes(String(value.kind)))
@@ -138,6 +141,7 @@ export function sanitizeCampaign(raw: unknown, status: string): CampaignDraft {
     title,
     description,
     cta_label,
+    coupon_code,
     image_alt,
     target_url,
     logo_url,

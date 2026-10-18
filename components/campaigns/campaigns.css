@@ -277,6 +277,69 @@
 .site-app .campaign-card-preview {
   max-width: 400px;
 }
+.site-app .campaign-coupon {
+  margin-top: 14px;
+  width: 100%;
+  min-width: 0;
+}
+.site-app .campaign-coupon-ticket {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  color: var(--foreground);
+  background: var(--surface);
+  border-radius: 10px;
+  /* True transparent inward curves, including on non-white parent surfaces. */
+  mask-image: radial-gradient(circle at 0 50%, transparent 7px, #000 7.5px), radial-gradient(circle at 100% 50%, transparent 7px, #000 7.5px);
+  mask-composite: intersect;
+}
+.site-app .campaign-coupon-code {
+  flex: 1;
+  min-width: 0;
+}
+.site-app .campaign-coupon-code > span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.site-app .campaign-coupon-code > code {
+  display: block;
+  margin-top: 3px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.site-app .campaign-coupon-ticket > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: none;
+  min-height: 44px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.site-app .campaign-coupon-ticket > button:hover {
+  background: var(--surface-hover);
+}
+.site-app .campaign-coupon-ticket > button:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+.site-app .campaign-coupon-error {
+  display: block;
+  margin-top: 6px;
+  color: var(--foreground);
+  font-size: 12px;
+  line-height: 1.5;
+}
 .site-app .sponsored-card > .prompt-card-details {
   margin-top: 4px;
   border-radius: 16px;

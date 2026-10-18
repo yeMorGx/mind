@@ -177,3 +177,7 @@ MFA usa QRCode do Spell UI em preto sobre branco com margem de segurança e Code
 ## Campos de seleção e anexos
 
 `SelectField` padroniza seleções de formulários e filtros com HeroUI Select/Autocomplete, rótulos, validação, teclado, indicadores de seleção e portal dentro de diálogos nativos. As variantes pesquisáveis preservam logos e nomes personalizados de IA; filtros continuam sem borda. Campanhas usam DatePicker com calendário, hora de 24 horas e fuso local. Uploads substituem entrada de URL de imagem/vídeo. Referências, escopo e conferências: `docs/design/form-controls.md`.
+
+### Entrada principal e cupons de campanha
+
+O endereço `/` redireciona para `/explore`, por solicitação explícita do proprietário. O código e o visual da landing permanecem preservados. Cupons opcionais das campanhas aparecem abaixo da descrição em um ticket claro, com curvas invertidas nas laterais e botão de copiar. O código mantém a grafia do anunciante; campanhas sem cupom não exibem esse bloco.

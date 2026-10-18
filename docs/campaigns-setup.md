@@ -33,3 +33,9 @@ A revisão de acabamento recebeu **SHIP apenas para o código e a interface prep
 A migração `campaign_asset_storage` foi aplicada e as configurações de tipo, tamanho e política de leitura foram conferidas. O bucket `mind-campaign-assets` é público para reprodução dos anúncios; nomes de arquivos são substituídos por caminhos aleatórios. Não existe política de escrita pública. `/api/campaigns/media` verifica sessão, MFA e emblema de dono antes de emitir o token de envio. O arquivo vai diretamente do navegador ao Storage; a chave de serviço fica no servidor.
 
 Anexar envia o arquivo antes de salvar a campanha. Remover o anexo no editor desvincula a mídia; não exclui o arquivo físico, preservando referências e páginas já carregadas. Rascunhos da campanha permanecem privados, mas os anexos enviados têm URLs públicas. Nenhuma campanha real ou mídia do proprietário foi criada durante a implementação.
+
+## Cupom do anunciante
+
+O editor aceita um código opcional de até 48 caracteres, preservando maiúsculas e minúsculas. `campaign_coupon_code` acrescenta a coluna com valor vazio nas campanhas existentes e concede sua leitura na projeção pública, mantendo as regras de período e status. Somente a administração pode alterá-lo.
+
+Quando preenchido, o card e o hero mostram o código num ticket com recortes laterais transparentes e botão de copiar, com confirmação acessível e alternativa manual em falha da área de transferência. Sem código, o bloco não aparece. É um cupom para uso no destino do anunciante; não altera cobranças nem aplica descontos no Stripe do Mind.

@@ -23,6 +23,7 @@ export type PublicCampaign = {
   image_alt: string;
   video_url: string;
   cta_label: string;
+  coupon_code: string;
   target_url: string;
   starts_at: string | null;
   ends_at: string | null;
@@ -38,7 +39,7 @@ export type Campaign = PublicCampaign & {
 };
 export type CampaignDraft = Omit<PublicCampaign, "id"> & { name: string };
 export const PUBLIC_CAMPAIGN_FIELDS =
-  "id,placements,kind,advertiser,title,description,logo_url,image_url,image_alt,video_url,cta_label,target_url,starts_at,ends_at";
+  "id,placements,kind,advertiser,title,description,logo_url,image_url,image_alt,video_url,cta_label,coupon_code,target_url,starts_at,ends_at";
 export const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function campaignState(

@@ -9,6 +9,7 @@ import {
 } from "@/lib/campaigns/types";
 import { trackCampaignEvent, useCampaignExposure } from "./campaign-tracking";
 import CampaignVisibility from "./CampaignVisibility";
+import CampaignCoupon from "./CampaignCoupon";
 import "./campaigns.css";
 export default function SponsoredCard({
   campaign,
@@ -141,6 +142,7 @@ function CardContent({
           {campaign.description ||
             "Uma breve descrição da ferramenta ou parceria."}
         </p>
+        <CampaignCoupon code={campaign.coupon_code} />
         {campaign.kind === "affiliate" && (
           <p className="sponsored-card-affiliate">
             Link de afiliado · Podemos receber uma comissão.

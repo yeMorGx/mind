@@ -6,6 +6,7 @@ import type { PublicCampaign } from "@/lib/campaigns/types";
 import { campaignDestination, campaignMedia } from "@/lib/campaigns/types";
 import { trackCampaignEvent, useCampaignExposure } from "./campaign-tracking";
 import CampaignVisibility from "./CampaignVisibility";
+import CampaignCoupon from "./CampaignCoupon";
 import "./campaigns.css";
 export default function SponsoredHero({
   campaign,
@@ -92,6 +93,7 @@ function HeroContent({
             </a>
           )
         )}
+        <CampaignCoupon code={campaign.coupon_code} />
         <p className="sponsored-note">
           {campaign.kind === "affiliate"
             ? "Podemos receber uma comissão se você contratar pelo link."
