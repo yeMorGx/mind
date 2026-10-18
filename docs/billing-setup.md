@@ -109,4 +109,17 @@ Depois da migração e da chave de servidor configuradas, definir `CONTACT_FORMS
 
 Build e TypeScript do Next e ESLint foram conferidos na entrega do código. As capturas de design usam o servidor local e estado de visitante, sem cobrar, enviar formulários ou gravar dados reais. A instalação remota confirmou `enabled=false`, `legacy_rules_confirmed=false`, zero assinaturas e zero prompts protegidos; os oito snapshots públicos existentes permanecem disponíveis. Os papéis anon/authenticated não podem executar o RPC que atribui planos. O advisor informa RLS sem políticas nas tabelas exclusivamente administrativas, conforme projetado; a proteção contra senhas vazadas já estava desativada antes desta instalação.
 
-A ativação Stripe continua pendente: a sessão de execução não possui chaves Stripe ou acesso autenticado à Vercel. Foram oferecidas as conexões Stripe e Vercel para configurar os produtos e os segredos sem enviá-los no chat. Não foi realizado pagamento de teste, configuração de produtos/preços/webhook, nem habilitada a proteção das cópias legadas no Firebase. A ativação depende dos passos administrativos acima.
+A autenticação direta do MCP oficial da Stripe e da CLI da Vercel foi concluída. A conta Stripe é **Mind**, em produção; o projeto Vercel confirmado é `mind`, equipe `yemorgxs-projects`. As chaves Stripe, webhook e Supabase estão cadastradas como Secret em Production; seus valores não foram lidos ou expostos.
+
+Foram criados e conferidos os quatro preços recorrentes BRL, com quantidade fixa e lookup keys `mind_<plano>_<monthly|yearly>_v1`. Os IDs foram cadastrados em Production na Vercel:
+
+| Variável | ID |
+|---|---|
+| `STRIPE_PRICE_PLUS_MONTHLY` | `price_1URkbCKHp5qmp50gqLdElAca` |
+| `STRIPE_PRICE_PLUS_YEARLY` | `price_1URkbDKHp5qmp50gkqJBwXzb` |
+| `STRIPE_PRICE_PREMIUM_MONTHLY` | `price_1URkbDKHp5qmp50gJQ8Ukvdu` |
+| `STRIPE_PRICE_PREMIUM_YEARLY` | `price_1URkbEKHp5qmp50gioauv9pL` |
+
+O webhook existente `we_1URkMPKHp5qmp50gVIdHbvjk` foi preservado e limitado aos cinco eventos desta integração; o segredo não foi rotacionado. O endpoint respondeu 400 por assinatura ausente à solicitação sem assinatura, confirmando a presença de configuração, mas não sua correspondência com o segredo Stripe. O portal padrão `bpc_1URkbfKHp5qmp50gRnE3oWm7` permite consultar faturas, atualizar pagamento, cancelar ao fim do período e trocar somente entre os quatro preços. Quantidade não é editável; reduções de valor e encurtamentos de intervalo são agendados para o fim do período, com rateio nas demais trocas.
+
+`BILLING_CHECKOUT_ENABLED=false` foi cadastrado em Production. A ativação depende da confirmação administrativa das regras e do documento de proteção do Firebase. A consulta anônima filtrada de publicações antigas retornou `PERMISSION_DENIED`, mas isso não substitui a inspeção das regras atuais e do documento de configuração. A autorização da CLI Firebase foi iniciada para concluir essa inspeção. Não foi realizado pagamento de teste nem criada assinatura ou cliente real.
