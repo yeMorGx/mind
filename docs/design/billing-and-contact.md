@@ -83,4 +83,4 @@ O pagamento permanece no Checkout hospedado da Stripe. Novas sessões recebem a 
 
 O resumo usa as descrições reais dos produtos Plus/Premium. O botão é explicitamente de assinatura; o texto informa renovação mensal/anual e gerenciamento em Minha assinatura. Preços, ciclos, autenticação, webhooks e concessão de benefícios permanecem iguais. Uma sessão já aberta para a mesma reserva é reutilizada, preservando pagamentos em andamento e a idempotência após atualizações visuais.
 
-A verificação visual usa sessões de prévia não concluídas em produção, sem e-mail, cartão, cliente ou assinatura, encerradas após a captura. Nenhuma compra é realizada durante essa inspeção.
+A verificação visual usa sessões de prévia não concluídas em produção, sem e-mail, cartão, cliente ou assinatura, com expiração automática. A prévia personalizada usa prazo de cerca de 30 minutos. Nenhuma compra é realizada durante essa inspeção.
