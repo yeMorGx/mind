@@ -2,11 +2,11 @@
 
 ## Estado desta entrega
 
-O código fornece planos, Checkout e Customer Portal do Stripe, webhooks assinados, desbloqueios por conta, limites de publicações, formulários de candidaturas/propostas e caixa de entrada administrativa. **A cobrança, os limites e o envio dos formulários começam desativados.** O frontend informa preparação até a infraestrutura estar pronta. As conexões administrativas Supabase desta sessão recusaram o projeto Mind; não foi possível aplicar a migração remota. Nenhuma cobrança, produto ou assinatura real foi criada por esta entrega.
+O código fornece planos, Checkout e Customer Portal do Stripe, webhooks assinados, desbloqueios por conta, limites de publicações, formulários de candidaturas/propostas e caixa de entrada administrativa. **A migração de cobrança e contatos já foi aplicada no Supabase do Mind, com a cobrança e os limites desativados.** O frontend informa preparação até a infraestrutura Stripe estar pronta. Nenhuma cobrança, produto ou assinatura real foi criada por esta entrega.
 
 ## 1. Banco
 
-Aplicar `supabase/migrations/20261017203513_billing_and_contact.sql` no projeto `rwltdjwjxrcmmxksxlxk`, por conexão administrativa autorizada (MCP, CLI vinculada ou SQL Editor). A migração foi criada pela CLI. Ela adiciona tabelas, funções e gatilhos, mas deixa `mind_billing_settings.enabled=false`.
+A migração `supabase/migrations/20261017203513_billing_and_contact.sql` já foi aplicada no projeto `rwltdjwjxrcmmxksxlxk`, pela conexão administrativa MCP autenticada da CLI. Não reaplicar. Ela adiciona tabelas, funções e gatilhos, mas deixa `mind_billing_settings.enabled=false`.
 
 - Todas as tabelas de cobrança e contatos têm RLS, sem permissões de leitura/escrita a visitantes ou usuários. Apenas o servidor com service role acessa esses dados.
 - Os RPCs com IDs de conta são exclusivos de service_role. O servidor valida a assinatura do token Firebase ou o usuário Supabase e o MFA antes de chamar esses RPCs.
@@ -107,4 +107,6 @@ Depois da migração e da chave de servidor configuradas, definir `CONTACT_FORMS
 
 ## Verificação e limites de evidência
 
-Build e TypeScript do Next e ESLint são conferidos antes da publicação. As capturas de design usam o servidor local e estado de visitante, sem cobrar, enviar formulários ou gravar dados reais. Não foram executados testes de implementação ou pagamentos, nem aplicada a migração ao Supabase remoto. A ativação depende dos passos administrativos acima.
+Build e TypeScript do Next e ESLint foram conferidos na entrega do código. As capturas de design usam o servidor local e estado de visitante, sem cobrar, enviar formulários ou gravar dados reais. A instalação remota confirmou `enabled=false`, `legacy_rules_confirmed=false`, zero assinaturas e zero prompts protegidos; os oito snapshots públicos existentes permanecem disponíveis. Os papéis anon/authenticated não podem executar o RPC que atribui planos. O advisor informa RLS sem políticas nas tabelas exclusivamente administrativas, conforme projetado; a proteção contra senhas vazadas já estava desativada antes desta instalação.
+
+A ativação Stripe continua pendente: a sessão de execução não possui chaves Stripe ou acesso autenticado à Vercel. Foram oferecidas as conexões Stripe e Vercel para configurar os produtos e os segredos sem enviá-los no chat. Não foi realizado pagamento de teste, configuração de produtos/preços/webhook, nem habilitada a proteção das cópias legadas no Firebase. A ativação depende dos passos administrativos acima.
