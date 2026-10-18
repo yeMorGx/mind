@@ -2,7 +2,7 @@
 
 ## Estado desta entrega
 
-O código fornece planos, Checkout e Customer Portal do Stripe, webhooks assinados, desbloqueios por conta, limites de publicações, formulários de candidaturas/propostas e caixa de entrada administrativa. **A migração de cobrança e contatos já foi aplicada no Supabase do Mind, com a cobrança e os limites desativados.** O frontend informa preparação até a infraestrutura Stripe estar pronta. Nenhuma cobrança, produto ou assinatura real foi criada por esta entrega.
+O código fornece planos, Checkout e Customer Portal do Stripe, webhooks assinados, desbloqueios por conta, limites de publicações, formulários de candidaturas/propostas e caixa de entrada administrativa. **Os planos de produção foram configurados na Stripe; os limites do Supabase e o Checkout foram ativados.** A ativação segue a orientação expressa do proprietário de não alterar o Firebase. Foram criados produtos e preços, sem criar cliente, assinatura ou cobrança real. Os formulários de contato conservam sua ativação independente.
 
 ## 1. Banco
 
@@ -64,22 +64,22 @@ Ativar o Customer Portal no Dashboard. Permitir cancelamento ao fim do período 
 
 O retorno de Checkout não concede benefícios. O webhook verifica assinatura/timestamp, busca a assinatura atual no Stripe, confere customer e metadata com o vínculo do banco e permite apenas preços configurados. Eventos repetidos não reprocessam benefícios, e respostas com leitura anterior não substituem estado mais recente. Assinaturas canceladas antigas não substituem uma nova assinatura ativa.
 
-## 4. Proteção das cópias antigas do Firebase
+## 4. Escopo: Supabase
 
-Antes do paywall, publicar o `firestore.rules` atualizado pelo processo administrativo existente. Criar pelo console/admin o documento `/billing/features` com `enabled: true`. Isso fecha a leitura pública de snapshots antigos em `publicPrompts`; os próprios criadores continuam com acesso. Clientes não podem alterar esse documento. Confirmar que essa proteção foi aplicada antes de marcar a confirmação abaixo.
+O proprietário instruiu expressamente seguir sem Firebase. A migração `billing_supabase_rollout` remove a dependência da confirmação administrativa de regras legadas; não marca `legacy_rules_confirmed` como verdadeiro nem afirma ter protegido o Firestore. Nenhuma regra, conta ou documento Firebase foi alterado.
 
-Perfis continuam públicos, e a apresentação da landing não foi alterada. O acesso público atual via Supabase permanece disponível enquanto a ativação está desligada.
+O paywall protege os snapshots públicos do Supabase, preservando o texto completo em `mind_billing.prompt_content`. Cópias antigas fora do Supabase estão fora desta proteção: eventual acesso pelo Firebase continua sujeito às regras existentes nesse serviço. Perfis continuam públicos, e a apresentação da landing não foi alterada.
 
 ## 5. Ativação controlada
 
-Após confirmar a instalação do banco, os vínculos de conta, a proteção do Firebase e o processamento dos eventos Stripe no ambiente escolhido:
+Após confirmar a instalação do banco, os vínculos de conta e a configuração Stripe no ambiente escolhido:
 
 1. Na Vercel, definir `BILLING_CHECKOUT_ENABLED=true` e fazer novo deploy com todos os preços/segredos.
-2. Somente depois de concluir a proteção do Firebase, executar administrativamente:
+2. Para o rollout com Supabase, executar administrativamente:
 
 ```sql
 update public.mind_billing_settings
-set legacy_rules_confirmed=true, enabled=true
+set enabled=true
 where id=true;
 ```
 
@@ -120,6 +120,6 @@ Foram criados e conferidos os quatro preços recorrentes BRL, com quantidade fix
 | `STRIPE_PRICE_PREMIUM_MONTHLY` | `price_1URkbDKHp5qmp50gJQ8Ukvdu` |
 | `STRIPE_PRICE_PREMIUM_YEARLY` | `price_1URkbEKHp5qmp50gioauv9pL` |
 
-O webhook existente `we_1URkMPKHp5qmp50gVIdHbvjk` foi preservado e limitado aos cinco eventos desta integração; o segredo não foi rotacionado. O endpoint respondeu 400 por assinatura ausente à solicitação sem assinatura, confirmando a presença de configuração, mas não sua correspondência com o segredo Stripe. O portal padrão `bpc_1URkbfKHp5qmp50gRnE3oWm7` permite consultar faturas, atualizar pagamento, cancelar ao fim do período e trocar somente entre os quatro preços. Quantidade não é editável; reduções de valor e encurtamentos de intervalo são agendados para o fim do período, com rateio nas demais trocas.
+O webhook existente `we_1URkMPKHp5qmp50gVIdHbvjk` foi preservado e limitado aos cinco eventos desta integração; o segredo não foi rotacionado. Os logs da Vercel confirmaram entregas reais da Stripe com HTTP 200 durante a configuração dos produtos/preços, quando o endpoint ainda recebia esses eventos. Isso confirma o processamento de assinaturas criptográficas pelo handler; não equivale a validar uma compra ou a concessão de um plano pago. O portal padrão `bpc_1URkbfKHp5qmp50gRnE3oWm7` permite consultar faturas, atualizar pagamento, cancelar ao fim do período e trocar somente entre os quatro preços. Quantidade não é editável; reduções de valor e encurtamentos de intervalo são agendados para o fim do período, com rateio nas demais trocas.
 
-`BILLING_CHECKOUT_ENABLED=false` foi cadastrado em Production. A ativação depende da confirmação administrativa das regras e do documento de proteção do Firebase. A consulta anônima filtrada de publicações antigas retornou `PERMISSION_DENIED`, mas isso não substitui a inspeção das regras atuais e do documento de configuração. A autorização da CLI Firebase foi iniciada para concluir essa inspeção. Não foi realizado pagamento de teste nem criada assinatura ou cliente real.
+`BILLING_CHECKOUT_ENABLED=true` foi cadastrado em Production e `mind_billing_settings.enabled=true` foi aplicado em transação com conferência dos originais preservados. O campo histórico `legacy_rules_confirmed` permanece falso, coerente com o Firebase fora do escopo. A autorização Firebase foi abandonada após a orientação expressa do proprietário. Não foi realizado pagamento de teste nem criada assinatura ou cliente real; o fluxo completo de compra, concessão de plano, ticket e cancelamento ainda não foi exercitado por uma conta real.
