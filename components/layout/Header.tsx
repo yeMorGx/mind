@@ -110,7 +110,7 @@ export default function Header({
     >
       <div className="showcase-header-inner">
         <Link
-          href={profileHref ? "/home" : "/explore"}
+          href="/explore"
           aria-label="Mind — início"
           className="showcase-brand"
         >
