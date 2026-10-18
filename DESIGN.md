@@ -180,4 +180,4 @@ MFA usa QRCode do Spell UI em preto sobre branco com margem de segurança e Code
 
 ### Entrada principal e cupons de campanha
 
-O endereço `/` redireciona para `/explore`, por solicitação explícita do proprietário. O código e o visual da landing permanecem preservados. Cupons opcionais das campanhas aparecem abaixo da descrição em um ticket claro, com curvas invertidas nas laterais e botão de copiar. O código mantém a grafia do anunciante; campanhas sem cupom não exibem esse bloco.
+A landing permanece em `/`. A logo do header das páginas internas aponta sempre para `/explore`, inclusive para usuários autenticados. Cupons opcionais das campanhas aparecem abaixo da descrição em um ticket claro, com curvas invertidas nas laterais e botão de copiar. O código mantém a grafia do anunciante; campanhas sem cupom não exibem esse bloco.
