@@ -3,10 +3,11 @@ import {AnimatedCheckbox} from "@/components/ui/animated-checkbox";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Send } from "lucide-react";
+import { SelectField } from "@/components/ui/SelectField";
 import "@/components/billing/billing.css";
 export default function ContactPage({ kind, enterprise = false }: { kind: "careers" | "business"; enterprise?: boolean }) {
  const careers = kind === "careers";
- const [available, setAvailable] = useState<boolean | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState(""), [received, setReceived] = useState(""); const locked = useRef(false);
+ const [available, setAvailable] = useState<boolean | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState(""), [received, setReceived] = useState(""), [subject,setSubject]=useState(enterprise?"Enterprise":""), [budget,setBudget]=useState(""); const locked = useRef(false);
  useEffect(() => { let alive = true; void fetch("/api/contact", { cache: "no-store" }).then(response => { if (!response.ok) throw new Error(); return response.json(); }).then(value => { if (alive) setAvailable(value.available); }).catch(() => { if (alive) setAvailable(false); }); return () => { alive = false; }; }, []);
  async function submit(event: FormEvent<HTMLFormElement>) {
   event.preventDefault(); if (locked.current) return; locked.current = true; setBusy(true); setError("");
@@ -20,10 +21,10 @@ export default function ContactPage({ kind, enterprise = false }: { kind: "caree
    <h2>{careers ? "Apresente seu trabalho" : "Conte sua ideia"}</h2>
    {available === null ? <p className="billing-notice" role="status">Conferindo disponibilidade do formulário…</p> : !available && <p className="billing-notice" role="status">Este canal de contato está em preparação. O envio estará disponível em breve.</p>}
    <div className="contact-field-grid"><label>Seu nome<input name="name" required minLength={2} maxLength={100} autoComplete="name"/></label><label>E-mail para contato<input name="email" type="email" required maxLength={254} autoComplete="email"/></label></div>
-   <label>{careers ? "Área de interesse" : "Tipo de proposta"}<select name="subject" required defaultValue={enterprise ? "Enterprise" : ""}><option value="" disabled>Selecionar</option>{(careers ? ["Desenvolvimento", "Design", "Conteúdo", "Marketing", "Outro"] : ["Divulgação", "Patrocínio", "Parceria", "Enterprise", "Outro"]).map(value => <option key={value}>{value}</option>)}</select></label>
+   <SelectField label={careers ? "Área de interesse" : "Tipo de proposta"} name="subject" required value={subject} onValueChange={setSubject} placeholder="Selecionar" options={(careers ? ["Desenvolvimento", "Design", "Conteúdo", "Marketing", "Outro"] : ["Divulgação", "Patrocínio", "Parceria", "Enterprise", "Outro"]).map(value=>({value,label:value}))}/>
    {!careers && <label>Empresa ou organização<input name="organization" maxLength={160} autoComplete="organization"/></label>}
    <label>{careers ? "Link do portfólio ou LinkedIn (opcional)" : "Site da empresa (opcional)"}<input name="website" type="url" maxLength={2048} placeholder="https://"/></label>
-   {!careers && <label>Investimento previsto (opcional)<select name="budget" defaultValue=""><option value="">Prefiro conversar</option>{["Até R$ 1.000", "De R$ 1.000 a R$ 5.000", "De R$ 5.000 a R$ 15.000", "Acima de R$ 15.000"].map(value => <option key={value}>{value}</option>)}</select></label>}
+   {!careers && <SelectField label="Investimento previsto (opcional)" name="budget" value={budget} onValueChange={setBudget} placeholder="Prefiro conversar" options={[{value:"",label:"Prefiro conversar"},...["Até R$ 1.000", "De R$ 1.000 a R$ 5.000", "De R$ 5.000 a R$ 15.000", "Acima de R$ 15.000"].map(value=>({value,label:value}))]}/>}
    <label>{careers ? "Como você gostaria de contribuir?" : "O que você tem em mente?"}<textarea name="message" rows={6} required minLength={20} maxLength={5000} placeholder={careers ? "Conte sobre sua experiência e o que gostaria de fazer no Mind." : "Descreva a proposta, o objetivo e os prazos que você tem em mente."}/><span className="contact-field-note">De 20 a 5.000 caracteres.</span></label>
    <div className="contact-trap" aria-hidden="true"><label>Deixe em branco<input name="extra" tabIndex={-1} autoComplete="off" maxLength={200}/></label></div>
    <AnimatedCheckbox className="contact-consent" name="consent" required title="Autorizo o Mind a usar estes dados para avaliar e responder à minha solicitação."/>

@@ -173,3 +173,7 @@ O header flutua com margem externa e se compacta em largura e altura ao rolar, m
 ## MFA e celebração de assinatura
 
 MFA usa QRCode do Spell UI em preto sobre branco com margem de segurança e CodeSlots do React Bits para seis dígitos. Checkboxes compartilham o traçado animado do Spell UI, com semântica e validação nativas. No retorno do checkout confirmado pelo servidor, TearTicket aparece sozinho no centro da tela, sem card ao redor, com arte fotográfica existente, logo real do Mind, primeiro nome da conta e plano na ponta destacável; apresenta a assinatura e permite destacar a ponta por arraste ou teclado antes de “Plano ativado!”. Fechar/continuar sem animação permanece disponível. Referências, adaptações e limites: `docs/design/mfa-and-subscription-components.md`.
+
+## Campos de seleção e anexos
+
+`SelectField` padroniza seleções de formulários e filtros com HeroUI Select/Autocomplete, rótulos, validação, teclado, indicadores de seleção e portal dentro de diálogos nativos. As variantes pesquisáveis preservam logos e nomes personalizados de IA; filtros continuam sem borda. Campanhas usam DatePicker com calendário, hora de 24 horas e fuso local. Uploads substituem entrada de URL de imagem/vídeo. Referências, escopo e conferências: `docs/design/form-controls.md`.

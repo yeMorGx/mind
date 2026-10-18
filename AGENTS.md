@@ -21,3 +21,9 @@ A autorização precisa mencionar diretamente a landing. Pedidos gerais para aju
 ## Checkboxes
 
 Use `components/ui/animated-checkbox.tsx` (AnimatedCheckbox, baseado no Spell UI) para novos checkboxes. Preserve `name`, `required`, estados controlados, validação e comportamento de teclado; não substitua por um elemento clicável sem input nativo.
+
+## Campos de seleção e mídia
+
+Use `components/ui/SelectField.tsx` para novos campos de seleção e filtros. Não adicione `<select>` nativo; preserve rótulo, validação, estados desabilitados e nome do campo de formulário no componente compartilhado.
+
+Para imagem e vídeo, ofereça anexo de arquivo com validação de tipo e tamanho. Não peça URL de mídia em novos campos. URLs de destino de site ou botão continuam permitidas.

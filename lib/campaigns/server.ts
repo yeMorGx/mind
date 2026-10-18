@@ -98,7 +98,7 @@ export function sanitizeCampaign(raw: unknown, status: string): CampaignDraft {
     video_url === null
   )
     throw new ServiceError(
-      "Use links HTTPS válidos. O destino também pode ser uma página pública do Mind.",
+      "Confira os arquivos anexados e o destino. O botão pode abrir uma página pública do Mind ou um site HTTPS.",
     );
   const date = (key: string) => {
     if (value[key] === null || value[key] === "") return null;

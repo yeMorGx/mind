@@ -1,4 +1,20 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "@heroui/styles/themes/default";
+@import "@heroui/styles/utilities";
+@import "@heroui/styles/variants";
+@import "@heroui/styles/components/select.css" layer(components);
+@import "@heroui/styles/components/autocomplete.css" layer(components);
+@import "@heroui/styles/components/close-button.css" layer(components);
+@import "@heroui/styles/components/search-field.css" layer(components);
+@import "@heroui/styles/components/list-box.css" layer(components);
+@import "@heroui/styles/components/list-box-item.css" layer(components);
+@import "@heroui/styles/components/label.css" layer(components);
+@import "@heroui/styles/components/field-error.css" layer(components);
+@import "@heroui/styles/components/date-picker.css" layer(components);
+@import "@heroui/styles/components/date-input-group.css" layer(components);
+@import "@heroui/styles/components/calendar.css" layer(components);
+@import "@heroui/styles/components/time-field.css" layer(components);
 
 :root {
   color-scheme: light;
@@ -38,6 +54,248 @@ body { background: var(--background); color: var(--foreground); }
 * { scrollbar-width: thin; scrollbar-color: #c4c4ce transparent; }
 ::selection { background: #dce1ec; color: #17181a; }
 input, textarea, select { accent-color: var(--foreground); caret-color: var(--foreground); }
+
+/* Shared HeroUI form controls: compact, quiet dropdowns that match Mind. */
+.mind-select, .mind-select-popover, .mind-date-picker, .mind-date-popover {
+  --accent: var(--primary);
+  --accent-foreground: var(--primary-foreground);
+  --focus: var(--foreground);
+}
+.mind-select {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--foreground);
+  font: inherit;
+}
+.mind-select-label {
+  width: fit-content;
+  color: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.mind-select :is(.select__trigger, .autocomplete__trigger) {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 13px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: none;
+  --field-border: var(--border-color);
+  --field-border-hover: color-mix(in srgb, var(--foreground) 28%, var(--border-color));
+  --border-width-field: 1px;
+}
+.mind-select :is(.select__trigger, .autocomplete__trigger):focus-visible,
+.mind-select :is(.select__trigger, .autocomplete__trigger)[data-focus-visible="true"] {
+  border-color: color-mix(in srgb, var(--foreground) 40%, var(--border-color));
+  outline: 2px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  outline-offset: 1px;
+}
+.mind-select :is(.select__value, .autocomplete__value) {
+  min-width: 0;
+  font-size: 14px;
+}
+.mind-select :is(.select__indicator, .autocomplete__indicator) {
+  color: var(--muted);
+}
+.mind-select-popover {
+  z-index: 80;
+  max-height: min(340px, var(--available-height, 70vh));
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 12%);
+}
+.mind-select-list {
+  padding: 5px;
+}
+.mind-select-popover .list-box-item {
+  min-height: 40px;
+  border-radius: 8px;
+  padding: 9px 11px;
+  color: var(--foreground);
+  font-size: 14px;
+}
+.mind-select-popover .list-box-item[data-focused="true"],
+.mind-select-popover .list-box-item[data-hovered="true"] {
+  background: var(--surface-hover);
+}
+.mind-select-popover .list-box-item[data-selected="true"] {
+  background: color-mix(in srgb, var(--foreground) 8%, var(--surface));
+  font-weight: 500;
+}
+.mind-select-popover .list-box-item__indicator {
+  color: var(--foreground);
+}
+.mind-select-option-content {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.mind-select-option-content > .ai-model-logo {
+  width: 24px;
+  height: 24px;
+}
+.mind-select-option-content > .ai-model-logo > img {
+  width: 20px;
+  height: 20px;
+}
+.mind-select-popover .mind-select-search {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  padding: 6px;
+  background: var(--surface);
+}
+.mind-select-search .search-field__group {
+  height: 40px;
+  border: 0;
+  box-shadow: none;
+  background: var(--surface-hover);
+}
+.mind-select-popover .mind-select-search .search-field__input {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 8px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 14px;
+}
+.mind-select-popover .mind-select-search .search-field__input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.mind-select-empty {
+  padding: 16px 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.mind-select-filter {
+  width: auto;
+  min-width: 140px;
+  max-width: 200px;
+}
+.mind-select-filter :is(.select__trigger, .autocomplete__trigger) {
+  min-height: 44px;
+  border: 0;
+  background: var(--surface-hover);
+}
+.mind-select-filter :is(.select__value, .autocomplete__value) {
+  font-size: 13px;
+}
+.mind-select-filter .mind-select-option-content > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.campaign-date-clear {
+  align-self: flex-start;
+  min-height: 32px;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .mind-select-popover .mind-select-search .search-field__input,
+  .mind-date-picker .date-input-group__segment {
+    font-size: 16px;
+  }
+  .filters-drawer .mind-select-filter,
+  .resource-filter-row .mind-select-filter {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+}
+.mind-date-picker {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--foreground);
+}
+.mind-date-picker .date-input-group {
+  min-height: 46px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--foreground);
+  --field-border: var(--border-color);
+  --border-width-field: 1px;
+}
+.mind-date-picker .date-input-group__input {
+  min-width: 0;
+  padding-inline: 12px;
+  color: var(--foreground);
+}
+.mind-date-picker .date-input-group__segment {
+  color: var(--foreground);
+}
+.mind-date-picker .date-input-group__segment[data-placeholder="true"] {
+  color: var(--muted);
+}
+.mind-date-picker .date-input-group__suffix {
+  padding-inline: 10px;
+}
+.mind-date-popover {
+  z-index: 90;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--foreground);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 14%);
+}
+.mind-date-popover .calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mind-date-popover .calendar__heading {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+.mind-date-popover .calendar__nav-button {
+  display: grid;
+  min-width: 36px;
+  min-height: 36px;
+  place-items: center;
+  border-radius: 9px;
+}
+.mind-date-popover .calendar__nav-button:hover,
+.mind-date-popover .calendar__cell:hover {
+  background: var(--surface-hover);
+}
+.mind-date-popover .time-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+.mind-date-time-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+.mind-date-popover .time-field .date-input-group {
+  min-height: 40px;
+}
 input::placeholder, textarea::placeholder { color: var(--subtle); opacity: 1; }
 button:not(:disabled), a { -webkit-tap-highlight-color: transparent; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--foreground); outline-offset: 3px; }

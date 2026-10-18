@@ -48,6 +48,35 @@ export async function POST(request: Request, context: Context) {
       databaseError(result.error);
       return Response.json({ received: true }, { headers: noStore });
     }
+    if (action === "media") {
+      const { actor, admin } = await identity(request, "mind_campaign_session");
+      if (!(await isOwner(actor)))
+        throw new ServiceError("Campanhas são restritas à administração do Mind.", 403);
+      const body = await readBody(request, 1000);
+      const type = typeof body.type === "string" ? body.type : "";
+      const size = Number(body.size);
+      const extensions: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp",
+        "image/avif": "avif",
+        "video/mp4": "mp4",
+        "video/webm": "webm",
+      };
+      const maxSize = type.startsWith("video/") ? 30 * 1024 * 1024 : 8 * 1024 * 1024;
+      if (!Object.hasOwn(extensions, type) || !Number.isInteger(size) || size <= 0 || size > maxSize)
+        throw new ServiceError("O tipo ou tamanho do arquivo não é permitido.");
+      const path = `${actor}/${crypto.randomUUID()}.${extensions[type]}`;
+      const bucket = admin.storage.from("mind-campaign-assets");
+      const upload = await bucket.createSignedUploadUrl(path, { upsert: false });
+      if (upload.error)
+        throw new ServiceError("Não foi possível preparar o envio do arquivo.", 503);
+      const { data } = bucket.getPublicUrl(path);
+      return Response.json(
+        { path, token: upload.data.token, publicUrl: data.publicUrl },
+        { headers: noStore },
+      );
+    }
     if (!["list", "save", "state"].includes(action))
       throw new ServiceError("Ação não encontrada.", 404);
     const { actor, admin } = await identity(request, "mind_campaign_session");

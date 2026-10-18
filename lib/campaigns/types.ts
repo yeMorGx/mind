@@ -78,6 +78,7 @@ export function campaignDestination(raw: string): string | null {
 }
 export function campaignMedia(raw: string): string | null {
   if (!raw) return "";
+  // Preserve previously saved media; authoring controls now attach uploaded files.
   const url = campaignDestination(raw);
   return url?.startsWith("https://") ? url : null;
 }

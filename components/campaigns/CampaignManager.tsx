@@ -155,6 +155,7 @@ function ManagerSession() {
       <main className="campaign-manager">
         <CampaignEditor
           key={editor === "new" ? "new" : editor.id}
+          user={user}
           initial={editor === "new" ? undefined : editor}
           onSave={save}
           onCancel={() => {

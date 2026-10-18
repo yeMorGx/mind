@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImagePlus, X } from "lucide-react";
 import { ImageCompare } from "@/components/ui/ImageCompare";
+import { SelectField } from "@/components/ui/SelectField";
 import type { Prompt, PromptDraft, PromptImageInput, PromptImageRole, PromptStatus } from "@/lib/supabase/types";
 
 /* eslint-disable @next/next/no-img-element -- The editor previews local blob URLs before upload. */
@@ -160,12 +161,7 @@ export default function PromptDialog({
                   <textarea id="prompt-content" required rows={9} maxLength={20000} value={content} onChange={(event) => setContent(event.target.value)} placeholder="Cole aqui o prompt completo para seus seguidores copiarem." className="mt-2 w-full resize-y rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 font-mono text-sm leading-6 outline-none focus:border-foreground/30" />
 
                   <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                    <label className="text-sm text-muted">Categoria
-                      <select value={category} onChange={(event) => setCategory(event.target.value)} className="mt-2 w-full rounded-xl border border-border bg-surface px-4 py-3 text-foreground outline-none focus:border-foreground/30">
-                        <option value="">Escolha uma categoria</option>
-                        <option>Arte</option><option>Retrato</option><option>Moda</option><option>Produto</option><option>Vídeo</option><option>Outro</option>
-                      </select>
-                    </label>
+                    <div className="text-sm text-muted"><SelectField className="marketplace-category-select" label="Categoria" value={category} onValueChange={setCategory} placeholder="Escolha uma categoria" options={["Arte","Retrato","Moda","Produto","Vídeo","Outro"].map(value=>({value,label:value}))}/></div>
                     <label htmlFor="prompt-model" className="text-sm text-muted">Ferramenta ou modelo
                       <input id="prompt-model" maxLength={80} value={model} onChange={(event) => setModel(event.target.value)} placeholder="Ex.: Midjourney, Flux, Sora" className="mt-2 w-full rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 outline-none focus:border-foreground/30" />
                     </label>

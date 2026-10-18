@@ -970,7 +970,7 @@
     max-width: 100%;
     width: 100%;
   }
-  .site-app .resource-filter-row .search-select-trigger:last-child {
+  .site-app .resource-filter-row .mind-select-filter:last-child {
     grid-column: 1/-1;
   }
 }

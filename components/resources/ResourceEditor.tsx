@@ -1,5 +1,6 @@
 "use client";
 import {AnimatedCheckbox} from "@/components/ui/animated-checkbox";
+import { SelectField } from "@/components/ui/SelectField";
 /* eslint-disable @next/next/no-img-element -- Locally optimized uploaded covers use data URLs. */
 import { ResourceClientIdentity } from "./ResourceClients";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -440,20 +441,12 @@ function ResourceEditorSession({
                     {input("repository", 2048, "https://github.com/…")}
                   </Field>
                   <h2>Conexão</h2>
-                  <Field label="Tipo de conexão">
-                    <select
-                      value={doc.transport}
-                      onChange={(event) =>
-                        update(
-                          "transport",
-                          event.target.value as "remote" | "stdio",
-                        )
-                      }
-                    >
-                      <option value="remote">Remota (HTTP)</option>
-                      <option value="stdio">Local (stdio)</option>
-                    </select>
-                  </Field>
+                  <div className="resource-field"><SelectField
+                    label="Tipo de conexão"
+                    value={doc.transport}
+                    onValueChange={(value) => update("transport", value as "remote" | "stdio")}
+                    options={[{value:"remote",label:"Remota (HTTP)"},{value:"stdio",label:"Local (stdio)"}]}
+                  /></div>
                   {doc.transport === "remote" ? (
                     <Field label="URL do servidor">
                       {input("remoteUrl", 2048, "https://exemplo.com/mcp")}
@@ -563,17 +556,14 @@ function ResourceEditorSession({
                   Remover capa
                 </button>
               )}
-              <Field label="Categoria *">
-                <select
-                  value={doc.category}
-                  onChange={(event) => update("category", event.target.value)}
-                >
-                  <option value="">Selecionar categoria</option>
-                  {RESOURCE_CATEGORIES.map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
-              </Field>
+              <div className="resource-field"><SelectField
+                label="Categoria *"
+                required
+                value={doc.category}
+                onValueChange={(value) => update("category", value)}
+                placeholder="Selecionar categoria"
+                options={RESOURCE_CATEGORIES.map((value) => ({value,label:value}))}
+              /></div>
               <fieldset className="resource-clients">
                 <legend>Ferramentas compatíveis</legend>
                 <p>Selecione apenas as que você conferiu.</p>
