@@ -102,3 +102,11 @@ Visualizações/cliques são estimativas deduplicadas por sessão do navegador, 
 
 
 Os campos de seleção usam HeroUI por meio de `SelectField`, inclusive seletores com busca, filtros e modelos com logos. Nomes personalizados de IA continuam aceitos. Novos campos devem reutilizar esse componente. Campanhas usam DatePicker em português, formato de 24 horas e fuso do navegador, com persistência UTC. Mídias são anexadas: logo/capa de campanha até 8 MB, vídeo até 30 MB. O bucket público `mind-campaign-assets` foi criado pela migração `campaign_asset_storage`; o envio exige dono autenticado e URL assinada temporária para um caminho novo.
+
+## GradientASCII na landing
+
+Alteração diretamente autorizada pelo proprietário: o fundo do hero da rota `/`
+usa GradientASCII do React Bits em modo claro, forma horizon e paleta azul do
+anexo. Textos, ações, galeria e comunidade mantêm a composição existente.
+O efeito carrega no cliente, respeita movimento reduzido e pausa fora da tela,
+com a aba oculta e durante o login. Sem WebGL2, permanece o fundo azul claro.

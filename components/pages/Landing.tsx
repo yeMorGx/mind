@@ -7,11 +7,13 @@ import Link from "next/link";
 import { ArrowUpRight, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { Instrument_Serif } from "next/font/google";
-import { CloudShader } from "@/components/ui/cloud-shader";
+import dynamic from "next/dynamic";
 import LandingGallery from "@/components/pages/LandingGallery";
 import LoginModal from "@/components/modal/modalLogin";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import type { Prompt } from "@/lib/supabase/types";
+
+const GradientASCII = dynamic(() => import("@/components/ui/GradientASCII"), { ssr: false });
 
 const instrumentSerif = Instrument_Serif({ subsets: ["latin"], weight: "400" });
 
@@ -46,8 +48,18 @@ export default function Landing({ initialPrompts }: { initialPrompts: Prompt[] }
   return (
     <main className="landing-page">
     <div className="landing-hero relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <CloudShader className="h-full w-full" speed={0.4} skyTopColor="#6ca8da" skyBottomColor="#b9ddf3" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[#e8f0ff]">
+        <GradientASCII
+          colors={["#4f8ff7", "#e8f0ff", "#b4d0ff", "#7cb4fb"]}
+          shape="horizon"
+          characters=" =+xX0S8#@"
+          cellSize={18}
+          density={0.8}
+          speed={0.5}
+          grain={0.03}
+          lightMode
+          paused={isModalOpen}
+        />
       </div>
 
       <div aria-hidden="true" className="landing-sky-transition"/>

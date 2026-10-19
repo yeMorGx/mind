@@ -181,3 +181,11 @@ MFA usa QRCode do Spell UI em preto sobre branco com margem de segurança e Code
 ### Entrada principal e cupons de campanha
 
 A landing permanece em `/`. A logo do header das páginas internas aponta sempre para `/explore`, inclusive para usuários autenticados. Cupons opcionais das campanhas aparecem abaixo da descrição em um ticket claro, com curvas invertidas nas laterais e botão de copiar. O código mantém a grafia do anunciante; campanhas sem cupom não exibem esse bloco.
+
+## GradientASCII na landing
+
+Alteração diretamente autorizada pelo proprietário: o fundo do hero da rota `/`
+usa GradientASCII do React Bits em modo claro, forma horizon e paleta azul do
+anexo. Textos, ações, galeria e comunidade mantêm a composição existente.
+O efeito carrega no cliente, respeita movimento reduzido e pausa fora da tela,
+com a aba oculta e durante o login. Sem WebGL2, permanece o fundo azul claro.
