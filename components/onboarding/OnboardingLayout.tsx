@@ -23,7 +23,6 @@ export default function OnboardingLayout({ children, step }: { children: ReactNo
       <Link href="/explore" className="onboarding-brand" aria-label="Mind — explorar"><span><Logo/></span>Mind</Link>
       <div className="onboarding-journey"><h2>Da sua ideia<br/>ao próximo resultado.</h2><ol aria-label="Etapas do cadastro">{steps.map((item,index) => <li key={item.title} aria-current={step === index + 1 ? "step" : undefined} data-complete={step > index + 1 || undefined}><span className="onboarding-step-icon" aria-hidden="true">{step > index + 1 ? <Check size={16}/> : index + 1}</span><span><strong>{item.title}</strong><small>{item.detail}</small></span></li>)}</ol></div>
       <OnboardingBackground/>
-      <p className="onboarding-aside-note">Guarde suas ideias.<br/>Compartilhe quando quiser.</p>
     </aside>
     <div className="onboarding-content">
       <div className="onboarding-top"><Link href="/explore"><ArrowLeft size={15}/>Explorar</Link>{user ? <button type="button" onClick={() => void signOut()}>Sair da conta</button> : <span>Já tem uma conta? <button type="button" onClick={requestLogin}>Entrar</button></span>}</div>
