@@ -5,11 +5,12 @@
 .onboarding-artwork { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 @media (min-width: 901px) {
   .onboarding-aside { justify-content: center; align-items: center; }
-  .onboarding-card { width: min(100%,320px); padding: 22px; border-radius: 16px; background: #17181a; color: #fff; }
-  .onboarding-card .onboarding-brand { color: #fff; margin: 0 auto 20px; }
-  .onboarding-card .onboarding-brand > span { width: 80px; height: 80px; }
-  .onboarding-aside:has(.onboarding-card) .onboarding-journey > h2 { font-size: clamp(25px,2vw,30px); }
-  .onboarding-aside:has(.onboarding-card) .onboarding-journey ol { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 12px; margin-top: 24px; }
+  .onboarding-card { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: 16px; width: min(100%,320px); padding: 22px; border-radius: 16px; background: #17181a; color: #fff; }
+  .onboarding-card .onboarding-brand { grid-column: 2; grid-row: 1; align-self: center; color: #fff; margin: 0; }
+  .onboarding-card .onboarding-brand > span { width: clamp(48px,6vw,80px); height: clamp(48px,6vw,80px); }
+  .onboarding-card .onboarding-journey { display: contents; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey > h2 { grid-column: 1; grid-row: 1; align-self: center; font-size: clamp(25px,2vw,30px); }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey ol { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 12px; margin-top: 24px; }
   .onboarding-aside:has(.onboarding-card) .onboarding-journey li { align-items: flex-start; gap: 8px; }
   .onboarding-aside:has(.onboarding-card) .onboarding-step-icon { width: 24px; height: 24px; font-size: 10px; }
   .onboarding-aside:has(.onboarding-card) .onboarding-journey strong { font-size: 12px; }

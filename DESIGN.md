@@ -198,7 +198,8 @@ carrega somente URLs de resultados (gallery/after), sem imagens privadas ou de
 referência. A grade inclinada preenche todo o painel lateral com as cores originais
 das imagens, sem máscaras de esmaecimento, degradê branco ou desfoque. A logo, o título
 e as etapas ficam dentro de um único painel escuro compacto de até 320 px,
-centralizado horizontal e verticalmente no aside, com etapas em duas colunas. A marca mostra apenas o símbolo, sem palavra ou caixa, com área de 80 px
+centralizado horizontal e verticalmente no aside. O título fica à esquerda
+e a logo à direita, lado a lado; as etapas ficam abaixo em duas colunas. A marca mostra apenas o símbolo, sem palavra ou caixa, com área de 80 px
 no desktop e 56 px no celular, usando viewBox ajustado para remover a margem
 interna do SVG. O bloco do rodapé foi removido.
 A grade usa sete linhas para mostrar imagens menores e mais variedade. Essa direção foi escolhida explicitamente pelo dono. A composição compacta do celular mantém o fundo oculto.
