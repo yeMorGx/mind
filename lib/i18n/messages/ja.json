@@ -1410,5 +1410,14 @@
   "Seu plano, suas cópias e a próxima renovação.": "プラン、コピー回数、次回更新。",
   "Cópias neste período": "今期のコピー回数",
   "Entre para consultar seu plano e as cópias disponíveis.": "ログインしてプランと残りのコピー回数を確認してください。",
-  "Premium de cortesia. Sem cobrança.": "無料提供のPremium。請求はありません。"
+  "Premium de cortesia. Sem cobrança.": "無料提供のPremium。請求はありません。",
+  "Seu cartão de assinatura Mind": "Mindのメンバーシップカード",
+  "Assinatura Mind": "Mindメンバーシップ",
+  "Titular": "メンバー",
+  "Cópias": "コピー",
+  "{v0} disponíveis": "残り{v0}回",
+  "Ativo": "有効",
+  "Pagamento pendente": "お支払い待ち",
+  "Até {v0}": "{v0}まで",
+  "Membro Mind": "Mindメンバー"
 }

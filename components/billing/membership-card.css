@@ -1,0 +1,32 @@
+/* Reflective studio metal is intentional here: this is the member's Mind card. */
+.membership-card-region { width:100%; max-width:500px; min-width:0; }
+.mind-membership-card { aspect-ratio:1.586; }
+.mind-membership-card .reflective-card__content { padding:clamp(20px,3vw,30px); justify-content:space-between; gap:20px; }
+.membership-card-top,.membership-card-bottom { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.membership-card-brand { display:inline-flex; align-items:center; gap:9px; font-size:21px; font-weight:600; letter-spacing:-.03em; }
+.membership-card-brand svg { width:31px; height:34px; flex:none; }
+.membership-card-status { display:inline-flex; align-items:center; gap:6px; font-size:11px; max-width:55%; text-align:right; }
+.membership-card-status i { width:6px; height:6px; flex:none; border-radius:50%; background:currentColor; }
+.membership-card-status[data-pending] { font-weight:600; }
+.membership-card-plan h2 { font-size:clamp(30px,4vw,44px); font-weight:500; line-height:1.1; letter-spacing:-.035em; }
+.membership-card-plan > span { display:block; margin-top:6px; font-size:12px; }
+.membership-card-holder { min-width:0; }
+.membership-card-holder > span,.membership-card-allowance > span { display:block; margin-bottom:5px; font-size:10px; }
+.membership-card-holder strong { display:block; font-size:14px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.membership-card-allowance { flex:none; text-align:right; }
+.membership-card-allowance strong { display:flex; justify-content:flex-end; font-size:13px; font-weight:500; }
+.site-app .billing-membership-layout { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:48px; align-items:center; padding-block:12px 24px; }
+.site-app .billing-membership-details { min-width:0; }
+.site-app .billing-membership-details h2 { font-size:23px; font-weight:600; line-height:1.3; }
+.site-app .billing-membership-details p { margin-top:14px; font-size:14px; line-height:1.8; color:var(--muted); }
+.site-app .billing-membership-details .resource-actions { margin-top:24px; }
+.site-app .billing-plan.billing-pixel-plan { display:block; width:auto; height:auto; box-shadow:none; user-select:auto; }
+.site-app .billing-pixel-plan::after { display:none; }
+.site-app .billing-pixel-plan > :not(.pixel-card-canvas) { z-index:1; }
+@media(max-width:767px) {
+ .site-app .billing-membership-layout { grid-template-columns:minmax(0,1fr); gap:30px; }
+ .membership-card-region { margin-inline:auto; }
+ .membership-card-plan h2 { font-size:clamp(28px,8vw,40px); }
+ .mind-membership-card .reflective-card__content { gap:12px; }
+ .membership-card-holder strong { font-size:12px; }
+}

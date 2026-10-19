@@ -89,3 +89,13 @@ from the React Bits Masonry source supplied by the owner. It measures complete
 Mind cards and keeps their existing links and controls. License and attribution:
 [React Bits / David Haz](docs/licenses/react-bits.md). The component is used as
 part of the Mind application, not offered as a standalone component product.
+
+## React Bits PixelCard and ReflectiveCard
+
+`components/effects/PixelCard.jsx` and `ReflectiveCard.jsx`, with their styles,
+use the React Bits source supplied by the owner. Settings are synchronized in
+layout effects for React compatibility; existing Lucide icons replace the sample
+icon dependency. Mind supplies the plan content and the membership card face.
+License and attribution: [React Bits / David Haz](docs/licenses/react-bits.md).
+These effects are used inside the application, not distributed as standalone
+component products.

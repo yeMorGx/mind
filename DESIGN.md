@@ -237,3 +237,7 @@ Tema e idioma ficam em Configurações → Aparência; o header não mostra esse
 ## Masonry do Explorar
 
 A grade principal de prompts usa encaixe pela coluna de menor altura, adaptado do Masonry React Bits fornecido pelo proprietário. Mede a altura completa de cada card, incluindo os dados do criador, e recalcula após carregar mídia, alterar filtros ou redimensionar. Conserva 1/2/3/4 colunas nos breakpoints existentes, espaçamento de 28px entre colunas e 30px entre cards. Entrada e reposicionamento respeitam movimento reduzido. A ordem do DOM segue a ordenação selecionada, e o fallback sem JavaScript é uma grade legível. Cards patrocinados participam do mesmo encaixe. A landing não usa este componente.
+
+## Cartões de assinatura
+
+Os quatro planos em `/plans` usam o PixelCard React Bits anexado pelo proprietário, com pixels neutros e baixa opacidade no hover/foco. Mantêm os preços, recursos e ações reais; o efeito fica atrás do conteúdo e acompanha o tema. O cartão de assinatura em `/home/billing` usa o ReflectiveCard fornecido, em proporção horizontal próxima de um cartão bancário: logo Mind, plano, nome do titular, status e saldo real. Sem números financeiros, dados fictícios ou captura de câmera; reflexo de estúdio, inclinação discreta e suporte a movimento reduzido. Informações de cobrança e ações Stripe ficam ao lado, fora da superfície reflexiva. No celular, as ações ficam abaixo. A superfície continua legível mesmo sem WebGL.
