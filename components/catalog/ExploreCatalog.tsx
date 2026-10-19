@@ -13,6 +13,7 @@ import type { Prompt } from "@/lib/supabase/types";
 import CreatorSearch from "@/components/profile/CreatorSearch";
 import ExploreFilters from "./ExploreFilters";
 import PublicPromptCard from "./PublicPromptCard";
+import Masonry from "./Masonry";
 import ExploreCategories from "./ExploreCategories";
 import ResourceCard from "@/components/resources/ResourceCard";
 import type { CatalogResource } from "@/lib/resources";
@@ -126,7 +127,7 @@ export default function ExploreCatalog({
               {t("Tentar novamente")}</button>
           </div>
         ) : visible.length ? (
-          <div className="catalog-grid">
+          <Masonry>
             {!searchQuery && !category && !model && sponsoredCard && <SponsoredCard key={`sponsor:${sponsoredCard.id}`} campaign={sponsoredCard}/>}
             {visible.map((prompt) => (
               <PublicPromptCard
@@ -134,7 +135,7 @@ export default function ExploreCatalog({
                 prompt={prompt}
               />
             ))}
-          </div>
+          </Masonry>
         ) : (
           <div className="catalog-empty">
             <h2>

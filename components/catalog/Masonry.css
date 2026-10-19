@@ -1,0 +1,19 @@
+/* Keep the server-rendered/no-JS layout usable until cards can be measured. */
+.site-app .explore-page .catalog-grid.explore-masonry {
+  --masonry-columns: 1;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--masonry-columns), minmax(0, 1fr));
+  columns: auto;
+  gap: 30px 28px;
+  align-items: start;
+}
+.site-app .explore-page .explore-masonry[data-ready] { display: block; }
+.explore-masonry[data-ready] > .explore-masonry-item { position: absolute; top: 0; left: 0; transition: transform 480ms cubic-bezier(.2,.9,.2,1); }
+.explore-masonry-item { min-width: 0; }
+.explore-masonry-content { display: flow-root; }
+.site-app .explore-page .explore-masonry .catalog-public-card { display: block; margin-bottom: 0; }
+@media (min-width:640px) { .site-app .explore-page .catalog-grid.explore-masonry { --masonry-columns: 2; } }
+@media (min-width:1100px) { .site-app .explore-page .catalog-grid.explore-masonry { --masonry-columns: 3; } }
+@media (min-width:1600px) { .site-app .explore-page .catalog-grid.explore-masonry { --masonry-columns: 4; } }
+@media (prefers-reduced-motion:reduce) { .explore-masonry[data-ready] > .explore-masonry-item { transition: none; } }

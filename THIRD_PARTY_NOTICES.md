@@ -81,3 +81,11 @@ hidden-tab suspension, a static reduced-motion path, and image failure handling.
 The five local SVG country flags in `public/flags` come from lipis/flag-icons
 (https://github.com/lipis/flag-icons), MIT licensed. The copyright and full
 license are included in `public/flags/LICENSE`.
+
+## React Bits Masonry
+
+`components/catalog/Masonry.tsx` adapts the shortest-column placement approach
+from the React Bits Masonry source supplied by the owner. It measures complete
+Mind cards and keeps their existing links and controls. License and attribution:
+[React Bits / David Haz](docs/licenses/react-bits.md). The component is used as
+part of the Mind application, not offered as a standalone component product.

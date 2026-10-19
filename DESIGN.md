@@ -233,3 +233,7 @@ and metadata; it does not receive internal theme or language controls.
 ## Saldo no header
 
 Tema e idioma ficam em Configurações → Aparência; o header não mostra esses seletores. O indicador de uso mantém o link para a assinatura. Seu tooltip usa superfície semântica, largura limitada, plano, saldo, progresso e data de renovação, com suporte a hover/foco, Escape e colisões da viewport. Não usar `title` nativo para essa explicação. A medição é por cópia, inclusive cópias repetidas.
+
+## Masonry do Explorar
+
+A grade principal de prompts usa encaixe pela coluna de menor altura, adaptado do Masonry React Bits fornecido pelo proprietário. Mede a altura completa de cada card, incluindo os dados do criador, e recalcula após carregar mídia, alterar filtros ou redimensionar. Conserva 1/2/3/4 colunas nos breakpoints existentes, espaçamento de 28px entre colunas e 30px entre cards. Entrada e reposicionamento respeitam movimento reduzido. A ordem do DOM segue a ordenação selecionada, e o fallback sem JavaScript é uma grade legível. Cards patrocinados participam do mesmo encaixe. A landing não usa este componente.
