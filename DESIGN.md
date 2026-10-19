@@ -195,8 +195,9 @@ com a aba oculta e durante o login. Sem WebGL2, permanece o fundo azul claro.
 O proprietário solicitou GridMotion do React Bits em `.onboarding-aside`, usando
 as imagens dos prompts públicos exibidos em Explorar. O layout de `/register`
 carrega somente URLs de resultados (gallery/after), sem imagens privadas ou de
-referência. A grade inclinada tem movimento suave e uma camada clara que preserva
-a leitura das etapas. A composição compacta do celular mantém o fundo oculto.
+referência. A grade inclinada tem movimento suave na faixa inferior do painel, com
+as cores originais das imagens. Marca, título e etapas ficam em área sólida
+acima da grade; no desktop largo, as etapas usam duas colunas. A composição compacta do celular mantém o fundo oculto.
 Sem resultados ou em caso de falha, permanece o fundo original; com movimento
 reduzido, a grade fica estática. A landing não participa desta alteração.
 
