@@ -4,20 +4,21 @@
 .onboarding-aside { isolation: isolate; overflow: hidden; }
 .onboarding-artwork { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 @media (min-width: 901px) {
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-brand { color: #fff; text-shadow: 0 1px 4px #000; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-brand > span { width: 80px; height: 80px; margin-left: 0; filter: drop-shadow(0 1px 3px #000); }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey { width: min(100%,320px); padding: 22px; border-radius: 16px; background: #17181a; color: #fff; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey > h2 { font-size: clamp(25px,2vw,30px); }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey ol { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 12px; margin-top: 24px; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey li { align-items: flex-start; gap: 8px; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-step-icon { width: 24px; height: 24px; font-size: 10px; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey strong { font-size: 12px; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey small { font-size: 10px; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey li { color: #c1c2c7; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-journey li[aria-current=step] { color: #fff; }
-  .onboarding-aside:has(.onboarding-artwork) .onboarding-step-icon { border-color: #75767d; }
-  .onboarding-aside:has(.onboarding-artwork) li[aria-current=step] .onboarding-step-icon { background: #fff; border-color: #fff; color: #17181a; }
-  .onboarding-aside:has(.onboarding-artwork) li[data-complete] .onboarding-step-icon { background: #383a40; color: #fff; }
+  .onboarding-aside { justify-content: center; align-items: center; }
+  .onboarding-card { width: min(100%,320px); padding: 22px; border-radius: 16px; background: #17181a; color: #fff; }
+  .onboarding-card .onboarding-brand { color: #fff; margin: 0 auto 20px; }
+  .onboarding-card .onboarding-brand > span { width: 80px; height: 80px; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey > h2 { font-size: clamp(25px,2vw,30px); }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey ol { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 12px; margin-top: 24px; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey li { align-items: flex-start; gap: 8px; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-step-icon { width: 24px; height: 24px; font-size: 10px; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey strong { font-size: 12px; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey small { font-size: 10px; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey li { color: #c1c2c7; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-journey li[aria-current=step] { color: #fff; }
+  .onboarding-aside:has(.onboarding-card) .onboarding-step-icon { border-color: #75767d; }
+  .onboarding-aside:has(.onboarding-card) li[aria-current=step] .onboarding-step-icon { background: #fff; border-color: #fff; color: #17181a; }
+  .onboarding-aside:has(.onboarding-card) li[data-complete] .onboarding-step-icon { background: #383a40; color: #fff; }
 }
 .onboarding-brand { display: flex; align-items: center; gap: 8px; width: fit-content; font-size: 22px; font-weight: 650; letter-spacing: -.025em; }
 .onboarding-brand > span { width: 56px; height: 56px; }
