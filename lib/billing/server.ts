@@ -17,7 +17,7 @@ export function stripeClient() {
 export const siteUrl = () => "https://mind-lemon.vercel.app";
 export function assertOrigin(request: Request) {
  const origin = request.headers.get("origin");
- const allowed = new Set([siteUrl(), ...(process.env.NODE_ENV === "development" ? ["http://localhost:3000"] : [])]);
+ const allowed = new Set([siteUrl(), "https://mindapp.icu", "https://www.mindapp.icu", "https://mind-yemorgxs-projects.vercel.app", ...(process.env.NODE_ENV === "development" ? ["http://localhost:3000"] : [])]);
  if (!origin || !allowed.has(origin)) throw new ServiceError("Origem da solicitação não permitida.", 403);
 }
 export async function readBody(request: Request, max = 12000) {

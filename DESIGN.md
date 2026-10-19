@@ -229,3 +229,7 @@ browser. Themes use shared semantic colors, including form controls, dropdowns,
 login, onboarding, cards, editors and account screens. System mode follows the
 device preference. The approved landing keeps its original presentation, language
 and metadata; it does not receive internal theme or language controls.
+
+## Saldo no header
+
+Tema e idioma ficam em Configurações → Aparência; o header não mostra esses seletores. O indicador de uso mantém o link para a assinatura. Seu tooltip usa superfície semântica, largura limitada, plano, saldo, progresso e data de renovação, com suporte a hover/foco, Escape e colisões da viewport. Não usar `title` nativo para essa explicação. A medição é por cópia, inclusive cópias repetidas.

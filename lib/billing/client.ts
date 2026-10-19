@@ -16,6 +16,6 @@ export async function billingRequest<T>(user: MindUser, action: string, body: Re
  const response = await fetch(`/api/billing/${action}`, { method: "POST", headers: { ...await accountHeaders(user), "Content-Type": "application/json" }, body: JSON.stringify(body), cache: "no-store" });
  const result = await response.json();
  if (!response.ok) throw new Error(result.error || "Não foi possível concluir. Tente novamente.");
- if (action === "unlock") window.dispatchEvent(new Event("mind:billing-usage"));
+ if (action === "unlock" || action === "copy") window.dispatchEvent(new Event("mind:billing-usage"));
  return result;
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useI18n } from "@/components/preferences/PreferencesProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Check, Copy, LockKeyhole } from "lucide-react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
@@ -16,6 +16,7 @@ function ContentSession({ content, creatorId, promptId, locked, hasImages, isPri
 
  const { user } = useOnboarding(); const { requestLogin } = useSiteLayout();
  const [entitlement, setEntitlement] = useState<Entitlement | null>(null), [checking, setChecking] = useState(locked && !!user), [busy, setBusy] = useState(false), [error, setError] = useState(""), [copied, setCopied] = useState(false);
+ const copying = useRef(false);
  const value = locked ? entitlement?.unlocked ? entitlement.content ?? null : null : content;
  useEffect(() => {
   if (!locked || !user) return;
@@ -30,17 +31,34 @@ function ContentSession({ content, creatorId, promptId, locked, hasImages, isPri
   catch (failure) { setError(failure instanceof Error ? failure.message : t("Não foi possível desbloquear.")); }
   finally { setBusy(false); }
  }
- async function copy() {
-  if (value === null) return;
-  try { await navigator.clipboard.writeText(value); setCopied(true); setError(""); }
-  catch { setError(t("Não foi possível copiar. Selecione o texto e copie manualmente.")); }
+ async function prepareCopy(): Promise<string> {
+  if (value === null || copying.current) throw new Error(t("Aguarde a cópia atual terminar."));
+  if (isPrivate) return value;
+  if (!user) { requestLogin(); throw new Error(t("Entre para copiar este prompt.")); }
+  copying.current = true; setBusy(true); setError("");
+  try {
+   const result = await billingRequest<Entitlement>(user, "copy", { creatorId, promptId, requestId: crypto.randomUUID() });
+   setEntitlement(result);
+   if (result.limitReached) throw new Error(t("Você usou as cópias disponíveis. Escolha um plano ou aguarde a renovação."));
+   if (!result.unlocked || !result.content) throw new Error(t("Não foi possível carregar o conteúdo."));
+   return result.content;
+  } catch (failure) {
+   const message = failure instanceof Error ? failure.message : t("Não foi possível copiar o prompt.");
+   setError(message); throw new Error(message);
+  } finally { copying.current = false; setBusy(false); }
  }
+ async function copy() {
+  if (value === null || copying.current) return;
+  try { const text = await prepareCopy(); await navigator.clipboard.writeText(text); setCopied(true); setError(""); }
+  catch (failure) { setError(failure instanceof Error ? failure.message : t("Não foi possível copiar o prompt.")); }
+ }
+
  return <>
-  <div className="prompt-detail-section-heading"><h2 id="prompt-text-heading">{t("O prompt")}</h2>{value !== null && <div className="prompt-detail-action-group"><button type="button" className="workflow-button secondary" onClick={() => void copy()}>{copied ? <Check size={16}/> : <Copy size={16}/>} {copied ? t("Copiado") : t("Copiar prompt")}</button><PromptUseAI content={value} hasImages={hasImages}/></div>}</div>
-  {value !== null ? <><ScrollShadow label={t("Texto completo do prompt")} className="prompt-text-scroll"><pre>{value}</pre></ScrollShadow><p className="prompt-detail-copy-note">{isPrivate ? t("Seu prompt na biblioteca. Só você tem acesso a esta página.") : locked ? t("Desbloqueado na sua conta. Copiar novamente não gasta outro crédito.") : t("Livre para visualizar, copiar e experimentar.")}</p></> : <div className="prompt-unlock-panel">
+  <div className="prompt-detail-section-heading"><h2 id="prompt-text-heading">{t("O prompt")}</h2>{value !== null && <div className="prompt-detail-action-group"><button type="button" className="workflow-button secondary" disabled={busy} onClick={() => void copy()}>{copied ? <Check size={16}/> : <Copy size={16}/>} {copied ? t("Copiado") : t("Copiar prompt")}</button><PromptUseAI content={value} hasImages={hasImages} beforeUse={prepareCopy} disabled={busy}/></div>}</div>
+  {value !== null ? <><ScrollShadow label={t("Texto completo do prompt")} className="prompt-text-scroll"><pre>{value}</pre></ScrollShadow><p className="prompt-detail-copy-note">{isPrivate ? t("Seu prompt na biblioteca. Só você tem acesso a esta página.") : t("Cada cópia gasta um uso, mesmo do mesmo prompt.")}</p></> : <div className="prompt-unlock-panel">
    <LockKeyhole size={23} aria-hidden="true"/><h3>{t("Leve este prompt para a sua próxima criação.")}</h3>
-   <p>{checking ? t("Conferindo seu acesso…") : entitlement?.limitReached ? t("Você usou os desbloqueios disponíveis neste período. Escolha um plano ou aguarde a renovação.") : t("Desbloqueie uma vez e volte para copiar sempre que precisar. O Free inclui dois novos prompts por dia.")}</p>
-   {entitlement && <p className="billing-balance">{entitlement.billing.remaining === null ? t("Desbloqueios ilimitados") : t("{v0} desbloqueios disponíveis", {v0: (entitlement.billing.remaining)})}{entitlement.billing.remaining !== null && <> {t("· Renova em")}{" "}{new Date(entitlement.billing.resetsAt).toLocaleString(intlLocale)}</>}</p>}
+   <p>{checking ? t("Conferindo seu acesso…") : entitlement?.limitReached ? t("Você usou as cópias disponíveis. Escolha um plano ou aguarde a renovação.") : t("O Free inclui duas cópias por dia. Abrir o prompt não gasta um uso.")}</p>
+   {entitlement && <p className="billing-balance">{entitlement.billing.remaining === null ? t("Cópias ilimitadas") : t("{v0} cópias disponíveis", {v0: (entitlement.billing.remaining)})}{entitlement.billing.remaining !== null && <> {t("· Renova em")}{" "}{new Date(entitlement.billing.resetsAt).toLocaleString(intlLocale)}</>}</p>}
    <div className="resource-actions">{!entitlement?.limitReached && <button type="button" className="workflow-button" disabled={busy || checking} onClick={() => void unlock()}>{busy ? t("Desbloqueando…") : user ? t("Desbloquear prompt") : t("Entrar para desbloquear")}</button>}<Link href="/plans" className="workflow-button secondary">{t("Conhecer os planos")}</Link></div>
   </div>}
   {error && <p role="alert" className="billing-error">{t(error)}</p>}

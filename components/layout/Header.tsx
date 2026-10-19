@@ -1,7 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Creator images include optimized data URLs and external account avatars. */
 import { useI18n } from "@/components/preferences/PreferencesProvider";
-import PreferencesMenu from "@/components/preferences/AppearanceControls";
 import UsageBadge from "@/components/billing/UsageBadge";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import type { BadgeKind } from "@/lib/firebase/badges";
@@ -138,7 +137,6 @@ export default function Header({
           onSearch={onSearch}
         />
         <div className="showcase-account-actions">
-          <PreferencesMenu/>
           <UsageBadge/>
           <button
             type="button"

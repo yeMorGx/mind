@@ -28,10 +28,13 @@ export async function POST(request: Request, context: Context) {
    }
    return Response.json({ ...result.data, activationId, canManageInquiries: await isOwner(actor) }, { headers: noStore });
   }
-  if (action === "prompt" || action === "unlock") {
+  if (action === "prompt" || action === "unlock" || action === "copy") {
    const creator = typeof body.creatorId === "string" ? body.creatorId : "", prompt = typeof body.promptId === "string" ? body.promptId : "";
    if (![creator, prompt].every(value => /^[A-Za-z0-9_-]{1,128}$/.test(value))) throw new ServiceError("Prompt inválido.");
-   const result = await admin.rpc("mind_prompt_entitlement", { actor, creator, prompt, consume: action === "unlock" }); databaseError(result.error);
+   if (action === "copy" && (typeof body.requestId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.requestId))) throw new ServiceError("Solicitação inválida.");
+   const result = action === "copy"
+    ? await admin.rpc("mind_copy_prompt", { actor, creator, prompt, request_id: body.requestId })
+    : await admin.rpc("mind_prompt_entitlement", { actor, creator, prompt, consume: action === "unlock" }); databaseError(result.error);
    return Response.json(result.data, { headers: noStore });
   }
   if (action === "access-state") {

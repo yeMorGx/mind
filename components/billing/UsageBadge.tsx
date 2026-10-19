@@ -3,6 +3,7 @@ import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { Tooltip } from "radix-ui";
 import { Gauge, Infinity as InfinityIcon } from "lucide-react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import type { MindUser } from "@/lib/backend";
@@ -16,12 +17,21 @@ export function UsageBadgeView({ state }: { state: UsageBadgeState }) {
 
  const status = state.kind === "ready" ? state.status : null;
  const exhausted = Boolean(status && status.limit !== null && status.remaining === 0);
- const label = state.kind === "loading" ? t("Conferindo seu uso…") : state.kind === "error" ? t("Uso indisponível. Abra sua assinatura para atualizar.") : state.kind === "open" ? t("Uso livre. Os limites de assinatura ainda não estão ativos.") : status?.limit === null ? `${PLANS[status.plan].name}: desbloqueios ilimitados.` : t("{v0}: {v1} de {v2} desbloqueios usados; {v3} disponíveis. Renova em {v4}. Prompts já desbloqueados não gastam outro crédito.", {v0: (PLANS[status!.plan].name), v1: (status!.used), v2: (status!.limit), v3: (status!.remaining), v4: (new Date(status!.resetsAt).toLocaleString(intlLocale))});
- return <Link href="/home/billing" className="header-usage-badge" data-exhausted={exhausted || undefined} title={label} aria-label={label}>
-  <Gauge size={15} aria-hidden="true"/>
-  <span className="header-usage-label">{t("Uso")}</span>
-  <span className="header-usage-value">{state.kind === "loading" ? "…" : state.kind === "error" ? "—" : state.kind === "open" ? t("livre") : status?.limit === null ? <><InfinityIcon size={17} aria-hidden="true"/><span className="sr-only">{t("ilimitado")}</span></> : t("{v0}/{v1}", {v0: (status!.used), v1: (status!.limit)})}</span>
- </Link>;
+ const label = state.kind === "loading" ? t("Conferindo seu uso…") : state.kind === "error" ? t("Uso indisponível. Abra sua assinatura para atualizar.") : state.kind === "open" ? t("Uso livre. Os limites de assinatura ainda não estão ativos.") : status?.limit === null ? t("Cópias ilimitadas") : t("{v0} de {v1} cópias usadas", { v0: status!.used, v1: status!.limit });
+ return <Tooltip.Provider delayDuration={200}><Tooltip.Root><Tooltip.Trigger asChild>
+  <Link href="/home/billing" className="header-usage-badge" data-exhausted={exhausted || undefined} aria-label={`${t("Uso")}: ${label}`}>
+   <Gauge size={15} aria-hidden="true"/>
+   <span className="header-usage-label">{t("Uso")}</span>
+   <span className="header-usage-value">{state.kind === "loading" ? "…" : state.kind === "error" ? "—" : state.kind === "open" ? t("livre") : status?.limit === null ? <><InfinityIcon size={17} aria-hidden="true"/><span className="sr-only">{t("ilimitado")}</span></> : t("{v0}/{v1}", {v0: status!.used, v1: status!.limit})}</span>
+  </Link>
+ </Tooltip.Trigger><Tooltip.Portal><Tooltip.Content className="usage-tooltip" side="bottom" align="end" sideOffset={12} collisionPadding={16}>
+  <div className="usage-tooltip-heading"><Gauge size={17} aria-hidden="true"/><strong>{status ? PLANS[status.plan].name : t("Uso")}</strong></div>
+  <p className="usage-tooltip-balance">{label}</p>
+  {status && status.limit !== null && <><progress value={Math.min(status.used, status.limit)} max={status.limit} aria-label={t("Cópias utilizadas")}/><p>{t("Cada cópia gasta um uso, mesmo do mesmo prompt.")}</p><span className="usage-tooltip-renewal">{t("Renova em {v0}", {v0: new Date(status.resetsAt).toLocaleString(intlLocale)})}</span></>}
+  <span className="usage-tooltip-footer">{t("Clique para ver sua assinatura")}</span>
+  <Tooltip.Arrow className="usage-tooltip-arrow"/>
+ </Tooltip.Content></Tooltip.Portal></Tooltip.Root></Tooltip.Provider>;
+
 }
 
 function AccountUsage({ user }: { user: MindUser }) {
