@@ -1,4 +1,6 @@
+"use client";
 /* eslint-disable @next/next/no-img-element -- Locally hosted, licensed brand SVGs. */
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { Blocks } from "lucide-react";
 
 const icons: Record<string, string> = {
@@ -20,10 +22,12 @@ export function ResourceClientIdentity({ value, iconOnly = false }: { value: str
 }
 
 export default function ResourceClients({ clients, compact = false, empty = "Consulte as instruções" }: { clients: string[]; compact?: boolean; empty?: string }) {
-  if (!clients.length) return compact ? null : <span>{empty}</span>;
+ const { t } = useI18n();
+
+  if (!clients.length) return compact ? null : <span>{t(empty)}</span>;
   const visible = compact ? clients.slice(0, 4) : clients;
-  return <ul className={`resource-client-list${compact ? " resource-client-list-compact" : ""}`} aria-label="Ferramentas compatíveis">
+  return <ul className={`resource-client-list${compact ? " resource-client-list-compact" : ""}`} aria-label={t("Ferramentas compatíveis")}>
     {visible.map(value => <li key={value}><ResourceClientIdentity value={value} iconOnly={compact}/></li>)}
-    {compact && clients.length > visible.length && <li className="resource-client-more" aria-label={`Também compatível com ${clients.slice(4).join(", ")}`} title={clients.slice(4).join(", ")}>+{clients.length - visible.length}</li>}
+    {compact && clients.length > visible.length && <li className="resource-client-more" aria-label={t("Também compatível com {v0}", {v0: (clients.slice(4).join(", "))})} title={clients.slice(4).join(", ")}>+{clients.length - visible.length}</li>}
   </ul>;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useId, useState } from "react";
 import Link from "next/link";
 import { NavigationMenu } from "radix-ui";
@@ -33,21 +34,23 @@ export default function SiteNavigation({
   onLibrary: (favorites: boolean) => void;
   onCreate: () => void;
 }) {
+ const { t } = useI18n();
+
   const group = useId();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState("");
   const close = () => setOpen("");
   const mobileItems = [
-    { id: "explore", label: "Explorar", icon: Compass, active: explore },
+    { id: "explore", label: t("Explorar"), icon: Compass, active: explore },
     {
       id: "library",
-      label: "Biblioteca",
+      label: t("Biblioteca"),
       icon: Library,
       active: library && !favorites,
     },
     {
       id: "favorites",
-      label: "Favoritos",
+      label: t("Favoritos"),
       icon: Star,
       active: library && favorites,
     },
@@ -56,7 +59,7 @@ export default function SiteNavigation({
     <>
       <NavigationMenu.Root
         className="showcase-nav desktop-site-navigation"
-        aria-label="Navegação principal"
+        aria-label={t("Navegação principal")}
         value={open}
         onValueChange={setOpen}
         delayDuration={120}
@@ -67,7 +70,7 @@ export default function SiteNavigation({
               className="site-nav-trigger"
               data-active={explore || undefined}
             >
-              Explorar <ChevronDown size={14} />
+              {t("Explorar")}{" "}<ChevronDown size={14} />
             </NavigationMenu.Trigger>
             <NavigationMenu.Content className="site-nav-dropdown">
               <div className="site-nav-discover">
@@ -82,11 +85,9 @@ export default function SiteNavigation({
                   >
                     <Compass size={27} strokeWidth={1.5} />
                     <strong>
-                      Uma ideia leva
-                      <br />a outra.
-                    </strong>
+                      {t("Uma ideia leva")}<br />{t("a outra.")}</strong>
                     <span>
-                      Explore os prompts da comunidade{" "}
+                      {t("Explore os prompts da comunidade")}{" "}
                       <ArrowUpRight size={17} />
                     </span>
                   </Link>
@@ -102,8 +103,8 @@ export default function SiteNavigation({
                     >
                       <Layers size={19} />
                       <span>
-                        <strong>Todos os prompts</strong>
-                        <small>Encontre sua próxima inspiração</small>
+                        <strong>{t("Todos os prompts")}</strong>
+                        <small>{t("Encontre sua próxima inspiração")}</small>
                       </span>
                     </Link>
                   </NavigationMenu.Link>
@@ -111,8 +112,8 @@ export default function SiteNavigation({
                     <Link href="/explore/markdown" onClick={close}>
                       <FileCode2 size={19} />
                       <span>
-                        <strong>Arquivos Markdown</strong>
-                        <small>DESIGN.md, SKILL.md e CLAUDE.md</small>
+                        <strong>{t("Arquivos Markdown")}</strong>
+                        <small>{t("DESIGN.md, SKILL.md e CLAUDE.md")}</small>
                       </span>
                     </Link>
                   </NavigationMenu.Link>
@@ -120,8 +121,8 @@ export default function SiteNavigation({
                     <Link href="/explore/mcps" onClick={close}>
                       <Plug size={19} />
                       <span>
-                        <strong>Diretório de MCPs</strong>
-                        <small>Conexões para suas ferramentas de IA</small>
+                        <strong>{t("Diretório de MCPs")}</strong>
+                        <small>{t("Conexões para suas ferramentas de IA")}</small>
                       </span>
                     </Link>
                   </NavigationMenu.Link>
@@ -129,8 +130,8 @@ export default function SiteNavigation({
                     <Link href="/explore?category=Imagem" onClick={close}>
                       <ImageIcon size={19} />
                       <span>
-                        <strong>Imagem</strong>
-                        <small>Ideias que viram resultados visuais</small>
+                        <strong>{t("Imagem")}</strong>
+                        <small>{t("Ideias que viram resultados visuais")}</small>
                       </span>
                     </Link>
                   </NavigationMenu.Link>
@@ -138,16 +139,15 @@ export default function SiteNavigation({
                     <Link href="/explore?category=Retrato" onClick={close}>
                       <ScanFace size={19} />
                       <span>
-                        <strong>Retrato</strong>
-                        <small>Explore estilos e personagens</small>
+                        <strong>{t("Retrato")}</strong>
+                        <small>{t("Explore estilos e personagens")}</small>
                       </span>
                     </Link>
                   </NavigationMenu.Link>
                 </div>
               </div>
               <div className="site-nav-dropdown-foot">
-                Uma comunidade para compartilhar o processo, além do resultado.
-              </div>
+                {t("Uma comunidade para compartilhar o processo, além do resultado.")}</div>
             </NavigationMenu.Content>
           </NavigationMenu.Item>
           <NavigationMenu.Item value="library">
@@ -155,7 +155,7 @@ export default function SiteNavigation({
               className="site-nav-trigger"
               data-active={library || undefined}
             >
-              Biblioteca <ChevronDown size={14} />
+              {t("Biblioteca")}{" "}<ChevronDown size={14} />
             </NavigationMenu.Trigger>
             <NavigationMenu.Content className="site-nav-dropdown site-nav-library">
               <div className="site-nav-options">
@@ -169,8 +169,8 @@ export default function SiteNavigation({
                   >
                     <Library size={20} />
                     <span>
-                      <strong>Meus prompts</strong>
-                      <small>Continue de onde você parou</small>
+                      <strong>{t("Meus prompts")}</strong>
+                      <small>{t("Continue de onde você parou")}</small>
                     </span>
                     <ArrowUpRight size={16} />
                   </button>
@@ -185,8 +185,8 @@ export default function SiteNavigation({
                   >
                     <Star size={20} />
                     <span>
-                      <strong>Favoritos</strong>
-                      <small>As ideias que você quer guardar</small>
+                      <strong>{t("Favoritos")}</strong>
+                      <small>{t("As ideias que você quer guardar")}</small>
                     </span>
                     <ArrowUpRight size={16} />
                   </button>
@@ -195,8 +195,8 @@ export default function SiteNavigation({
                   <Link href="/home/resources" onClick={close}>
                     <FileCode2 size={20} />
                     <span>
-                      <strong>Arquivos e MCPs</strong>
-                      <small>Rascunhos, publicações e recursos salvos</small>
+                      <strong>{t("Arquivos e MCPs")}</strong>
+                      <small>{t("Rascunhos, publicações e recursos salvos")}</small>
                     </span>
                     <ArrowUpRight size={16} />
                   </Link>
@@ -211,8 +211,8 @@ export default function SiteNavigation({
                   >
                     <Plus size={20} />
                     <span>
-                      <strong>Novo prompt</strong>
-                      <small>Guarde uma ideia ou compartilhe com todos</small>
+                      <strong>{t("Novo prompt")}</strong>
+                      <small>{t("Guarde uma ideia ou compartilhe com todos")}</small>
                     </span>
                     <ArrowUpRight size={16} />
                   </button>
@@ -224,7 +224,7 @@ export default function SiteNavigation({
       </NavigationMenu.Root>
       <LayoutGroup id={group}>
         <nav
-          aria-label="Navegação no celular"
+          aria-label={t("Navegação no celular")}
           className="showcase-nav mobile-site-navigation"
         >
           {mobileItems.map(({ id, label, icon: Icon, active }) => {
@@ -244,7 +244,7 @@ export default function SiteNavigation({
                 )}
                 <span className="site-nav-label">
                   <Icon size={20} aria-hidden="true" />
-                  <span>{label}</span>
+                  <span>{t(label)}</span>
                 </span>
               </>
             );

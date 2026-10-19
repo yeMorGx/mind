@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import {
   Calendar,
   DateField,
@@ -28,10 +29,12 @@ export function CampaignDateTimeField({
   name: string;
   required?: boolean;
 }) {
+ const { t, intlLocale } = useI18n();
+
   const timeZone = useLocalTimeZone();
   const localValue = value ? parseAbsolute(value, timeZone) : null;
   return (
-    <I18nProvider locale="pt-BR"><DatePicker
+    <I18nProvider locale={intlLocale}><DatePicker
       className="mind-date-picker"
       granularity="minute"
       hourCycle={24}
@@ -52,14 +55,14 @@ export function CampaignDateTimeField({
               {(segment) => <DateField.Segment segment={segment} />}
             </DateField.Input>
             <DateField.Suffix>
-              <DatePicker.Trigger aria-label={`Abrir calendário de ${label.toLocaleLowerCase()}`}>
+              <DatePicker.Trigger aria-label={t("Abrir calendário de {v0}", {v0: (label.toLocaleLowerCase())})}>
                 <DatePicker.TriggerIndicator />
               </DatePicker.Trigger>
             </DateField.Suffix>
           </DateField.Group>
           <FieldError />
           <DatePicker.Popover className="mind-date-popover">
-            <Calendar aria-label={`Calendário: ${label.toLocaleLowerCase()}`}>
+            <Calendar aria-label={t("Calendário: {v0}", {v0: (label.toLocaleLowerCase())})}>
               <Calendar.Header>
                 <Calendar.NavButton slot="previous" />
                 <Calendar.Heading />
@@ -76,14 +79,14 @@ export function CampaignDateTimeField({
             </Calendar>
             {state.timeValue && (
               <TimeField
-                aria-label={`Horário: ${label.toLocaleLowerCase()}`}
+                aria-label={t("Horário: {v0}", {v0: (label.toLocaleLowerCase())})}
                 granularity="minute"
                 hourCycle={24}
                 hideTimeZone
                 value={state.timeValue}
                 onChange={(next) => state.setTimeValue(next as TimeValue)}
               >
-                <Label className="mind-date-time-label">Horário</Label>
+                <Label className="mind-date-time-label">{t("Horário")}</Label>
                 <TimeField.Group variant="secondary">
                   <TimeField.Input>
                     {(segment) => <TimeField.Segment segment={segment} />}
@@ -94,6 +97,6 @@ export function CampaignDateTimeField({
           </DatePicker.Popover>
         </>
       )}
-    </DatePicker>{!required && value && <button type="button" className="campaign-date-clear" disabled={disabled} onClick={() => onChange(null)}>Remover data final</button>}</I18nProvider>
+    </DatePicker>{!required && value && <button type="button" className="campaign-date-clear" disabled={disabled} onClick={() => onChange(null)}>{t("Remover data final")}</button>}</I18nProvider>
   );
 }

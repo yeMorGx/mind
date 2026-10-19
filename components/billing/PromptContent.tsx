@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, Copy, LockKeyhole } from "lucide-react";
@@ -11,6 +12,8 @@ import ScrollShadow from "@/components/ui/ScrollShadow";
 import "./billing.css";
 type Props = { content: string; creatorId: string; promptId: string; locked: boolean; hasImages: boolean; isPrivate: boolean };
 function ContentSession({ content, creatorId, promptId, locked, hasImages, isPrivate }: Props) {
+ const { t, intlLocale } = useI18n();
+
  const { user } = useOnboarding(); const { requestLogin } = useSiteLayout();
  const [entitlement, setEntitlement] = useState<Entitlement | null>(null), [checking, setChecking] = useState(locked && !!user), [busy, setBusy] = useState(false), [error, setError] = useState(""), [copied, setCopied] = useState(false);
  const value = locked ? entitlement?.unlocked ? entitlement.content ?? null : null : content;
@@ -24,24 +27,24 @@ function ContentSession({ content, creatorId, promptId, locked, hasImages, isPri
   if (!user) { requestLogin(); return; }
   if (busy) return; setBusy(true); setError("");
   try { setEntitlement(await billingRequest<Entitlement>(user, "unlock", { creatorId, promptId })); }
-  catch (failure) { setError(failure instanceof Error ? failure.message : "Não foi possível desbloquear."); }
+  catch (failure) { setError(failure instanceof Error ? failure.message : t("Não foi possível desbloquear.")); }
   finally { setBusy(false); }
  }
  async function copy() {
   if (value === null) return;
   try { await navigator.clipboard.writeText(value); setCopied(true); setError(""); }
-  catch { setError("Não foi possível copiar. Selecione o texto e copie manualmente."); }
+  catch { setError(t("Não foi possível copiar. Selecione o texto e copie manualmente.")); }
  }
  return <>
-  <div className="prompt-detail-section-heading"><h2 id="prompt-text-heading">O prompt</h2>{value !== null && <div className="prompt-detail-action-group"><button type="button" className="workflow-button secondary" onClick={() => void copy()}>{copied ? <Check size={16}/> : <Copy size={16}/>} {copied ? "Copiado" : "Copiar prompt"}</button><PromptUseAI content={value} hasImages={hasImages}/></div>}</div>
-  {value !== null ? <><ScrollShadow label="Texto completo do prompt" className="prompt-text-scroll"><pre>{value}</pre></ScrollShadow><p className="prompt-detail-copy-note">{isPrivate ? "Seu prompt na biblioteca. Só você tem acesso a esta página." : locked ? "Desbloqueado na sua conta. Copiar novamente não gasta outro crédito." : "Livre para visualizar, copiar e experimentar."}</p></> : <div className="prompt-unlock-panel">
-   <LockKeyhole size={23} aria-hidden="true"/><h3>Leve este prompt para a sua próxima criação.</h3>
-   <p>{checking ? "Conferindo seu acesso…" : entitlement?.limitReached ? "Você usou os desbloqueios disponíveis neste período. Escolha um plano ou aguarde a renovação." : "Desbloqueie uma vez e volte para copiar sempre que precisar. O Free inclui dois novos prompts por dia."}</p>
-   {entitlement && <p className="billing-balance">{entitlement.billing.remaining === null ? "Desbloqueios ilimitados" : `${entitlement.billing.remaining} desbloqueios disponíveis`}{entitlement.billing.remaining !== null && <> · Renova em {new Date(entitlement.billing.resetsAt).toLocaleString("pt-BR")}</>}</p>}
-   <div className="resource-actions">{!entitlement?.limitReached && <button type="button" className="workflow-button" disabled={busy || checking} onClick={() => void unlock()}>{busy ? "Desbloqueando…" : user ? "Desbloquear prompt" : "Entrar para desbloquear"}</button>}<Link href="/plans" className="workflow-button secondary">Conhecer os planos</Link></div>
+  <div className="prompt-detail-section-heading"><h2 id="prompt-text-heading">{t("O prompt")}</h2>{value !== null && <div className="prompt-detail-action-group"><button type="button" className="workflow-button secondary" onClick={() => void copy()}>{copied ? <Check size={16}/> : <Copy size={16}/>} {copied ? t("Copiado") : t("Copiar prompt")}</button><PromptUseAI content={value} hasImages={hasImages}/></div>}</div>
+  {value !== null ? <><ScrollShadow label={t("Texto completo do prompt")} className="prompt-text-scroll"><pre>{value}</pre></ScrollShadow><p className="prompt-detail-copy-note">{isPrivate ? t("Seu prompt na biblioteca. Só você tem acesso a esta página.") : locked ? t("Desbloqueado na sua conta. Copiar novamente não gasta outro crédito.") : t("Livre para visualizar, copiar e experimentar.")}</p></> : <div className="prompt-unlock-panel">
+   <LockKeyhole size={23} aria-hidden="true"/><h3>{t("Leve este prompt para a sua próxima criação.")}</h3>
+   <p>{checking ? t("Conferindo seu acesso…") : entitlement?.limitReached ? t("Você usou os desbloqueios disponíveis neste período. Escolha um plano ou aguarde a renovação.") : t("Desbloqueie uma vez e volte para copiar sempre que precisar. O Free inclui dois novos prompts por dia.")}</p>
+   {entitlement && <p className="billing-balance">{entitlement.billing.remaining === null ? t("Desbloqueios ilimitados") : t("{v0} desbloqueios disponíveis", {v0: (entitlement.billing.remaining)})}{entitlement.billing.remaining !== null && <> {t("· Renova em")}{" "}{new Date(entitlement.billing.resetsAt).toLocaleString(intlLocale)}</>}</p>}
+   <div className="resource-actions">{!entitlement?.limitReached && <button type="button" className="workflow-button" disabled={busy || checking} onClick={() => void unlock()}>{busy ? t("Desbloqueando…") : user ? t("Desbloquear prompt") : t("Entrar para desbloquear")}</button>}<Link href="/plans" className="workflow-button secondary">{t("Conhecer os planos")}</Link></div>
   </div>}
-  {error && <p role="alert" className="billing-error">{error}</p>}
-  <span role="status" className="sr-only">{copied ? "Prompt copiado." : entitlement?.unlocked ? "Prompt desbloqueado." : ""}</span>
+  {error && <p role="alert" className="billing-error">{t(error)}</p>}
+  <span role="status" className="sr-only">{copied ? t("Prompt copiado.") : entitlement?.unlocked ? t("Prompt desbloqueado.") : ""}</span>
  </>;
 }
 export default function PromptContent(props: Props) { const { user } = useOnboarding(); return <ContentSession key={`${user?.uid ?? "visitor"}:${props.creatorId}:${props.promptId}:${props.locked}`} {...props}/>; }

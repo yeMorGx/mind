@@ -1,3 +1,3 @@
 import PlansPage from "@/components/billing/PlansPage";
-export const metadata = { title: "Planos · Mind", description: "Conheça Free, Plus, Premium e as propostas para empresas do Mind." };
+export const metadata = { title: "Plans · Mind", description: "Compare Mind Free, Plus, Premium and Enterprise plans." };
 export default function Page() { return <PlansPage/>; }

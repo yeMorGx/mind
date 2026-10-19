@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const resource = await getPublicResource(id).catch(() => null);
   return {
-    title: resource ? `${resource.document.title} · Mind` : "Recurso · Mind",
+    title: resource ? `${resource.document.title} · Mind` : "Resource · Mind",
     description: resource?.document.summary,
   };
 }

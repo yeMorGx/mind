@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import ResourceClients from "./ResourceClients";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -15,6 +16,8 @@ import { requireSupabaseClient } from "@/lib/supabase/client";
 import { resourceError, type Resource } from "@/lib/resources";
 import "./resources.css";
 function ResourceLibrarySession() {
+ const { t } = useI18n();
+
   const { user, authReady } = useOnboarding(),
     { requestLogin } = useSiteLayout();
   const [items, setItems] = useState<Resource[]>([]),
@@ -102,16 +105,16 @@ function ResourceLibrarySession() {
   if (!authReady)
     return (
       <main className="catalog-page">
-        <p role="status">Carregando…</p>
+        <p role="status">{t("Carregando…")}</p>
       </main>
     );
   if (!user)
     return (
       <main className="catalog-page">
         <div className="catalog-empty">
-          <h1>Sua biblioteca de recursos.</h1>
-          <p>Entre para gerenciar seus arquivos Markdown e MCPs.</p>
-          <button onClick={requestLogin}>Entrar na conta</button>
+          <h1>{t("Sua biblioteca de recursos.")}</h1>
+          <p>{t("Entre para gerenciar seus arquivos Markdown e MCPs.")}</p>
+          <button onClick={requestLogin}>{t("Entrar na conta")}</button>
         </div>
       </main>
     );
@@ -124,11 +127,9 @@ function ResourceLibrarySession() {
       <div className="explore-heading">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Arquivos e MCPs
-          </h1>
+            {t("Arquivos e MCPs")}</h1>
           <p className="mt-2 text-sm text-muted">
-            Seus rascunhos, publicações e recursos salvos.
-          </p>
+            {t("Seus rascunhos, publicações e recursos salvos.")}</p>
         </div>
         <div className="resource-actions">
           <Link
@@ -136,8 +137,7 @@ function ResourceLibrarySession() {
             className="workflow-button"
           >
             <Plus size={16} />
-            Arquivo Markdown
-          </Link>
+            {t("Arquivo Markdown")}</Link>
           <Link
             href="/home/resources/new?kind=mcp"
             className="workflow-button secondary"
@@ -147,7 +147,7 @@ function ResourceLibrarySession() {
           </Link>
         </div>
       </div>
-      <div className="resource-tabs" aria-label="Filtrar recursos">
+      <div className="resource-tabs" aria-label={t("Filtrar recursos")}>
         {[
           ["all", "Meus recursos"],
           ["markdown", "Markdown"],
@@ -159,26 +159,24 @@ function ResourceLibrarySession() {
             aria-pressed={tab === value}
             onClick={() => setTab(value)}
           >
-            {label}
+            {t(label)}
           </button>
         ))}
       </div>
       {error && (
         <p role="alert" className="resource-error">
-          {error}
+          {t(error)}
         </p>
       )}
       {!loaded ? (
         <p role="status" className="py-12 text-muted">
-          Carregando recursos…
-        </p>
+          {t("Carregando recursos…")}</p>
       ) : failed || (tab === "saved" && savedFailed) ? (
         <div className="catalog-empty">
-          <h2>Não foi possível carregar esta área.</h2>
-          <p>Confira sua conexão ou tente novamente em breve.</p>
+          <h2>{t("Não foi possível carregar esta área.")}</h2>
+          <p>{t("Confira sua conexão ou tente novamente em breve.")}</p>
           <button onClick={() => setRevision((value) => value + 1)}>
-            Tentar novamente
-          </button>
+            {t("Tentar novamente")}</button>
         </div>
       ) : visible.length ? (
         <div className="resource-library-list">
@@ -204,24 +202,23 @@ function ResourceLibrarySession() {
                 </Link>
                 <p className="mt-1 text-sm text-muted">
                   {item.kind === "markdown" ? item.document.fileName : "MCP"} ·{" "}
-                  {item.status === "draft" ? "Rascunho privado" : "Publicado"}
+                  {item.status === "draft" ? t("Rascunho privado") : t("Publicado")}
                 </p>
                 <ResourceClients clients={item.document.clients} compact/>
               </div>
               {tab !== "saved" && (
                 <div className="resource-library-actions">
-                  <Link href={`/home/resources/${item.id}/edit`}>Editar</Link>
+                  <Link href={`/home/resources/${item.id}/edit`}>{t("Editar")}</Link>
                   {item.status === "published" && (
                     <>
-                      <Link href={`/resources/${item.id}`}>Ver página</Link>
+                      <Link href={`/resources/${item.id}`}>{t("Ver página")}</Link>
                       <button
                         disabled={Boolean(pending)}
                         onClick={() =>
                           setConfirm({ id: item.id, action: "unpublish" })
                         }
                       >
-                        Tornar privado
-                      </button>
+                        {t("Tornar privado")}</button>
                     </>
                   )}
                   <button
@@ -230,29 +227,27 @@ function ResourceLibrarySession() {
                       setConfirm({ id: item.id, action: "delete" })
                     }
                   >
-                    Excluir
-                  </button>
+                    {t("Excluir")}</button>
                 </div>
               )}
               {confirm?.id === item.id && (
                 <div className="resource-delete-confirm">
                   <p>
                     {confirm.action === "delete"
-                      ? "Excluir este recurso permanentemente?"
-                      : "Retirar da página pública? O rascunho será preservado."}
+                      ? t("Excluir este recurso permanentemente?")
+                      : t("Retirar da página pública? O rascunho será preservado.")}
                   </p>
                   <button
                     disabled={Boolean(pending)}
                     onClick={() => void mutate()}
                   >
-                    {pending ? "Salvando…" : "Confirmar"}
+                    {pending ? t("Salvando…") : t("Confirmar")}
                   </button>
                   <button
                     disabled={Boolean(pending)}
                     onClick={() => setConfirm(null)}
                   >
-                    Cancelar
-                  </button>
+                    {t("Cancelar")}</button>
                 </div>
               )}
             </article>
@@ -262,13 +257,13 @@ function ResourceLibrarySession() {
         <div className="catalog-empty">
           <h2>
             {tab === "saved"
-              ? "Guarde suas próximas referências."
-              : "Dê espaço às suas ideias."}
+              ? t("Guarde suas próximas referências.")
+              : t("Dê espaço às suas ideias.")}
           </h2>
           <p>
             {tab === "saved"
-              ? "Salve arquivos e MCPs pelo ícone de favorito na página de cada recurso."
-              : "Crie um arquivo Markdown ou divulgue um MCP. Ele começa como rascunho privado."}
+              ? t("Salve arquivos e MCPs pelo ícone de favorito na página de cada recurso.")
+              : t("Crie um arquivo Markdown ou divulgue um MCP. Ele começa como rascunho privado.")}
           </p>
         </div>
       )}

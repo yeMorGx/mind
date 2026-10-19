@@ -1,7 +1,10 @@
-export default function PromptLoading() {
+import { getServerI18n } from "@/lib/i18n/server";
+export default async function PromptLoading() {
+ const { t } = await getServerI18n();
+
   return (
-    <main className="min-h-[calc(100dvh-4.5rem)] bg-background px-5 py-12 text-foreground sm:px-8" aria-busy="true" aria-label="Carregando página do prompt">
-      <p role="status" className="sr-only">Carregando o prompt e suas imagens.</p>
+    <main className="min-h-[calc(100dvh-4.5rem)] bg-background px-5 py-12 text-foreground sm:px-8" aria-busy="true" aria-label={t("Carregando página do prompt")}>
+      <p role="status" className="sr-only">{t("Carregando o prompt e suas imagens.")}</p>
       <div aria-hidden="true" className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
         <div className="space-y-6">
           <div className="h-5 w-32 rounded bg-foreground/5" />

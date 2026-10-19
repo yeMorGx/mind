@@ -21,3 +21,19 @@ GitHub e Discord estavam desativados no provedor em 15/10. Botões permanecem in
 ChatGPT aceita `?q=` (observado com texto inofensivo); Claude utiliza `/new?q=`. Para URLs acima do limite prático ou Claude acima de 14 mil caracteres, copiar e abrir. Gemini não oferece preenchimento web confirmado: copiar e abrir é explícito. Nenhum prompt do usuário foi enviado a provedores na inspeção.
 
 Build/TypeScript e inspeção visual em 1440, 1024, 390 e 320 px; confirmação final em 1440/390. Sem overflow horizontal, três logos ChatGPT carregados e cópia funcional. Prévia local de MFA usou dados explícitos de demonstração, sem criar fatores na conta real. Fluxo OAuth e alteração real de perfil exigem a sessão do usuário e não foram exercitados pela inspeção pública. A landing foi preservada.
+
+## Current navigation and appearance
+
+Settings is now a set of routes rather than one page of anchor sections:
+`/home/settings` opens Appearance; `/home/settings/appearance`, `/connections`,
+`/security`, `/preferences`, `/billing` and `/data` select one section at a time
+under the settings path. Desktop uses local vertical navigation; mobile uses a
+horizontal row with the active page indicated. Existing identity, MFA, backup
+and billing actions are preserved.
+
+Appearance provides Light, Dark and System choices with visual previews, plus
+English (default), Spanish, Japanese, Portuguese and French. The header exposes
+the same controls in a compact menu, using local flags. Cookies persist choices
+and server rendering reads the locale; content written by creators is not
+translated. Semantic neutral colors cover shared surfaces, controls and text.
+QR codes and creator media retain their original rendering.

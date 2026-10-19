@@ -1,0 +1,79 @@
+/* Neutral surfaces and contrast pairs for internal screens and portaled dialogs. */
+html[data-theme="dark"] * { scrollbar-color: var(--border-color) transparent; }
+html[data-theme="dark"] ::selection { color: var(--foreground); }
+html[data-theme="dark"] .results-marquee-viewport { scrollbar-color: var(--border-color) transparent; }
+html[data-theme="dark"] .site-app .catalog-nav-item.is-active { background: var(--surface-hover); }
+html[data-theme="dark"] .site-app .catalog-filter-chip { background: var(--surface-hover); }
+html[data-theme="dark"] .site-app .catalog-filter-chip:hover { background: var(--surface-hover); }
+html[data-theme="dark"] .ai-model-logo { background: var(--surface); color: var(--foreground); }
+html[data-theme="dark"] .site-app .wireframe-prompt-card > .prompt-card-details { background: var(--surface-hover); }
+html[data-theme="dark"] .activation-dialog { color: var(--foreground); }
+html[data-theme="dark"] .activation-close:hover { background: var(--media); }
+html[data-theme="dark"] .activation-heading p { color: var(--muted); }
+html[data-theme="dark"] .activation-dialog button:focus-visible { outline: 2px solid var(--foreground); }
+html[data-theme="dark"] .site-app .sponsored-card > .prompt-card-details { background: var(--surface-hover); }
+html[data-theme="dark"] .site-app .explore-page .catalog-public-card > .prompt-card-details { background: var(--surface-hover); }
+html[data-theme="dark"] .site-app .site-footer-panel { background: var(--media); }
+html[data-theme="dark"] .site-app .site-footer-invitation > h2 > span { color: var(--muted); }
+html[data-theme="dark"] .site-app .site-footer-main > p { color: var(--muted); }
+html[data-theme="dark"] .site-app .site-footer-main nav :is(a,button) { color: var(--muted); }
+html[data-theme="dark"] .site-app .site-footer-bottom { color: var(--muted); }
+html[data-theme="dark"] .mind-login-dialog { background: var(--surface); color: var(--foreground); color-scheme: dark; }
+html[data-theme="dark"] .mind-login-close { color: var(--subtle); }
+html[data-theme="dark"] .mind-login-close:hover { background: var(--input-background); color: var(--foreground); }
+html[data-theme="dark"] .mind-login-heading p { color: var(--subtle); }
+html[data-theme="dark"] .mind-login-providers button { border: 1px solid var(--border-color); background: var(--surface); color: var(--foreground); }
+html[data-theme="dark"] .mind-login-providers button:hover { background: var(--input-background); border-color: var(--border-color); }
+html[data-theme="dark"] .mind-login-divider { color: var(--subtle); }
+html[data-theme="dark"] .mind-login-field input { border: 1px solid var(--subtle); background: var(--surface); color: var(--foreground); caret-color: var(--foreground); }
+html[data-theme="dark"] .mind-login-field input::placeholder { color: var(--subtle); }
+html[data-theme="dark"] .mind-login-field input:focus { border-color: var(--foreground); }
+html[data-theme="dark"] .mind-login-password-label > button { color: var(--subtle); }
+html[data-theme="dark"] .mind-login-password-label > button:hover { color: var(--foreground); }
+html[data-theme="dark"] .mind-login-password > button { color: var(--subtle); }
+html[data-theme="dark"] .mind-login-password > button:hover { color: var(--foreground); }
+html[data-theme="dark"] .mind-login-submit { background: var(--primary); color: var(--primary-foreground); }
+html[data-theme="dark"] .mind-login-submit:hover { background: var(--primary-hover); }
+html[data-theme="dark"] .mind-login-dialog button:focus-visible { outline: 2px solid var(--foreground); }
+html[data-theme="dark"] .mind-login-signup { background: var(--background); color: var(--subtle); }
+html[data-theme="dark"] .mind-login-signup > button { color: var(--foreground); }
+html[data-theme="dark"] .onboarding-shell { background: var(--surface); color: var(--foreground); }
+html[data-theme="dark"] .onboarding-aside { background: var(--media); }
+html[data-theme="dark"] .onboarding-journey li { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-journey li[aria-current=step] { color: var(--foreground); }
+html[data-theme="dark"] .onboarding-top { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-top button { color: var(--foreground); }
+html[data-theme="dark"] .onboarding-progress { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-description { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-field :is(input,select,textarea), html[data-theme="dark"] .onboarding-form input[name=username] { border: 1px solid var(--subtle); background: var(--surface); color: var(--foreground); }
+html[data-theme="dark"] .onboarding-field input::placeholder, html[data-theme="dark"] .onboarding-field textarea::placeholder { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-field :is(input,select,textarea):focus, html[data-theme="dark"] .onboarding-form input[name=username]:focus { border-color: var(--foreground); }
+html[data-theme="dark"] .onboarding-field > p, html[data-theme="dark"] .onboarding-field-hint { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-password > button { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-submit { background: var(--primary); color: var(--primary-foreground); }
+html[data-theme="dark"] .onboarding-submit:hover { background: var(--primary-hover); }
+html[data-theme="dark"] .onboarding-status { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-form-note { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-form-note > strong { color: var(--foreground); }
+html[data-theme="dark"] .onboarding-back { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-bottom { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-choice-row label { border: 1px solid var(--subtle); }
+html[data-theme="dark"] .onboarding-choice-row label:has(input:checked) { border-color: var(--foreground); background: var(--input-background); }
+html[data-theme="dark"] .onboarding-choice-row input { accent-color: var(--foreground); }
+html[data-theme="dark"] .onboarding-optional { border-top: 1px solid var(--border-color); }
+html[data-theme="dark"] .onboarding-optional > summary { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-icons > button[aria-pressed=true] { border-color: var(--foreground); background: var(--surface-hover); }
+html[data-theme="dark"] .onboarding-success-icon { background: var(--media); }
+html[data-theme="dark"] .onboarding-summary > div { border-bottom: 1px solid var(--border-color); }
+html[data-theme="dark"] .onboarding-summary dt { color: var(--subtle); }
+html[data-theme="dark"] .onboarding-shell :is(a,button,summary):focus-visible { outline: 2px solid var(--foreground); }
+@media (max-width: 900px) {
+html[data-theme="dark"] .onboarding-aside { background: var(--surface); }
+}
+@media (max-width: 900px) {
+html[data-theme="dark"] .onboarding-mobile-progress > span { background: var(--border-color); }
+}
+@media (max-width: 900px) {
+html[data-theme="dark"] .onboarding-mobile-progress > span[data-done] { background: var(--primary); }
+}
+html[data-theme="dark"] .site-app .resource-field input:not([type="file"]), html[data-theme="dark"] .site-app .resource-field textarea, html[data-theme="dark"] .site-app .resource-field select { border: 1px solid var(--subtle); }

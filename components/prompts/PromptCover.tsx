@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import {useEffect,useRef,useState} from "react";
 import {Sparkles} from "lucide-react";
 import PromptVideo from "./PromptVideo";
@@ -7,6 +8,8 @@ import {useReducedMotion} from "framer-motion";
 import PixelImage from "@/components/ui/PixelImage";
 type Props={prompt:PromptShowcase&{title:string;description:string;images:{id:string;url:string;label:string;role:string}[]};pixelTransition?:boolean;onImageSize?:(width:number,height:number)=>void};
 export default function PromptCover({prompt,pixelTransition=false,onImageSize}:Props){
+ const { t } = useI18n();
+
  const root=useRef<HTMLDivElement>(null);
  const reducedMotion=useReducedMotion();
  const[hover,setHover]=useState(false),[index,setIndex]=useState(0),[failed,setFailed]=useState<string[]>([]);
@@ -18,8 +21,8 @@ export default function PromptCover({prompt,pixelTransition=false,onImageSize}:P
  return <div ref={root} className="prompt-cover-media">
  {prompt.kind==="video"&&(prompt.videoPath||prompt.videoUrl)?<PromptVideo path={prompt.videoPath} url={prompt.videoUrl} poster={cover?.url} hover active={hover}/>:cover&&pixelTransition?<PixelImage src={cover.url} alt={cover.label||prompt.title} onError={()=>setFailed(value=>[...value,cover.url])} onSize={onImageSize}/>:cover?
  // eslint-disable-next-line @next/next/no-img-element -- Existing optimized prompt uploads.
- <img src={cover.url} alt={cover.label||prompt.title} loading="lazy" draggable={false} onError={()=>setFailed(value=>[...value,cover.url])}/>:<div className="catalog-text-preview"><Sparkles size={24}/><p>{prompt.summary||prompt.description||"Conheça este prompt"}</p></div>}
- {prompt.kind==="website"&&<span className="prompt-kind-label">Site</span>}
+ <img src={cover.url} alt={cover.label||prompt.title} loading="lazy" draggable={false} onError={()=>setFailed(value=>[...value,cover.url])}/>:<div className="catalog-text-preview"><Sparkles size={24}/><p>{prompt.summary||prompt.description||t("Conheça este prompt")}</p></div>}
+ {prompt.kind==="website"&&<span className="prompt-kind-label">{t("Site")}</span>}
  {images.length>1&&prompt.kind!=="video"&&<span className="prompt-cover-position" aria-hidden="true">{index%images.length+1}/{images.length}</span>}
  </div>;
 }

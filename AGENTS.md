@@ -27,3 +27,16 @@ Use `components/ui/animated-checkbox.tsx` (AnimatedCheckbox, baseado no Spell UI
 Use `components/ui/SelectField.tsx` para novos campos de seleção e filtros. Não adicione `<select>` nativo; preserve rótulo, validação, estados desabilitados e nome do campo de formulário no componente compartilhado.
 
 Para imagem e vídeo, ofereça anexo de arquivo com validação de tipo e tamanho. Não peça URL de mídia em novos campos. URLs de destino de site ou botão continuam permitidas.
+
+## Temas e idiomas da interface
+
+As páginas internas agora oferecem temas claro, escuro e sistema, com inglês
+como idioma padrão e seletor para inglês, espanhol, japonês, português e francês.
+Use cores semânticas e `useI18n().t()` para textos novos; mantenha as traduções
+em `lib/i18n/messages`. Formatação de datas e números usa `intlLocale`.
+Preserve as cores próprias de imagens, logos, emblemas e QR Codes. Não traduza
+conteúdo, nomes ou títulos publicados pelos criadores. A landing continua
+independente, com sua apresentação, idioma e metadados preservados.
+
+Configurações usa rotas `/home/settings/{section}` e monta somente a seção
+selecionada. Aparência inclui tema e idioma; edição de perfil fica no perfil.

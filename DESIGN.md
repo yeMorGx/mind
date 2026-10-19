@@ -41,7 +41,7 @@ components:
 
 ## Direção
 
-Por solicitação do proprietário, as páginas internas usam somente o tema claro. A landing (`/`) é uma exceção explícita: mantém a apresentação original, sem header/sidebar globais e com seus estilos próprios. A biblioteca, os prompts, os perfis, o cadastro, o login interno e os estados de erro compartilham a mesma paleta. O céu e a galeria da landing são conteúdo visual; os emblemas mantêm as cores que indicam sua identidade.
+Por solicitação do proprietário, as páginas internas oferecem temas claro, escuro e sistema. A landing (`/`) é uma exceção explícita: mantém a apresentação original, sem header/sidebar globais e com seus estilos próprios. A biblioteca, os prompts, os perfis, o cadastro, o login interno e os estados de erro compartilham a mesma paleta. O céu e a galeria da landing são conteúdo visual; os emblemas mantêm as cores que indicam sua identidade.
 
 O conteúdo conduz a página: imagens e texto do prompt primeiro; identidade, detalhes e instruções depois. Evitar estatísticas fictícias e reformulações de conteúdo sem necessidade.
 
@@ -209,3 +209,23 @@ reduzido, a grade fica estática. A landing não participa desta alteração.
 As imagens públicas atuais são incorporadas como `data:image` e já são
 validadas por `readPromptDetails`. A seleção do fundo deve preservar esse
 formato; filtrar somente por HTTP/HTTPS deixa a grade sem conteúdo.
+
+## Settings, appearance and interface languages
+
+The default interface language is English. A header menu and Settings → Appearance
+let visitors choose English, Spanish, Japanese, Portuguese or French, with local
+SVG country flags and native language names. UI messages use `useI18n().t()`
+and versioned dictionaries in `lib/i18n/messages`; dates and numbers use the
+selected locale. Creator names, prompts, resource contents and campaign copy
+remain exactly as authored. No runtime translation service is called.
+
+Settings navigation opens separate routes at `/home/settings/{section}` for
+appearance, connections, security, preferences, billing and data. Only the active
+section mounts. Appearance is also available without an account; account actions
+retain their authentication requirements. Profile editing stays in the profile.
+
+`mind-theme` and `mind-locale` preference cookies persist for one year on this
+browser. Themes use shared semantic colors, including form controls, dropdowns,
+login, onboarding, cards, editors and account screens. System mode follows the
+device preference. The approved landing keeps its original presentation, language
+and metadata; it does not receive internal theme or language controls.

@@ -3,7 +3,7 @@ import ResourceCatalog from "@/components/resources/ResourceCatalog";
 import { getPublicResources } from "@/lib/supabase/resource-server";
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Arquivos Markdown · Mind",
+  title: "Markdown files · Mind",
   description:
     "Descubra DESIGN.md, SKILL.md e CLAUDE.md compartilhados pela comunidade.",
 };

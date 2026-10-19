@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import Link from "next/link";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
 import Logo from "@/components/ui/logo";
@@ -16,14 +17,15 @@ export default function SiteFooter({
   onCreate: () => void;
   onLogin: () => void;
 }) {
+ const { t } = useI18n();
+
   return (
     <footer className="site-footer">
       <div className="site-footer-panel">
         <div className="site-footer-invitation">
           <h2>
-            Bons prompts
-            <br />
-            <span>merecem circular.</span>
+            {t("Bons prompts")}<br />
+            <span>{t("merecem circular.")}</span>
           </h2>
           <button
             type="button"
@@ -31,10 +33,8 @@ export default function SiteFooter({
             onClick={onCreate}
           >
             <span>
-              Compartilhar
-              <br />
-              um prompt
-            </span>
+              {t("Compartilhar")}<br />
+              {t("um prompt")}</span>
             <span className="site-footer-create-arrow">
               <ArrowUpRight size={32} strokeWidth={1.5} aria-hidden="true" />
             </span>
@@ -42,48 +42,43 @@ export default function SiteFooter({
         </div>
         <div className="site-footer-main site-footer-main-contact">
           <p>
-            Um lugar para compartilhar os prompts por trás dos seus resultados.
-          </p>
-          <nav aria-label="Explorar no rodapé">
-            <h2>Descobrir</h2>
-            <Link href="/explore">Explorar prompts</Link>
-            <Link href="/explore/markdown">Arquivos Markdown</Link>
-            <Link href="/explore/mcps">Diretório de MCPs</Link>
+            {t("Um lugar para compartilhar os prompts por trás dos seus resultados.")}</p>
+          <nav aria-label={t("Explorar no rodapé")}>
+            <h2>{t("Descobrir")}</h2>
+            <Link href="/explore">{t("Explorar prompts")}</Link>
+            <Link href="/explore/markdown">{t("Arquivos Markdown")}</Link>
+            <Link href="/explore/mcps">{t("Diretório de MCPs")}</Link>
             <button type="button" onClick={() => onLibrary(false)}>
-              Minha biblioteca
-            </button>
+              {t("Minha biblioteca")}</button>
             <button type="button" onClick={() => onLibrary(true)}>
-              Meus favoritos
-            </button>
+              {t("Meus favoritos")}</button>
           </nav>
-          <nav aria-label="Conta no rodapé">
-            <h2>Sua conta</h2>
-            <Link href="/plans">Planos</Link>
-            <Link href="/home/billing">Minha assinatura</Link>
+          <nav aria-label={t("Conta no rodapé")}>
+            <h2>{t("Sua conta")}</h2>
+            <Link href="/plans">{t("Planos")}</Link>
+            <Link href="/home/billing">{t("Minha assinatura")}</Link>
             {profileHref ? (
               <>
-                <Link href={profileHref}>Meu perfil</Link>
-                <Link href="/home/settings">Configurações</Link>
+                <Link href={profileHref}>{t("Meu perfil")}</Link>
+                <Link href="/home/settings">{t("Configurações")}</Link>
               </>
             ) : (
               <button type="button" onClick={onLogin}>
-                Entrar no Mind
-              </button>
+                {t("Entrar no Mind")}</button>
             )}
             <button type="button" onClick={onCreate}>
-              Criar um prompt
-            </button>
+              {t("Criar um prompt")}</button>
           </nav>
-          <nav aria-label="Contato no rodapé">
-            <h2>Conecte-se</h2>
-            <Link href="/work-with-us">Trabalhe conosco</Link>
-            <Link href="/business">Para empresas</Link>
+          <nav aria-label={t("Contato no rodapé")}>
+            <h2>{t("Conecte-se")}</h2>
+            <Link href="/work-with-us">{t("Trabalhe conosco")}</Link>
+            <Link href="/business">{t("Para empresas")}</Link>
           </nav>
         </div>
         <Link
           href="/explore"
           className="site-footer-wordmark"
-          aria-label="Mind — explorar prompts"
+          aria-label={t("Mind — explorar prompts")}
         >
           <span aria-hidden="true">Mind</span>
           <span className="site-footer-symbol" aria-hidden="true">
@@ -92,7 +87,7 @@ export default function SiteFooter({
         </Link>
         <div className="site-footer-bottom">
           <p>© {new Date().getFullYear()} Mind</p>
-          <p>Feito para criar. Aberto para compartilhar.</p>
+          <p>{t("Feito para criar. Aberto para compartilhar.")}</p>
           <button
             type="button"
             onClick={() => {
@@ -108,7 +103,7 @@ export default function SiteFooter({
                 ?.focus({ preventScroll: true });
             }}
           >
-            Voltar ao topo <ArrowUp size={15} aria-hidden="true" />
+            {t("Voltar ao topo")}{" "}<ArrowUp size={15} aria-hidden="true" />
           </button>
         </div>
       </div>

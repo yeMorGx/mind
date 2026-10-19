@@ -1,6 +1,10 @@
+"use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 export default function MarkdownContent({ content }: { content: string }) {
+ const { t } = useI18n();
+
   return (
     <div className="resource-markdown">
       <ReactMarkdown
@@ -10,7 +14,7 @@ export default function MarkdownContent({ content }: { content: string }) {
           // Remote images aren't loaded automatically from an untrusted document.
           img: ({ alt }) => (
             <span className="text-muted">
-              [Imagem: {alt || "sem descrição"}]
+              {t("[Imagem:")}{" "}{alt || t("sem descrição")}]
             </span>
           ),
           a: ({ href, children }) =>

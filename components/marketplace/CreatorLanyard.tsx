@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -10,6 +11,8 @@ import type { CreatorProfile } from "@/lib/firebase/publication";
 const Lanyard = dynamic(() => import("@/components/ui/Lanyard"), { ssr: false });
 
 export default function CreatorLanyard({ profile, href }: { profile: CreatorProfile; href: string }) {
+ const { t } = useI18n();
+
   const [texture, setTexture] = useState("");
   const router = useRouter();
   const owner = profile.badges?.includes("owner");
@@ -40,7 +43,7 @@ export default function CreatorLanyard({ profile, href }: { profile: CreatorProf
     return () => { alive = false; };
   }, [profile.name, profile.avatarUrl, owner]);
 
-  return <aside aria-label="Criador do prompt" className="creator-lanyard-shell">
+  return <aside aria-label={t("Criador do prompt")} className="creator-lanyard-shell">
     <div className="creator-lanyard-scene">
       <div className="creator-lanyard-fallback" aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element -- Profile photo fallback when WebGL is unavailable. */}
@@ -49,9 +52,9 @@ export default function CreatorLanyard({ profile, href }: { profile: CreatorProf
       <Lanyard frontImage={texture || undefined} backImage={texture || undefined} size={0.78} strapLength={0.12} breeze={0.18} damping={0.7} intro={false}
         metal={owner ? "gold" : "silver"} strapColor={owner ? "#4e3b18" : "#25232f"} onCardClick={() => router.push(href)} />
     </div>
-    <Link href={href} aria-label={`Ver perfil de ${profile.name}`} className="block rounded-xl px-1 py-2 text-center focus-visible:outline-2 focus-visible:outline-foreground">
+    <Link href={href} aria-label={t("Ver perfil de {v0}", {v0: (profile.name)})} className="block rounded-xl px-1 py-2 text-center focus-visible:outline-2 focus-visible:outline-foreground">
       <span className="mt-1 flex justify-center [&>span]:justify-center"><CreatorBadges badges={profile.badges} /></span>
-      <span className="mt-4 inline-flex items-center gap-1 text-sm text-muted">{profile.username ? `@${profile.username}` : "Ver perfil do criador"} <ArrowUpRight size={13} /></span>
+      <span className="mt-4 inline-flex items-center gap-1 text-sm text-muted">{profile.username ? t("@{v0}", {v0: (profile.username)}) : t("Ver perfil do criador")} <ArrowUpRight size={13} /></span>
     </Link>
   </aside>;
 }

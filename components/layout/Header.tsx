@@ -1,5 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Creator images include optimized data URLs and external account avatars. */
+import { useI18n } from "@/components/preferences/PreferencesProvider";
+import PreferencesMenu from "@/components/preferences/AppearanceControls";
 import UsageBadge from "@/components/billing/UsageBadge";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import type { BadgeKind } from "@/lib/firebase/badges";
@@ -38,6 +40,8 @@ function AccountAvatar({
   fallback?: string;
   initials: string;
 }) {
+ const { t } = useI18n();
+
   const [failed, setFailed] = useState<string[]>([]);
   const current = [src, fallback].find(
     (value) => value && !failed.includes(value),
@@ -51,7 +55,7 @@ function AccountAvatar({
       onError={() => setFailed((values) => [...values, current])}
     />
   ) : (
-    <span>{initials || "M"}</span>
+    <span>{initials || t("M")}</span>
   );
 }
 export default function Header({
@@ -72,6 +76,8 @@ export default function Header({
   onExplore,
   onSignOut,
 }: HeaderProps) {
+ const { t } = useI18n();
+
   const pathname = usePathname();
   const account = useRef<HTMLDetailsElement>(null);
   const [compact, setCompact] = useState(false);
@@ -111,7 +117,7 @@ export default function Header({
       <div className="showcase-header-inner">
         <Link
           href="/explore"
-          aria-label="Mind — início"
+          aria-label={t("Mind — início")}
           className="showcase-brand"
         >
           <span className="catalog-logo">
@@ -132,16 +138,17 @@ export default function Header({
           onSearch={onSearch}
         />
         <div className="showcase-account-actions">
+          <PreferencesMenu/>
           <UsageBadge/>
           <button
             type="button"
             onClick={onCreate}
             disabled={!authReady}
-            aria-label="Novo prompt"
+            aria-label={t("Novo prompt")}
             className={`${profileHref ? "flex" : "hidden sm:flex"} h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50 lg:px-5`}
           >
             <Plus size={17} />
-            <span className="hidden lg:inline">Novo prompt</span>
+            <span className="hidden lg:inline">{t("Novo prompt")}</span>
           </button>
           {profileHref ? (
             <details
@@ -155,7 +162,7 @@ export default function Header({
               }}
             >
               <summary
-                aria-label="Menu da conta"
+                aria-label={t("Menu da conta")}
                 className="grid size-10 cursor-pointer list-none place-items-center rounded-full bg-media text-sm font-semibold text-foreground [&::-webkit-details-marker]:hidden"
               >
                 <AccountAvatar
@@ -175,31 +182,27 @@ export default function Header({
                   className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"
                 >
                   <UserRound size={16} />
-                  Meu perfil
-                </Link>
+                  {t("Meu perfil")}</Link>
                 <Link
                   href="/home/resources"
                   className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"
                 >
                   <FileCode2 size={16} />
-                  Arquivos e MCPs
-                </Link>
-                {badges?.includes("owner") && <Link href="/home/campaigns" className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><Megaphone size={16}/>Campanhas</Link>}
+                  {t("Arquivos e MCPs")}</Link>
+                {badges?.includes("owner") && <Link href="/home/campaigns" className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><Megaphone size={16}/>{t("Campanhas")}</Link>}
                 <Link
                   href="/home/settings"
                   className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"
                 >
                   <Settings size={16} />
-                  Configurações
-                </Link>
+                  {t("Configurações")}</Link>
                 <button
                   type="button"
                   onClick={onSignOut}
                   className="flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm hover:bg-surface-hover"
                 >
                   <LogOut size={16} />
-                  Sair da conta
-                </button>
+                  {t("Sair da conta")}</button>
               </div>
             </details>
           ) : (
@@ -209,8 +212,7 @@ export default function Header({
               onClick={onLogin}
               className="h-10 shrink-0 rounded-full border border-border px-4 text-sm font-medium hover:bg-surface-hover disabled:opacity-50"
             >
-              Entrar
-            </button>
+              {t("Entrar")}</button>
           )}
         </div>
       </div>

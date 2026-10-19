@@ -1,18 +1,23 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useRef, useState } from "react";
 import { Download, LoaderCircle } from "lucide-react";
 import type { PromptImage } from "@/lib/supabase/types";
 
 export default function PromptReferences({ images }: { images: PromptImage[] }) {
+ const { t } = useI18n();
+
   return <section className="prompt-detail-references" aria-labelledby="references-heading">
-    <h2 id="references-heading">{images.length === 1 ? "Imagem de referência" : "Imagens de referência"}</h2>
-    <p>Baixe e anexe na IA junto com o prompt. Use a ordem indicada abaixo ao mencionar cada imagem.</p>
+    <h2 id="references-heading">{images.length === 1 ? t("Imagem de referência") : t("Imagens de referência")}</h2>
+    <p>{t("Baixe e anexe na IA junto com o prompt. Use a ordem indicada abaixo ao mencionar cada imagem.")}</p>
     <div>{images.map((image, index) => <ReferenceImage key={image.id} image={image} position={index + 1} />)}</div>
   </section>;
 }
 
 function ReferenceImage({ image, position }: { image: PromptImage; position: number }) {
+ const { t } = useI18n();
+
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [failedPreview, setFailedPreview] = useState(false);
@@ -40,7 +45,7 @@ function ReferenceImage({ image, position }: { image: PromptImage; position: num
       // Keep the object URL alive long enough for Safari to start the download.
       window.setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch {
-      setError("Não foi possível baixar. Confira sua conexão e tente novamente.");
+      setError(t("Não foi possível baixar. Confira sua conexão e tente novamente."));
     } finally {
       busy.current = false;
       setPending(false);
@@ -48,14 +53,14 @@ function ReferenceImage({ image, position }: { image: PromptImage; position: num
   }
 
   return <figure>
-    {failedPreview ? <div className="prompt-reference-unavailable">Prévia indisponível</div> :
+    {failedPreview ? <div className="prompt-reference-unavailable">{t("Prévia indisponível")}</div> :
       // eslint-disable-next-line @next/next/no-img-element -- Supports optimized data URLs and published storage URLs.
-      <img src={image.url} alt={image.label || `Referência ${position} do prompt`} loading="lazy" onError={() => setFailedPreview(true)} />}
-    <figcaption><strong>Referência {position}</strong>{image.label && <span>{image.label}</span>}</figcaption>
-    <button type="button" className="workflow-button secondary" disabled={pending} onClick={() => void download()} aria-label={`Baixar referência ${position}`}>
+      <img src={image.url} alt={image.label || t("Referência {v0} do prompt", {v0: (position)})} loading="lazy" onError={() => setFailedPreview(true)} />}
+    <figcaption><strong>{t("Referência")}{" "}{position}</strong>{image.label && <span>{image.label}</span>}</figcaption>
+    <button type="button" className="workflow-button secondary" disabled={pending} onClick={() => void download()} aria-label={t("Baixar referência {v0}", {v0: (position)})}>
       {pending ? <LoaderCircle size={16} className="motion-safe:animate-spin" /> : <Download size={16} />}
-      {pending ? "Baixando…" : "Baixar referência"}
+      {pending ? t("Baixando…") : t("Baixar referência")}
     </button>
-    {error && <p role="alert" className="prompt-reference-error">{error}</p>}
+    {error && <p role="alert" className="prompt-reference-error">{t(error)}</p>}
   </figure>;
 }

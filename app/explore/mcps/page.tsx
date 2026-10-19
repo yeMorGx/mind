@@ -3,7 +3,7 @@ import ResourceCatalog from "@/components/resources/ResourceCatalog";
 import { getPublicResources } from "@/lib/supabase/resource-server";
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Diretório de MCPs · Mind",
+  title: "MCP directory · Mind",
   description:
     "Descubra servidores MCP, documentação oficial e configurações para suas ferramentas de IA.",
 };

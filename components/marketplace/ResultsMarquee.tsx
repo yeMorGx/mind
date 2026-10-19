@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 
@@ -8,18 +9,22 @@ type ResultImage = { id: string; url: string; label: string };
 function ResultTile({ image, index, onOpen }: {
   image: ResultImage; index: number; onOpen: () => void;
 }) {
+ const { t } = useI18n();
+
   const [failed, setFailed] = useState(false);
   return <button type="button" className="results-marquee-card"
-    aria-label={`Ampliar resultado ${index + 1}${image.label ? `: ${image.label}` : ""}`}
+    aria-label={t("Ampliar resultado {v0}{v1}", {v0: (index + 1), v1: (image.label ? `: ${image.label}` : "")})}
     onClick={onOpen}>
     <span className="results-marquee-media">
       {/* eslint-disable-next-line @next/next/no-img-element -- Real optimized data URLs and signed image URLs. */}
-      {failed ? <span className="results-marquee-error">Imagem indisponível</span> : <img src={image.url} alt={image.label || `Resultado ${index + 1}`} draggable={false} loading={index === 0 ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)} />}
+      {failed ? <span className="results-marquee-error">{t("Imagem indisponível")}</span> : <img src={image.url} alt={image.label || t("Resultado {v0}", {v0: (index + 1)})} draggable={false} loading={index === 0 ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)} />}
     </span>
   </button>;
 }
 
 export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
+ const { t } = useI18n();
+
   const viewport=useRef<HTMLDivElement>(null);
   const [paused,setPaused]=useState(false);
   const [dragging, setDragging] = useState(false);
@@ -64,10 +69,10 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
 
   return <section className="results-marquee mt-9" aria-labelledby="prompt-results-heading" data-single={!multiple || undefined}>
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 id="prompt-results-heading" className="text-sm font-medium text-muted">Resultados do prompt</h2>
+      <h2 id="prompt-results-heading" className="text-sm font-medium text-muted">{t("Resultados do prompt")}</h2>
     </div>
     <div ref={viewport} onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)} onFocus={()=>setPaused(true)} onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget))setPaused(false)}} className="results-marquee-viewport" data-dragging={dragging || undefined}
-      role="region" aria-label="Galeria de resultados do prompt" tabIndex={multiple ? 0 : undefined}
+      role="region" aria-label={t("Galeria de resultados do prompt")} tabIndex={multiple ? 0 : undefined}
       onPointerDown={event => {
         suppressClick.current = false;
         if (event.pointerType === "touch" || event.button !== 0 || !multiple) return;
@@ -109,7 +114,7 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
         </div>
       </div>
     </div>
-    <p className="mt-3 text-xs text-muted">{multiple ? "O carrossel avança automaticamente. Passe o mouse ou arraste para explorar; clique para ampliar." : "Clique na imagem para ver o resultado completo."}</p>
+    <p className="mt-3 text-xs text-muted">{multiple ? t("O carrossel avança automaticamente. Passe o mouse ou arraste para explorar; clique para ampliar.") : t("Clique na imagem para ver o resultado completo.")}</p>
 
     <dialog ref={dialog} className="results-lightbox" aria-labelledby="result-viewer-title" onCancel={(event) => { event.preventDefault(); setActive(null); }} onClose={() => setActive(null)}
       onClick={(event) => {
@@ -118,17 +123,17 @@ export default function ResultsMarquee({ images }: { images: ResultImage[] }) {
         if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) setActive(null);
       }} onKeyDown={(event) => { if (multiple && (event.key === "ArrowLeft" || event.key === "ArrowRight")) { event.preventDefault(); step(event.key === "ArrowLeft" ? -1 : 1); } }}>
       {selected && <>
-        <div className="results-lightbox-header"><h2 id="result-viewer-title">{selected.label || `Resultado ${(active ?? 0) + 1}`}</h2><button type="button" aria-label="Fechar imagem ampliada" onClick={() => setActive(null)}><X size={20} /></button></div>
+        <div className="results-lightbox-header"><h2 id="result-viewer-title">{selected.label || t("Resultado {v0}", {v0: ((active ?? 0) + 1)})}</h2><button type="button" aria-label={t("Fechar imagem ampliada")} onClick={() => setActive(null)}><X size={20} /></button></div>
         <div className="results-lightbox-image">
-          {failedImage === selected.id ? <p role="alert">Imagem indisponível. Recarregue a página para tentar novamente.</p> : (
+          {failedImage === selected.id ? <p role="alert">{t("Imagem indisponível. Recarregue a página para tentar novamente.")}</p> : (
             /* eslint-disable-next-line @next/next/no-img-element -- View the exact selected uploaded or signed image. */
-            <img src={selected.url} alt={selected.label || `Resultado ${(active ?? 0) + 1}`} onError={() => setFailedImage(selected.id)} />
+            <img src={selected.url} alt={selected.label || t("Resultado {v0}", {v0: ((active ?? 0) + 1)})} onError={() => setFailedImage(selected.id)} />
           )}
         </div>
         <div className="results-lightbox-footer">
-          {multiple && <button type="button" aria-label="Resultado anterior" onClick={() => step(-1)}><ArrowLeft size={18} /></button>}
+          {multiple && <button type="button" aria-label={t("Resultado anterior")} onClick={() => step(-1)}><ArrowLeft size={18} /></button>}
           <span aria-live="polite">{(active ?? 0) + 1} / {images.length}</span>
-          {multiple && <button type="button" aria-label="Próximo resultado" onClick={() => step(1)}><ArrowRight size={18} /></button>}
+          {multiple && <button type="button" aria-label={t("Próximo resultado")} onClick={() => step(1)}><ArrowRight size={18} /></button>}
         </div>
       </>}
     </dialog>

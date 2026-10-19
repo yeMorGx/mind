@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   try {
     const prompt = await getPublicPrompt(slug);
-    if (!prompt) return { title: "Prompt não encontrado · Mind" };
+    if (!prompt) return { title: "Prompt not found · Mind" };
     const description = prompt.description || prompt.content.slice(0, 150);
     const cover = prompt.images.find((image) => image.role === "gallery")
       ?? prompt.images.find((image) => image.role === "after")
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     };
   } catch {
-    return { title: "Mind · prompts para criadores de IA" };
+    return { title: "Mind · prompts for AI creators" };
   }
 }
 

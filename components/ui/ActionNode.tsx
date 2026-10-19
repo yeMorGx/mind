@@ -1,6 +1,7 @@
 "use client";
 
 // Adapted from Bencho Action node (MIT): https://bencho.dev/licence
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useRef, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { GitCommitHorizontal, Plus, type LucideIcon } from "lucide-react";
@@ -78,6 +79,8 @@ export type NodeAction = { id: string; label: string; icon: LucideIcon; onClick:
 export function ActionNode({ title, description, actions, disabled = false, children, className = "" }: {
   title: string; description: string; actions: NodeAction[]; disabled?: boolean; children?: ReactNode; className?: string;
 }) {
+ const { t } = useI18n();
+
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
   const still = useReducedMotion();
@@ -94,7 +97,7 @@ export function ActionNode({ title, description, actions, disabled = false, chil
     onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); trigger.current?.focus(); setOpen(false); } }}>
     <div className="mind-node-card">
       {children || <><div className="mind-node-top"><GitCommitHorizontal size={18} /><h2>{title}</h2></div><p>{description}</p></>}
-      <button ref={trigger} type="button" className="mind-node-trigger" aria-label="Mostrar ações do prompt" aria-expanded={open} onClick={() => setOpen(true)}><Plus size={18} /></button>
+      <button ref={trigger} type="button" className="mind-node-trigger" aria-label={t("Mostrar ações do prompt")} aria-expanded={open} onClick={() => setOpen(true)}><Plus size={18} /></button>
     </div>
     {/* Anchored ON the corner, so every button's travel is
         measured from the one point they all came out of.

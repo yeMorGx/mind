@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import ResourceClients from "./ResourceClients";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -33,6 +34,8 @@ import {
 import MarkdownContent from "./MarkdownContent";
 import "./resources.css";
 function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
+ const { t, intlLocale } = useI18n();
+
   const { user } = useOnboarding(),
     { requestLogin } = useSiteLayout();
   const [source, setSource] = useState(false),
@@ -70,7 +73,7 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
       setNotice(message);
     } catch {
       setError(
-        "Não foi possível copiar. Selecione o texto e copie manualmente.",
+        t("Não foi possível copiar. Selecione o texto e copie manualmente."),
       );
     }
   }
@@ -85,7 +88,7 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
       await setResourceFavorite(user, resource.id, !favorite);
       setFavorite(!favorite);
     } catch {
-      setError("Não foi possível atualizar o favorito. Tente novamente.");
+      setError(t("Não foi possível atualizar o favorito. Tente novamente."));
     } finally {
       setPending(false);
     }
@@ -95,7 +98,7 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
     <main className="catalog-page resource-detail">
       <Link href={resourceCatalogHref(resource.kind)} className="resource-back">
         <ArrowLeft size={16} />
-        {markdown ? "Arquivos Markdown" : "Diretório de MCPs"}
+        {markdown ? t("Arquivos Markdown") : t("Diretório de MCPs")}
       </Link>
       <header className="resource-detail-heading">
         <div>
@@ -117,7 +120,7 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
           <button
             type="button"
             aria-label={
-              favorite ? "Remover dos favoritos" : "Salvar nos favoritos"
+              favorite ? t("Remover dos favoritos") : t("Salvar nos favoritos")
             }
             aria-pressed={favorite}
             disabled={pending || (Boolean(user) && !favoriteReady)}
@@ -127,14 +130,14 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
           </button>
           <button
             type="button"
-            aria-label="Copiar link da publicação"
+            aria-label={t("Copiar link da publicação")}
             onClick={() => void copy(window.location.href, "Link copiado.")}
           >
             <Share2 size={20} />
           </button>
           {user?.uid === resource.creator_id && (
             <Link
-              aria-label="Editar publicação"
+              aria-label={t("Editar publicação")}
               href={`/home/resources/${resource.id}/edit`}
             >
               <Pencil size={20} />
@@ -154,19 +157,17 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
                     onClick={() => setSource(false)}
                   >
                     <FileText size={16} />
-                    Prévia
-                  </button>
+                    {t("Prévia")}</button>
                   <button
                     type="button"
                     aria-pressed={source}
                     onClick={() => setSource(true)}
                   >
                     <Code2 size={16} />
-                    Código
-                  </button>
+                    {t("Código")}</button>
                 </>
               ) : (
-                <h2>Sobre este MCP</h2>
+                <h2>{t("Sobre este MCP")}</h2>
               )}
             </div>
             {markdown && <span>{doc.fileName}</span>}
@@ -182,11 +183,11 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
               <p>{doc.description || doc.summary}</p>
               <dl>
                 <div>
-                  <dt>Desenvolvedor</dt>
+                  <dt>{t("Desenvolvedor")}</dt>
                   <dd>{doc.developer}</dd>
                 </div>
                 <div>
-                  <dt>Divulgado por</dt>
+                  <dt>{t("Divulgado por")}</dt>
                   <dd>
                     <CreatorIdentity
                       {...resource.creator}
@@ -198,44 +199,44 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
                   </dd>
                 </div>
                 <div>
-                  <dt>Conexão</dt>
+                  <dt>{t("Conexão")}</dt>
                   <dd>
                     {doc.transport === "remote"
-                      ? "Remota (HTTP)"
-                      : "Local (stdio)"}
+                      ? t("Remota (HTTP)")
+                      : t("Local (stdio)")}
                   </dd>
                 </div>
                 <div>
-                  <dt>Autenticação</dt>
-                  <dd>{doc.authentication || "Não informada pelo autor"}</dd>
+                  <dt>{t("Autenticação")}</dt>
+                  <dd>{doc.authentication || t("Não informada pelo autor")}</dd>
                 </div>
                 <div>
-                  <dt>Permissões</dt>
+                  <dt>{t("Permissões")}</dt>
                   <dd>
-                    {doc.permissions || "Consulte a documentação oficial"}
+                    {doc.permissions || t("Consulte a documentação oficial")}
                   </dd>
                 </div>
                 <div>
-                  <dt>Custo</dt>
-                  <dd>{doc.pricing || "Consulte o site oficial"}</dd>
+                  <dt>{t("Custo")}</dt>
+                  <dd>{doc.pricing || t("Consulte o site oficial")}</dd>
                 </div>
               </dl>
             </div>
           )}
           {markdown && doc.description && (
             <section className="resource-detail-section">
-              <h2>Sobre este arquivo</h2>
+              <h2>{t("Sobre este arquivo")}</h2>
               <p>{doc.description}</p>
             </section>
           )}
           <section className="resource-detail-section">
-            <h2>Como usar</h2>
+            <h2>{t("Como usar")}</h2>
             <p>{doc.instructions}</p>
           </section>
           {!markdown && (
             <section className="resource-detail-section">
               <div className="resource-section-heading">
-                <h2>Configuração</h2>
+                <h2>{t("Configuração")}</h2>
                 <button
                   type="button"
                   onClick={() =>
@@ -243,18 +244,15 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
                   }
                 >
                   <Copy size={16} />
-                  Copiar JSON
-                </button>
+                  {t("Copiar JSON")}</button>
               </div>
               <p className="mb-4 text-sm text-muted">
-                Adapte ao seu cliente de IA e preencha suas próprias
-                credenciais, quando necessário.
-              </p>
+                {t("Adapte ao seu cliente de IA e preencha suas próprias credenciais, quando necessário.")}</p>
               <pre className="resource-source">{configuration}</pre>
             </section>
           )}
           <section className="resource-detail-section">
-            <h2>Créditos e licença</h2>
+            <h2>{t("Créditos e licença")}</h2>
             <p>{doc.license}</p>
             {doc.credits && <p>{doc.credits}</p>}
           </section>
@@ -262,12 +260,12 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
         <aside className="resource-detail-aside">
           <div className="resource-download-panel">
             <h2>
-              {markdown ? "Leve para o seu projeto" : "Conheça o servidor"}
+              {markdown ? t("Leve para o seu projeto") : t("Conheça o servidor")}
             </h2>
             <p>
               {markdown
-                ? "Copie as instruções ou baixe o arquivo no formato original."
-                : "Acesse o projeto oficial ou copie a configuração para seu cliente de IA."}
+                ? t("Copie as instruções ou baixe o arquivo no formato original.")
+                : t("Acesse o projeto oficial ou copie a configuração para seu cliente de IA.")}
             </p>
             <button
               type="button"
@@ -280,7 +278,7 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
               }
             >
               <Copy size={16} />
-              {markdown ? "Copiar arquivo" : "Copiar configuração"}
+              {markdown ? t("Copiar arquivo") : t("Copiar configuração")}
             </button>
             {markdown ? (
               <button
@@ -289,16 +287,16 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
                 onClick={() => {
                   try {
                     downloadMarkdown(doc);
-                    setNotice("Download iniciado.");
+                    setNotice(t("Download iniciado."));
                   } catch {
                     setError(
-                      "Não foi possível baixar. Você pode copiar o conteúdo do arquivo.",
+                      t("Não foi possível baixar. Você pode copiar o conteúdo do arquivo."),
                     );
                   }
                 }}
               >
                 <Download size={16} />
-                Baixar {doc.fileName}
+                {t("Baixar")}{" "}{doc.fileName}
               </button>
             ) : (
               <>
@@ -310,35 +308,33 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
                   .filter(([, url]) => url)
                   .map(([label, url]) => (
                     <a
-                      key={label}
+                      key={t(label)}
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="resource-official-link"
                     >
-                      {label}
+                      {t(label)}
                       <ArrowUpRight size={17} />
                     </a>
                   ))}
                 <p className="resource-notice">
-                  Este é um diretório. O Mind não instala nem conecta este
-                  servidor automaticamente.
-                </p>
+                  {t("Este é um diretório. O Mind não instala nem conecta este servidor automaticamente.")}</p>
               </>
             )}
             <dl className="resource-facts">
               <div>
-                <dt>Categoria</dt>
+                <dt>{t("Categoria")}</dt>
                 <dd>{doc.category}</dd>
               </div>
               <div>
-                <dt>Compatível com</dt>
+                <dt>{t("Compatível com")}</dt>
                 <dd><ResourceClients clients={doc.clients}/></dd>
               </div>
               <div>
-                <dt>Atualizado em</dt>
+                <dt>{t("Atualizado em")}</dt>
                 <dd>
-                  {new Date(resource.updated_at).toLocaleDateString("pt-BR", {
+                  {new Date(resource.updated_at).toLocaleDateString(intlLocale, {
                     timeZone: "UTC",
                   })}
                 </dd>
@@ -351,13 +347,13 @@ function ResourceDetailSession({ resource }: { resource: CatalogResource }) {
         {notice && (
           <>
             <Check size={16} />
-            {notice}
+            {t(notice)}
           </>
         )}
       </p>
       {error && (
         <p role="alert" className="resource-error">
-          {error}
+          {t(error)}
         </p>
       )}
       <PromptComments

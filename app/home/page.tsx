@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
@@ -21,6 +22,8 @@ import {
 
 
 export default function HomePage() {
+ const { t } = useI18n();
+
   const router = useRouter();
   const { user, authReady, profileLoading, data } = useOnboarding();
   const { searchValue, activeView, category, model, setCategory, setModel, newPromptOpen, newPromptVersion, openNewPrompt: requestNewPrompt, closeNewPrompt } = useSiteLayout();
@@ -132,7 +135,7 @@ export default function HomePage() {
   }
 
   if (!authReady || profileLoading || !user || !data.onboardingComplete) {
-    return <main className="catalog-page flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">Carregando seu espaço...</main>;
+    return <main className="catalog-page flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted">{t("Carregando seu espaço...")}</main>;
   }
 
   return (
@@ -141,24 +144,24 @@ export default function HomePage() {
       <main className="catalog-page flex min-h-[calc(100dvh-4.5rem)] flex-col pt-7">
         <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col px-5 sm:px-8">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-            <div><h1 className="text-2xl font-semibold tracking-tight">{activeView === "favorites" ? "Favoritos" : "Meus prompts"}</h1><p className="mt-2 text-sm text-muted">Crie, organize e escolha o que compartilhar.</p></div>
+            <div><h1 className="text-2xl font-semibold tracking-tight">{activeView === "favorites" ? t("Favoritos") : t("Meus prompts")}</h1><p className="mt-2 text-sm text-muted">{t("Crie, organize e escolha o que compartilhar.")}</p></div>
             <CatalogFilters categories={[]} models={catalogOptions.models} />
           </div>
           <section className="pb-12">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <div className="catalog-library-categories flex gap-2">{[["", "Tudo"], ...[...new Set(allPrompts.map(prompt => prompt.category || (prompt.images.length ? "Imagem" : "Texto")))].map(value => [value,value])].map(([value,label]) => <button key={value} type="button" onClick={() => setCategory(value)} aria-pressed={category === value} className={`catalog-filter-chip ${category === value ? "is-active" : ""}`}>{label}</button>)}</div>
-              <span className="text-xs text-subtle">{visiblePrompts.length} {visiblePrompts.length === 1 ? "prompt" : "prompts"}</span>
+              <span className="text-xs text-subtle">{visiblePrompts.length} {visiblePrompts.length === 1 ? t("prompt") : t("prompts")}</span>
             </div>
-            {model && <button type="button" onClick={() => setModel("")} className="catalog-filter-chip mb-5 inline-flex items-center gap-2" aria-label={`Remover modelo ${model}`}>{model}<X size={14} /></button>}
+            {model && <button type="button" onClick={() => setModel("")} className="catalog-filter-chip mb-5 inline-flex items-center gap-2" aria-label={t("Remover modelo {v0}", {v0: (model)})}>{model}<X size={14} /></button>}
             {pageError && <p role="alert" className="mb-4 rounded-xl border border-red-400/20 bg-red-400/5 p-4 text-sm text-red-700">{pageError}</p>}
 
             {promptsLoading ? (
-              <p className="py-12 text-center text-sm text-subtle">Carregando prompts…</p>
+              <p className="py-12 text-center text-sm text-subtle">{t("Carregando prompts…")}</p>
             ) : visiblePrompts.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-border p-10 text-center">
-                <p className="font-medium">{searchValue || category || model ? "Nenhum prompt com esses filtros" : activeView === "favorites" ? "Nenhum favorito ainda" : "Sua biblioteca está vazia"}</p>
-                <p className="mt-2 text-sm text-subtle">{searchValue || category || model ? "Tente outra busca ou remova um filtro." : activeView === "favorites" ? "Favorite um prompt para encontrá-lo aqui." : "Crie seu primeiro prompt para começar."}</p>
-                {activeView === "all" && <button onClick={() => openNewPrompt()} className="mt-5 rounded-xl border border-border px-4 py-2 text-sm hover:bg-foreground/5">Criar meu primeiro prompt</button>}
+                <p className="font-medium">{searchValue || category || model ? t("Nenhum prompt com esses filtros") : activeView === "favorites" ? t("Nenhum favorito ainda") : t("Sua biblioteca está vazia")}</p>
+                <p className="mt-2 text-sm text-subtle">{searchValue || category || model ? t("Tente outra busca ou remova um filtro.") : activeView === "favorites" ? t("Favorite um prompt para encontrá-lo aqui.") : t("Crie seu primeiro prompt para começar.")}</p>
+                {activeView === "all" && <button onClick={() => openNewPrompt()} className="mt-5 rounded-xl border border-border px-4 py-2 text-sm hover:bg-foreground/5">{t("Criar meu primeiro prompt")}</button>}
               </div>
             ) : (
               <div className="catalog-grid catalog-library-grid">

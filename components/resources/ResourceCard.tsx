@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Creator images include optimized data URLs and external account avatars. */
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import Link from "next/link";
 import { useState } from "react";
 import { Plug } from "lucide-react";
@@ -14,6 +15,8 @@ export default function ResourceCard({
 }: {
   resource: CatalogResource;
 }) {
+ const { t } = useI18n();
+
   const doc = resource.document;
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -27,7 +30,7 @@ export default function ResourceCard({
       <Link
         href={`/resources/${resource.id}`}
         className="catalog-card-cover resource-card-cover"
-        aria-label={`Abrir ${doc.title}`}
+        aria-label={t("Abrir {v0}", {v0: (doc.title)})}
       >
         {doc.coverUrl ? (
           <>
@@ -40,11 +43,11 @@ export default function ResourceCard({
           <div className="resource-mcp-preview">
             <Plug size={36} strokeWidth={1.4} />
             <strong>{doc.title}</strong>
-            <span>{doc.developer || "Servidor MCP"}</span>
+            <span>{doc.developer || t("Servidor MCP")}</span>
             <code>
               {doc.transport === "remote"
-                ? "Conexão remota"
-                : "Instalação local"}
+                ? t("Conexão remota")
+                : t("Instalação local")}
             </code>
           </div>
         )}

@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingLayout from "@/components/onboarding/OnboardingLayout";
@@ -10,6 +11,8 @@ import { ensureCreatorProfile, getOwnProfile, saveCreatorProfile, profileSaveErr
 import { getUsername } from "@/lib/supabase/creators";
 
 export default function CreatorStep() {
+ const { t } = useI18n();
+
   const router = useRouter();
   const { user, ready } = useOnboardingGuard();
   const { data, updateData } = useOnboarding();
@@ -41,8 +44,8 @@ export default function CreatorStep() {
 
   return <OnboardingLayout step={2}>
     {ready && user && identity && identity.uid === uid ? <CreatorSetupForm key={user.uid} publicId={user.uid} initialName={data.name || user.displayName || ""} initialUsername={identity.username} initialRole={data.role} save={save}/> : <>
-      <h1>Seu perfil de criador.</h1>
-      {error ? <div className="onboarding-status"><p role="alert">Não foi possível carregar seu @. Tente novamente.</p><button type="button" className="onboarding-back" onClick={() => { setError(false); setAttempt(value => value + 1); }}>Tentar novamente</button></div> : <p role="status" className="onboarding-status">Carregando seu perfil…</p>}
+      <h1>{t("Seu perfil de criador.")}</h1>
+      {error ? <div className="onboarding-status"><p role="alert">{t("Não foi possível carregar seu @. Tente novamente.")}</p><button type="button" className="onboarding-back" onClick={() => { setError(false); setAttempt(value => value + 1); }}>{t("Tentar novamente")}</button></div> : <p role="status" className="onboarding-status">{t("Carregando seu perfil…")}</p>}
     </>}
   </OnboardingLayout>;
 }

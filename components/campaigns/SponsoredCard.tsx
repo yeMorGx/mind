@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Advertiser-owned HTTPS media loads directly. */
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useRef, useState } from "react";
 import { ArrowUpRight, ImageOff } from "lucide-react";
 import {
@@ -31,6 +32,8 @@ function CardContent({
   campaign: PublicCampaign;
   preview: boolean;
 }) {
+ const { t } = useI18n();
+
   const video = useRef<HTMLVideoElement>(null),
     root = useCampaignExposure(campaign.id, preview, video);
   const [imageFailed, setImageFailed] = useState(false),
@@ -65,7 +68,7 @@ function CardContent({
     <article
       ref={root}
       className="catalog-public-card wireframe-prompt-card sponsored-card"
-      aria-label={`Patrocinado por ${campaign.advertiser || "anunciante"}`}
+      aria-label={t("Patrocinado por {v0}", {v0: (campaign.advertiser || "anunciante")})}
       onPointerEnter={(e) => {
         if (e.pointerType === "mouse") play();
       }}
@@ -78,7 +81,7 @@ function CardContent({
       <a
         {...link}
         className="catalog-card-cover"
-        aria-label={`${campaign.cta_label || "Conhecer"}: ${campaign.title || "divulgação"}${external ? " (abre em outra aba)" : ""}`}
+        aria-label={t("{v0}: {v1}{v2}", {v0: (campaign.cta_label || "Conhecer"), v1: (campaign.title || "divulgação"), v2: (external ? " (abre em outra aba)" : "")})}
       >
         {image && !imageFailed ? (
           <img
@@ -92,7 +95,7 @@ function CardContent({
           <div className="sponsored-card-empty">
             <ImageOff size={28} />
             <span>
-              {preview ? "Adicione uma capa" : "Conheça o anunciante"}
+              {preview ? t("Adicione uma capa") : t("Conheça o anunciante")}
             </span>
           </div>
         )}
@@ -113,7 +116,7 @@ function CardContent({
             onError={() => setPlaying(false)}
           />
         )}
-        <span className="sponsored-card-label">Patrocinado</span>
+        <span className="sponsored-card-label">{t("Patrocinado")}</span>
       </a>
       <div className="prompt-card-details">
         <div className="sponsored-card-advertiser">
@@ -127,26 +130,25 @@ function CardContent({
             />
           ) : (
             <span className="sponsored-card-initial" aria-hidden="true">
-              {campaign.advertiser.slice(0, 1) || "M"}
+              {campaign.advertiser.slice(0, 1) || t("M")}
             </span>
           )}
-          <span>{campaign.advertiser || "Nome do anunciante"}</span>
+          <span>{campaign.advertiser || t("Nome do anunciante")}</span>
           <ArrowUpRight size={16} aria-hidden="true" />
         </div>
         <a {...link} className="mt-2 block">
           <h2 className="line-clamp-2 break-words text-base font-semibold leading-6">
-            {campaign.title || "O título da sua divulgação"}
+            {campaign.title || t("O título da sua divulgação")}
           </h2>
         </a>
         <p className="prompt-card-summary">
           {campaign.description ||
-            "Uma breve descrição da ferramenta ou parceria."}
+            t("Uma breve descrição da ferramenta ou parceria.")}
         </p>
         <CampaignCoupon code={campaign.coupon_code} />
         {campaign.kind === "affiliate" && (
           <p className="sponsored-card-affiliate">
-            Link de afiliado · Podemos receber uma comissão.
-          </p>
+            {t("Link de afiliado · Podemos receber uma comissão.")}</p>
         )}
       </div>
     </article>

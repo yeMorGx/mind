@@ -75,3 +75,9 @@ SOFTWARE.
 Bits source supplied by the owner. The React Bits / David Haz license reproduced
 above also applies here. Adaptations include effect-based settings synchronization,
 hidden-tab suspension, a static reduced-motion path, and image failure handling.
+
+## Flag icons
+
+The five local SVG country flags in `public/flags` come from lipis/flag-icons
+(https://github.com/lipis/flag-icons), MIT licensed. The copyright and full
+license are included in `public/flags/LICENSE`.

@@ -10,7 +10,7 @@ import {
   getCatalogCreatorBadges,
 } from "@/lib/supabase/server-data";
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Explorar prompts · Mind" };
+export const metadata: Metadata = { title: "Explore prompts · Mind" };
 export default async function Page({
   searchParams,
 }: {

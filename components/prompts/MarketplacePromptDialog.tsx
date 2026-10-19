@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImagePlus, X } from "lucide-react";
@@ -30,6 +31,8 @@ export default function PromptDialog({
   onClose,
   onSave,
 }: PromptDialogProps) {
+ const { t } = useI18n();
+
   const [title, setTitle] = useState(prompt?.title ?? initialTitle);
   const [content, setContent] = useState(prompt?.content ?? "");
   const [description, setDescription] = useState(prompt?.description ?? "");
@@ -116,7 +119,7 @@ export default function PromptDialog({
         <>
           <motion.button
             type="button"
-            aria-label="Fechar editor de prompt"
+            aria-label={t("Fechar editor de prompt")}
             className="fixed inset-0 z-40 cursor-default bg-black/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -138,32 +141,31 @@ export default function PromptDialog({
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-subtle">Publicação</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-subtle">{t("Publicação")}</p>
                   <h2 id="prompt-dialog-title" className="mt-2 text-2xl font-semibold">
-                    {prompt ? "Editar prompt" : "Novo prompt"}
+                    {prompt ? t("Editar prompt") : t("Novo prompt")}
                   </h2>
-                  <p className="mt-1 text-sm text-muted">Mostre o resultado e compartilhe o prompt com seus seguidores.</p>
+                  <p className="mt-1 text-sm text-muted">{t("Mostre o resultado e compartilhe o prompt com seus seguidores.")}</p>
                 </div>
-                <button type="button" onClick={onClose} aria-label="Fechar" className="rounded-full border border-border p-2 text-muted hover:bg-foreground/5 hover:text-foreground">
+                <button type="button" onClick={onClose} aria-label={t("Fechar")} className="rounded-full border border-border p-2 text-muted hover:bg-foreground/5 hover:text-foreground">
                   <X size={18} />
                 </button>
               </div>
 
               <div className="mt-7 grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(250px,.8fr)]">
                 <div>
-                  <label htmlFor="prompt-title" className="block text-sm text-muted">Título</label>
-                  <input id="prompt-title" required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Ex.: Retrato editorial com luz de estúdio" className="mt-2 w-full rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 outline-none focus:border-foreground/30" />
+                  <label htmlFor="prompt-title" className="block text-sm text-muted">{t("Título")}</label>
+                  <input id="prompt-title" required maxLength={120} value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t("Ex.: Retrato editorial com luz de estúdio")} className="mt-2 w-full rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 outline-none focus:border-foreground/30" />
 
-                  <label htmlFor="prompt-description" className="mt-5 block text-sm text-muted">Sobre o resultado</label>
-                  <textarea id="prompt-description" rows={3} maxLength={500} value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Explique o estilo, os ajustes ou como você usou este prompt." className="mt-2 w-full resize-y rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 outline-none focus:border-foreground/30" />
+                  <label htmlFor="prompt-description" className="mt-5 block text-sm text-muted">{t("Sobre o resultado")}</label>
+                  <textarea id="prompt-description" rows={3} maxLength={500} value={description} onChange={(event) => setDescription(event.target.value)} placeholder={t("Explique o estilo, os ajustes ou como você usou este prompt.")} className="mt-2 w-full resize-y rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 outline-none focus:border-foreground/30" />
 
-                  <label htmlFor="prompt-content" className="mt-5 block text-sm text-muted">Prompt</label>
-                  <textarea id="prompt-content" required rows={9} maxLength={20000} value={content} onChange={(event) => setContent(event.target.value)} placeholder="Cole aqui o prompt completo para seus seguidores copiarem." className="mt-2 w-full resize-y rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 font-mono text-sm leading-6 outline-none focus:border-foreground/30" />
+                  <label htmlFor="prompt-content" className="mt-5 block text-sm text-muted">{t("Prompt")}</label>
+                  <textarea id="prompt-content" required rows={9} maxLength={20000} value={content} onChange={(event) => setContent(event.target.value)} placeholder={t("Cole aqui o prompt completo para seus seguidores copiarem.")} className="mt-2 w-full resize-y rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 font-mono text-sm leading-6 outline-none focus:border-foreground/30" />
 
                   <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                    <div className="text-sm text-muted"><SelectField className="marketplace-category-select" label="Categoria" value={category} onValueChange={setCategory} placeholder="Escolha uma categoria" options={["Arte","Retrato","Moda","Produto","Vídeo","Outro"].map(value=>({value,label:value}))}/></div>
-                    <label htmlFor="prompt-model" className="text-sm text-muted">Ferramenta ou modelo
-                      <input id="prompt-model" maxLength={80} value={model} onChange={(event) => setModel(event.target.value)} placeholder="Ex.: Midjourney, Flux, Sora" className="mt-2 w-full rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 outline-none focus:border-foreground/30" />
+                    <div className="text-sm text-muted"><SelectField className="marketplace-category-select" label={t("Categoria")} value={category} onValueChange={setCategory} placeholder={t("Escolha uma categoria")} options={["Arte","Retrato","Moda","Produto","Vídeo","Outro"].map(value=>({value,label:value}))}/></div>
+                    <label htmlFor="prompt-model" className="text-sm text-muted">{t("Ferramenta ou modelo")}<input id="prompt-model" maxLength={80} value={model} onChange={(event) => setModel(event.target.value)} placeholder={t("Ex.: Midjourney, Flux, Sora")} className="mt-2 w-full rounded-xl border border-border bg-foreground/[0.04] px-4 py-3 outline-none focus:border-foreground/30" />
                     </label>
                   </div>
                 </div>
@@ -172,30 +174,29 @@ export default function PromptDialog({
                   <section>
                     <div className="flex items-end justify-between gap-3">
                       <div>
-                        <h3 className="text-sm font-medium">Resultados para o carrossel</h3>
-                        <p className="mt-1 text-xs leading-5 text-subtle">Até 8 imagens · JPG, PNG, WebP ou AVIF · 20 MB cada</p>
+                        <h3 className="text-sm font-medium">{t("Resultados para o carrossel")}</h3>
+                        <p className="mt-1 text-xs leading-5 text-subtle">{t("Até 8 imagens · JPG, PNG, WebP ou AVIF · 20 MB cada")}</p>
                       </div>
                       <label className="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs text-muted hover:bg-foreground/5">
-                        <ImagePlus size={15} /> Adicionar
-                        <input className="sr-only" type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => { addImages(event.target.files, "gallery"); event.currentTarget.value = ""; }} />
+                        <ImagePlus size={15} /> {t("Adicionar")}<input className="sr-only" type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => { addImages(event.target.files, "gallery"); event.currentTarget.value = ""; }} />
                       </label>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       {images.filter((image) => image.role === "gallery").map((image) => (
                         <ImageTile key={image.id ?? image.url} image={image} onRemove={() => removeImage(image)} />
                       ))}
-                      {!images.some((image) => image.role === "gallery") && <div className="col-span-2 rounded-xl border border-dashed border-border p-5 text-center text-xs text-subtle">Adicione exemplos do que este prompt gera.</div>}
+                      {!images.some((image) => image.role === "gallery") && <div className="col-span-2 rounded-xl border border-dashed border-border p-5 text-center text-xs text-subtle">{t("Adicione exemplos do que este prompt gera.")}</div>}
                     </div>
                   </section>
 
-                  <ImageUploadSection title="Imagem de referência (opcional)" image={images.find((item) => item.role === "reference")} onAdd={(files) => addImages(files, "reference")} onRemove={(image) => removeImage(image)} />
+                  <ImageUploadSection title={t("Imagem de referência (opcional)")} image={images.find((item) => item.role === "reference")} onAdd={(files) => addImages(files, "reference")} onRemove={(image) => removeImage(image)} />
 
                   <section>
-                    <h3 className="text-sm font-medium">Antes e depois (opcional)</h3>
-                    <p className="mt-1 text-xs leading-5 text-subtle">As duas imagens aparecem em um comparador interativo na publicação.</p>
+                    <h3 className="text-sm font-medium">{t("Antes e depois (opcional)")}</h3>
+                    <p className="mt-1 text-xs leading-5 text-subtle">{t("As duas imagens aparecem em um comparador interativo na publicação.")}</p>
                     <div className="mt-3 grid grid-cols-2 gap-3">
-                      <ImageUploadSection compact title="Antes" image={before} onAdd={(files) => addImages(files, "before")} onRemove={(image) => removeImage(image)} />
-                      <ImageUploadSection compact title="Depois" image={after} onAdd={(files) => addImages(files, "after")} onRemove={(image) => removeImage(image)} />
+                      <ImageUploadSection compact title={t("Antes")} image={before} onAdd={(files) => addImages(files, "before")} onRemove={(image) => removeImage(image)} />
+                      <ImageUploadSection compact title={t("Depois")} image={after} onAdd={(files) => addImages(files, "after")} onRemove={(image) => removeImage(image)} />
                     </div>
                     {before?.url && after?.url && (
                       <div className="mt-3 overflow-hidden rounded-xl">
@@ -205,21 +206,20 @@ export default function PromptDialog({
                   </section>
 
                   <div className="rounded-xl border border-border bg-foreground/[0.025] p-4 text-xs leading-5 text-subtle">
-                    <strong className="font-medium text-muted">Ao publicar</strong>, qualquer pessoa poderá ver a página e copiar o prompt sem criar uma conta. Você pode salvar como rascunho enquanto prepara as imagens.
-                  </div>
+                    <strong className="font-medium text-muted">{t("Ao publicar")}</strong>{t(", qualquer pessoa poderá ver a página e copiar o prompt sem criar uma conta. Você pode salvar como rascunho enquanto prepara as imagens.")}</div>
                 </aside>
               </div>
 
               {(localError || error) && <p role="alert" className="mt-5 rounded-xl border border-red-400/20 bg-red-400/5 p-3 text-sm text-red-700">{localError || error}</p>}
 
               <div className="mt-7 flex flex-col-reverse justify-between gap-3 border-t border-border pt-5 sm:flex-row">
-                <button type="button" onClick={onClose} className="rounded-xl border border-border px-5 py-3 text-muted hover:bg-foreground/5">Cancelar</button>
+                <button type="button" onClick={onClose} className="rounded-xl border border-border px-5 py-3 text-muted hover:bg-foreground/5">{t("Cancelar")}</button>
                 <div className="flex flex-col-reverse gap-3 sm:flex-row">
                   <button type="button" disabled={pending || !title.trim() || !content.trim()} onClick={() => save("draft")} className="rounded-xl border border-border px-5 py-3 text-foreground disabled:opacity-50">
-                    {pending ? "Salvando…" : "Salvar rascunho"}
+                    {pending ? t("Salvando…") : t("Salvar rascunho")}
                   </button>
                   <button type="button" disabled={pending || !title.trim() || !content.trim()} onClick={() => save("published")} className="rounded-xl bg-primary px-5 py-3 font-semibold text-primary-foreground disabled:opacity-50">
-                    {pending ? "Salvando…" : prompt?.status === "published" ? "Salvar publicação" : "Publicar prompt"}
+                    {pending ? t("Salvando…") : prompt?.status === "published" ? t("Salvar publicação") : t("Publicar prompt")}
                   </button>
                 </div>
               </div>
@@ -244,6 +244,8 @@ function ImageUploadSection({
   onRemove: (image: PromptImageInput) => void;
   compact?: boolean;
 }) {
+ const { t } = useI18n();
+
   return (
     <div className={compact ? "min-w-0" : ""}>
       <p className="text-xs text-muted">{title}</p>
@@ -252,7 +254,7 @@ function ImageUploadSection({
       ) : (
         <label className="mt-2 flex min-h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border px-2 py-4 text-center text-xs text-subtle hover:bg-foreground/[0.03]">
           <ImagePlus size={17} />
-          <span>{compact ? "Adicionar" : "Selecionar imagem"}</span>
+          <span>{compact ? t("Adicionar") : t("Selecionar imagem")}</span>
           <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => { onAdd(event.target.files); event.currentTarget.value = ""; }} />
         </label>
       )}
@@ -261,13 +263,15 @@ function ImageUploadSection({
 }
 
 function ImageTile({ image, onRemove, compact = false }: { image: PromptImageInput; onRemove: () => void; compact?: boolean }) {
+ const { t } = useI18n();
+
   return (
     <div className="relative mt-2 overflow-hidden rounded-xl border border-border bg-foreground/[0.03]">
-      <img src={image.url} alt={image.label || "Prévia da imagem selecionada"} className="aspect-[4/3] w-full object-cover" />
-      <button type="button" aria-label={`Remover ${image.label || "imagem"}`} onClick={onRemove} className="absolute right-2 top-2 rounded-full bg-black/75 p-1.5 text-white hover:bg-black">
+      <img src={image.url} alt={image.label || t("Prévia da imagem selecionada")} className="aspect-[4/3] w-full object-cover" />
+      <button type="button" aria-label={t("Remover {v0}", {v0: (image.label || "imagem")})} onClick={onRemove} className="absolute right-2 top-2 rounded-full bg-black/75 p-1.5 text-white hover:bg-black">
         <X size={14} />
       </button>
-      {!compact && <p className="truncate px-2 py-1.5 text-[11px] text-subtle">{image.label || "Imagem"}</p>}
+      {!compact && <p className="truncate px-2 py-1.5 text-[11px] text-subtle">{image.label || t("Imagem")}</p>}
     </div>
   );
 }

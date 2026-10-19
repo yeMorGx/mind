@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import {
   createContext,
   useContext,
@@ -46,23 +47,27 @@ export function useSiteLayout() {
   return value;
 }
 export function useCatalogOptions(items: CatalogItem[]) {
+ const { intlLocale } = useI18n();
+
   const categories = useMemo(
     () =>
       [...new Set(items.map(catalogCategory))].sort((a, b) =>
-        a.localeCompare(b, "pt-BR"),
+        a.localeCompare(b, intlLocale),
       ),
-    [items],
+    [items, intlLocale],
   );
   const models = useMemo(
     () =>
       [...new Set(items.map((item) => item.model).filter(Boolean))].sort(
-        (a, b) => a.localeCompare(b, "pt-BR"),
+        (a, b) => a.localeCompare(b, intlLocale),
       ),
-    [items],
+    [items, intlLocale],
   );
   return { categories, models };
 }
 export default function SiteLayout({ children }: { children: ReactNode }) {
+ const { t } = useI18n();
+
   const { user, authReady, data, mfaRequired } = useOnboarding();
   const pathname = usePathname();
   const router = useRouter();
@@ -163,7 +168,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       resetFilters();
       router.replace("/");
     } catch {
-      setError("Não foi possível sair da conta. Tente novamente.");
+      setError(t("Não foi possível sair da conta. Tente novamente."));
     }
   }
   // The landing is protected and does not receive internal navigation or styles.
@@ -180,7 +185,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
           }
         }}
         onSignOut={logout}
-        externalError={error}
+        externalError={t(error)}
       />
     );
   return (
@@ -204,8 +209,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       <SocialProvider>
         <div className="site-app min-h-screen bg-background text-foreground">
           <a href="#conteudo" className="skip-link">
-            Pular para o conteúdo
-          </a>
+            {t("Pular para o conteúdo")}</a>
           {!onboarding && (
             <Header
               searchValue={searchValue}
@@ -251,14 +255,13 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
                 role="alert"
                 className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pt-5 text-sm text-red-700"
               >
-                <p>{error}</p>
+                <p>{t(error)}</p>
                 <button
                   type="button"
                   onClick={() => setError("")}
                   className="underline"
                 >
-                  Fechar
-                </button>
+                  {t("Fechar")}</button>
               </div>
             )}
             {children}

@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import {AnimatedCheckbox} from "@/components/ui/animated-checkbox";
 import { SelectField } from "@/components/ui/SelectField";
 /* eslint-disable @next/next/no-img-element -- Locally optimized uploaded covers use data URLs. */
@@ -55,6 +56,8 @@ function ResourceEditorSession({
   kind: ResourceKind;
   id?: string;
 }) {
+ const { t, intlLocale } = useI18n();
+
   const { user, authReady } = useOnboarding();
   const { requestLogin } = useSiteLayout();
   const router = useRouter();
@@ -182,7 +185,7 @@ function ResourceEditorSession({
       dirty.current = false;
       if (publish) setStage("done");
       else {
-        setNotice("Rascunho salvo. Só você pode vê-lo.");
+        setNotice(t("Rascunho salvo. Só você pode vê-lo."));
         if (!id) router.replace(`/home/resources/${value.id}/edit`);
       }
     } catch (failure) {
@@ -232,22 +235,18 @@ function ResourceEditorSession({
     return (
       <main className="catalog-page resource-editor">
         <p role="status" className="py-16 text-center text-muted">
-          Carregando publicação…
-        </p>
+          {t("Carregando publicação…")}</p>
       </main>
     );
   if (!user)
     return (
       <main className="catalog-page resource-editor">
         <div className="catalog-empty">
-          <h1>Compartilhe com a comunidade.</h1>
+          <h1>{t("Compartilhe com a comunidade.")}</h1>
           <p>
-            Entre na sua conta para criar um arquivo Markdown ou divulgar um
-            MCP.
-          </p>
+            {t("Entre na sua conta para criar um arquivo Markdown ou divulgar um MCP.")}</p>
           <button type="button" onClick={requestLogin}>
-            Entrar na conta
-          </button>
+            {t("Entrar na conta")}</button>
         </div>
       </main>
     );
@@ -255,9 +254,9 @@ function ResourceEditorSession({
     return (
       <main className="catalog-page resource-editor">
         <div className="catalog-empty">
-          <h1>Não foi possível abrir a publicação.</h1>
-          <p role="alert">{error}</p>
-          <Link href="/home/resources">Voltar às minhas publicações</Link>
+          <h1>{t("Não foi possível abrir a publicação.")}</h1>
+          <p role="alert">{t(error)}</p>
+          <Link href="/home/resources">{t("Voltar às minhas publicações")}</Link>
         </div>
       </main>
     );
@@ -266,15 +265,14 @@ function ResourceEditorSession({
       <main className="catalog-page resource-editor">
         <div className="resource-published">
           <Check size={36} />
-          <h1>Pronto para compartilhar.</h1>
-          <p>{doc.title} está público e já aparece no seu perfil.</p>
+          <h1>{t("Pronto para compartilhar.")}</h1>
+          <p>{doc.title} {t("está público e já aparece no seu perfil.")}</p>
           <div className="resource-actions">
             <Link
               className="workflow-button"
               href={`/resources/${resourceId.current}`}
             >
-              Ver publicação
-            </Link>
+              {t("Ver publicação")}</Link>
             <button
               className="workflow-button secondary"
               onClick={async () => {
@@ -282,22 +280,20 @@ function ResourceEditorSession({
                   await navigator.clipboard.writeText(
                     `${window.location.origin}/resources/${resourceId.current}`,
                   );
-                  setNotice("Link copiado.");
+                  setNotice(t("Link copiado."));
                 } catch {
                   setError(
-                    "Não foi possível copiar. Abra a publicação e copie o endereço do navegador.",
+                    t("Não foi possível copiar. Abra a publicação e copie o endereço do navegador."),
                   );
                 }
               }}
             >
-              Copiar link
-            </button>
+              {t("Copiar link")}</button>
           </div>
-          <p role="status">{notice}</p>
-          {error && <p role="alert">{error}</p>}
+          <p role="status">{t(notice)}</p>
+          {error && <p role="alert">{t(error)}</p>}
           <Link href="/home/resources" className="text-sm underline">
-            Voltar às minhas publicações
-          </Link>
+            {t("Voltar às minhas publicações")}</Link>
         </div>
       </main>
     );
@@ -305,21 +301,20 @@ function ResourceEditorSession({
     <main className="catalog-page resource-editor">
       <Link href="/home/resources" className="resource-back">
         <ArrowLeft size={16} />
-        Minhas publicações
-      </Link>
+        {t("Minhas publicações")}</Link>
       <div className="resource-editor-heading">
         <div>
           <h1>
             {stage === "review"
-              ? "Revise antes de publicar"
-              : `${id ? "Editar" : "Novo"} ${kind === "mcp" ? "MCP" : "arquivo Markdown"}`}
+              ? t("Revise antes de publicar")
+              : t("{v0} {v1}", {v0: (id ? "Editar" : "Novo"), v1: (kind === "mcp" ? "MCP" : "arquivo Markdown")})}
           </h1>
           <p>
             {stage === "review"
-              ? "Confira o que as pessoas vão encontrar na sua página pública."
+              ? t("Confira o que as pessoas vão encontrar na sua página pública.")
               : existing?.status === "published"
-                ? "Ao publicar as alterações, a página pública será atualizada."
-                : "Salve como rascunho e publique quando estiver pronto."}
+                ? t("Ao publicar as alterações, a página pública será atualizada.")
+                : t("Salve como rascunho e publique quando estiver pronto.")}
           </p>
         </div>
         {stage === "edit" && kind === "markdown" && (
@@ -328,7 +323,7 @@ function ResourceEditorSession({
             className="workflow-button secondary"
             onClick={() => setPreview((value) => !value)}
           >
-            {preview ? "Editar conteúdo" : "Pré-visualizar"}
+            {preview ? t("Editar conteúdo") : t("Pré-visualizar")}
           </button>
         )}
       </div>
@@ -355,9 +350,9 @@ function ResourceEditorSession({
           <div className="resource-editor-grid">
             <section
               className="resource-editor-main"
-              aria-label="Conteúdo da publicação"
+              aria-label={t("Conteúdo da publicação")}
             >
-              <Field label="Título *">
+              <Field label={t("Título *")}>
                 {input(
                   "title",
                   120,
@@ -367,7 +362,7 @@ function ResourceEditorSession({
                 )}
               </Field>
               <Field
-                label="Descrição breve *"
+                label={t("Descrição breve *")}
                 hint={`${doc.summary.length}/180 · Aparece no card.`}
               >
                 {text("summary", 180, 2, "O que este recurso ajuda a fazer?")}
@@ -375,13 +370,12 @@ function ResourceEditorSession({
               {kind === "markdown" ? (
                 <>
                   <div className="resource-file-row">
-                    <Field label="Nome do arquivo *">
+                    <Field label={t("Nome do arquivo *")}>
                       {input("fileName", 80, "CLAUDE.md")}
                     </Field>
                     <label className="workflow-button secondary resource-upload">
                       <FileUp size={16} />
-                      Importar .md
-                      <input
+                      {t("Importar .md")}<input
                         type="file"
                         accept=".md,text/markdown,text/plain"
                         disabled={uploading}
@@ -395,8 +389,7 @@ function ResourceEditorSession({
                   </div>
                   <div className="resource-field">
                     <label htmlFor="resource-content">
-                      Conteúdo do arquivo *
-                    </label>
+                      {t("Conteúdo do arquivo *")}</label>
                     {preview ? (
                       <div className="resource-editor-preview">
                         <MarkdownContent
@@ -413,72 +406,70 @@ function ResourceEditorSession({
                           update("content", event.target.value)
                         }
                         rows={22}
-                        placeholder="# Instruções para o projeto\n\nEscreva aqui o conteúdo do seu arquivo…"
+                        placeholder={t("# Instruções para o projeto\\n\\nEscreva aqui o conteúdo do seu arquivo…")}
                       />
                     )}
                     <p>
-                      {doc.content.length.toLocaleString("pt-BR")}/100.000
+                      {doc.content.length.toLocaleString(intlLocale)}/100.000
                       caracteres · Markdown, sem executar HTML.
                     </p>
                   </div>
                 </>
               ) : (
                 <>
-                  <h2>Links oficiais</h2>
+                  <h2>{t("Links oficiais")}</h2>
                   <Field
-                    label="Desenvolvedor / organização *"
+                    label={t("Desenvolvedor / organização *")}
                     hint="Informe quem mantém o MCP. Você aparecerá como quem o divulgou."
                   >
                     {input("developer", 1000)}
                   </Field>
-                  <Field label="Site oficial *">
+                  <Field label={t("Site oficial *")}>
                     {input("website", 2048, "https://")}
                   </Field>
-                  <Field label="Documentação *">
+                  <Field label={t("Documentação *")}>
                     {input("documentation", 2048, "https://")}
                   </Field>
-                  <Field label="Repositório">
+                  <Field label={t("Repositório")}>
                     {input("repository", 2048, "https://github.com/…")}
                   </Field>
-                  <h2>Conexão</h2>
+                  <h2>{t("Conexão")}</h2>
                   <div className="resource-field"><SelectField
-                    label="Tipo de conexão"
+                    label={t("Tipo de conexão")}
                     value={doc.transport}
                     onValueChange={(value) => update("transport", value as "remote" | "stdio")}
-                    options={[{value:"remote",label:"Remota (HTTP)"},{value:"stdio",label:"Local (stdio)"}]}
+                    options={[{value:"remote",label:t("Remota (HTTP)")},{value:"stdio",label:t("Local (stdio)")}]}
                   /></div>
                   {doc.transport === "remote" ? (
-                    <Field label="URL do servidor">
+                    <Field label={t("URL do servidor")}>
                       {input("remoteUrl", 2048, "https://exemplo.com/mcp")}
                     </Field>
                   ) : (
                     <>
-                      <Field label="Comando">
+                      <Field label={t("Comando")}>
                         {input("command", 500, "npx")}
                       </Field>
-                      <Field label="Argumentos (lista JSON)">
+                      <Field label={t("Argumentos (lista JSON)")}>
                         {text("args", 5000, 3, '["-y", "nome-do-pacote"]')}
                       </Field>
                     </>
                   )}
                   <Field
-                    label="Configuração JSON (opcional)"
+                    label={t("Configuração JSON (opcional)")}
                     hint="Use valores de exemplo no lugar de tokens e senhas. Este conteúdo ficará público."
                   >
                     {text("config", 10000, 8, '{ "mcpServers": { … } }')}
                   </Field>
                   <div className="resource-notice">
-                    O Mind divulga o MCP. Nenhum comando ou configuração será
-                    executado pelo site.
-                  </div>
-                  <Field label="Autenticação">
+                    {t("O Mind divulga o MCP. Nenhum comando ou configuração será executado pelo site.")}</div>
+                  <Field label={t("Autenticação")}>
                     {input(
                       "authentication",
                       1000,
                       "Ex.: OAuth, token pessoal ou sem autenticação",
                     )}
                   </Field>
-                  <Field label="Permissões necessárias">
+                  <Field label={t("Permissões necessárias")}>
                     {text(
                       "permissions",
                       1000,
@@ -486,7 +477,7 @@ function ResourceEditorSession({
                       "Quais dados o servidor poderá acessar?",
                     )}
                   </Field>
-                  <Field label="Custo / plano">
+                  <Field label={t("Custo / plano")}>
                     {input(
                       "pricing",
                       1000,
@@ -495,7 +486,7 @@ function ResourceEditorSession({
                   </Field>
                 </>
               )}
-              <Field label="Sobre este recurso">
+              <Field label={t("Sobre este recurso")}>
                 {text(
                   "description",
                   5000,
@@ -503,7 +494,7 @@ function ResourceEditorSession({
                   "Contexto, exemplos e o que vale saber antes de usar.",
                 )}
               </Field>
-              <Field label="Como usar *">
+              <Field label={t("Como usar *")}>
                 {text(
                   "instructions",
                   5000,
@@ -515,26 +506,26 @@ function ResourceEditorSession({
               </Field>
             </section>
             <aside className="resource-editor-aside">
-              <h2>Detalhes da publicação</h2>
+              <h2>{t("Detalhes da publicação")}</h2>
               <Field
                 label={
-                  kind === "mcp" ? "Logo ou capa (opcional)" : "Capa (opcional)"
+                  kind === "mcp" ? t("Logo ou capa (opcional)") : t("Capa (opcional)")
                 }
                 hint="JPEG, PNG ou WebP, até 5 MB. Otimizada ao enviar."
               >
                 <span className="resource-cover-upload">
                   {doc.coverUrl ? (
                     <>
-                      <img src={doc.coverUrl} alt="Prévia da capa" />
+                      <img src={doc.coverUrl} alt={t("Prévia da capa")} />
                     </>
                   ) : (
                     <>
                       <Upload size={23} />
-                      <span>Escolher imagem</span>
+                      <span>{t("Escolher imagem")}</span>
                     </>
                   )}
                   <input
-                    aria-label="Escolher capa"
+                    aria-label={t("Escolher capa")}
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
                     disabled={uploading}
@@ -553,20 +544,19 @@ function ResourceEditorSession({
                   onClick={() => update("coverUrl", "")}
                 >
                   <X size={15} />
-                  Remover capa
-                </button>
+                  {t("Remover capa")}</button>
               )}
               <div className="resource-field"><SelectField
-                label="Categoria *"
+                label={t("Categoria *")}
                 required
                 value={doc.category}
                 onValueChange={(value) => update("category", value)}
-                placeholder="Selecionar categoria"
+                placeholder={t("Selecionar categoria")}
                 options={RESOURCE_CATEGORIES.map((value) => ({value,label:value}))}
               /></div>
               <fieldset className="resource-clients">
-                <legend>Ferramentas compatíveis</legend>
-                <p>Selecione apenas as que você conferiu.</p>
+                <legend>{t("Ferramentas compatíveis")}</legend>
+                <p>{t("Selecione apenas as que você conferiu.")}</p>
                 {RESOURCE_CLIENTS.map((value) => (
                   <AnimatedCheckbox key={value}
                       checked={doc.clients.includes(value)}
@@ -583,14 +573,14 @@ function ResourceEditorSession({
                   </AnimatedCheckbox>
                 ))}
               </fieldset>
-              <Field label="Licença / condições de uso *">
+              <Field label={t("Licença / condições de uso *")}>
                 {input(
                   "license",
                   1000,
                   "Ex.: MIT, CC BY 4.0 ou link dos termos",
                 )}
               </Field>
-              <Field label="Créditos / fonte original">
+              <Field label={t("Créditos / fonte original")}>
                 {text(
                   "credits",
                   1000,
@@ -604,18 +594,18 @@ function ResourceEditorSession({
         <div className="resource-editor-bottom">
           {error && (
             <p role="alert" className="resource-error">
-              {error}
+              {t(error)}
             </p>
           )}
           <p role="status" className="resource-save-notice">
-            {notice}
-            {uploading && "Preparando arquivo…"}
+            {t(notice)}
+            {uploading && t("Preparando arquivo…")}
           </p>
           <div className="resource-editor-bottom-actions">
             <span>
               {stage === "review"
-                ? "Última etapa · Confirmar publicação"
-                : "Rascunhos ficam privados"}
+                ? t("Última etapa · Confirmar publicação")
+                : t("Rascunhos ficam privados")}
             </span>
             <div>
               {stage === "review" ? (
@@ -625,8 +615,7 @@ function ResourceEditorSession({
                   className="workflow-button secondary"
                   onClick={() => setStage("edit")}
                 >
-                  Voltar à edição
-                </button>
+                  {t("Voltar à edição")}</button>
               ) : (
                 <button
                   type="button"
@@ -635,10 +624,10 @@ function ResourceEditorSession({
                   onClick={() => void persist(false)}
                 >
                   {busy
-                    ? "Salvando…"
+                    ? t("Salvando…")
                     : existing?.status === "published"
-                      ? "Salvar como rascunho"
-                      : "Salvar rascunho"}
+                      ? t("Salvar como rascunho")
+                      : t("Salvar rascunho")}
                 </button>
               )}
               <button
@@ -654,9 +643,9 @@ function ResourceEditorSession({
                 )}
                 {stage === "review"
                   ? busy
-                    ? "Publicando…"
-                    : "Confirmar publicação"
-                  : "Revisar publicação"}
+                    ? t("Publicando…")
+                    : t("Confirmar publicação")
+                  : t("Revisar publicação")}
               </button>
             </div>
           </div>

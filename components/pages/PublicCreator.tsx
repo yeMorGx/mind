@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import { resolveUsername } from "@/lib/supabase/creators";
 import { creatorProfileHref } from "@/lib/usernames";
@@ -7,6 +8,8 @@ import { getPublicCreator, getCreatorPrompts, getSharedPrompt, type CreatorProfi
 import type { Prompt } from "@/lib/supabase/types";
 import CreatorProfileView from "@/components/pages/CreatorProfileView";
 export default function PublicCreator({ creatorId, promptId }: { creatorId: string; promptId?: string }) {
+ const { t } = useI18n();
+
   const [revision, setRevision] = useState(0);
   useEffect(() => { const refresh = () => setRevision(value => value + 1); window.addEventListener("mind:username",refresh); return () => window.removeEventListener("mind:username",refresh); }, []);
   const requestKey = `${creatorId}:${promptId ?? ""}`;
@@ -33,6 +36,6 @@ export default function PublicCreator({ creatorId, promptId }: { creatorId: stri
   if (current?.prompt) return <PublicPromptPage prompt={current.prompt} creatorHref={creatorProfileHref(current.resolvedId,current.profile.username)} creatorProfile={current.profile} creatorPrompts={current.prompts.filter(item=>item.id!==current.prompt?.id).slice(0,3)} />;
   if (current) return <CreatorProfileView profile={current.profile} prompts={current.prompts} creatorId={current.resolvedId} promptsError={current.promptsError} />;
   return <main className="min-h-[calc(100dvh-4.5rem)] bg-background px-5 py-10 text-foreground"><div className="mx-auto mt-14 max-w-5xl">
-    <p role="status" className="text-center text-muted">{error?.key === requestKey ? error.message : promptId ? "Carregando prompt…" : "Carregando perfil…"}</p>
+    <p role="status" className="text-center text-muted">{error?.key === requestKey ? error.message : promptId ? t("Carregando prompt…") : t("Carregando perfil…")}</p>
   </div></main>;
 }

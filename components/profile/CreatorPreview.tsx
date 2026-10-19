@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import { HoverCard } from "radix-ui";
 import Link from "next/link";
@@ -18,6 +19,8 @@ function loadProfile(id: string) {
   return profile;
 }
 export default function CreatorPreview({ prompt }: { prompt: Prompt }) {
+ const { t } = useI18n();
+
   const [open, setOpen] = useState(false);
   const [result, setResult] = useState<{ profile: CreatorProfile | null } | null>(null);
   const href = creatorProfileHref(prompt.creatorId, prompt.creatorSlug);
@@ -32,9 +35,9 @@ export default function CreatorPreview({ prompt }: { prompt: Prompt }) {
     <HoverCard.Trigger asChild><CreatorIdentity {...identity} username={undefined}/></HoverCard.Trigger>
     <HoverCard.Portal><HoverCard.Content className="creator-preview" side="top" sideOffset={12} collisionPadding={16}>
       <CreatorIdentity {...identity} name={result?.profile?.name || identity.name} avatarUrl={result?.profile?.avatarUrl || identity.avatarUrl} badges={result?.profile?.badges ?? identity.badges}/>
-      {!result ? <div className="creator-preview-loading" aria-label="Carregando apresentação"><span className="image-skeleton"/><span className="image-skeleton"/></div> : <p>{result.profile?.headline || result.profile?.bio || "Conheça os prompts e resultados deste criador."}</p>}
+      {!result ? <div className="creator-preview-loading" aria-label={t("Carregando apresentação")}><span className="image-skeleton"/><span className="image-skeleton"/></div> : <p>{result.profile?.headline || result.profile?.bio || t("Conheça os prompts e resultados deste criador.")}</p>}
       <FollowControls creatorId={prompt.creatorId}/>
-      <Link href={href} className="creator-preview-link">Ver perfil completo <ArrowUpRight size={15}/></Link>
+      <Link href={href} className="creator-preview-link">{t("Ver perfil completo")}{" "}<ArrowUpRight size={15}/></Link>
     </HoverCard.Content></HoverCard.Portal>
   </HoverCard.Root>;
 }

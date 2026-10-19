@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import SponsoredCard from "@/components/campaigns/SponsoredCard";
 import SponsoredHero from "@/components/campaigns/SponsoredHero";
 import type {PublicCampaign} from "@/lib/campaigns/types";
@@ -37,6 +38,8 @@ export default function ExploreCatalog({
   searchQuery?: string;
   initialCategory?: string;
 }) {
+ const { t, intlLocale } = useI18n();
+
   const {
     setSearchValue,
     category,
@@ -66,12 +69,12 @@ export default function ExploreCatalog({
         .filter((prompt) => matchesCatalog(prompt, "", category, model))
         .sort((a, b) =>
           ordering === "title"
-            ? a.title.localeCompare(b.title, "pt-BR")
+            ? a.title.localeCompare(b.title, intlLocale)
             : ordering === "recent"
               ? b.createdAt - a.createdAt
               : 0,
         ),
-    [prompts, category, model, ordering],
+    [prompts, category, model, ordering, intlLocale],
   );
   return (
     <main className="catalog-page explore-page min-h-[calc(100dvh-4.5rem)]">
@@ -79,10 +82,10 @@ export default function ExploreCatalog({
       <ResourceTabs active="prompts" />
       <div className="explore-heading">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Explorar</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("Explorar")}</h1>
           {searchQuery && (
             <p className="mt-2 text-sm text-muted">
-              Resultados para “{searchQuery}”
+              {t("Resultados para “")}{searchQuery}”
             </p>
           )}
         </div>
@@ -96,8 +99,7 @@ export default function ExploreCatalog({
                   )
                 }
               >
-                Me surpreenda
-              </InteractiveButton>
+                {t("Me surpreenda")}</InteractiveButton>
             )}
             <ExploreFilters
               {...options}
@@ -118,11 +120,10 @@ export default function ExploreCatalog({
       {!peopleOnly &&
         (loadFailed ? (
           <div className="catalog-empty">
-            <h2>Não foi possível carregar os prompts.</h2>
-            <p>Confira sua conexão e tente novamente.</p>
+            <h2>{t("Não foi possível carregar os prompts.")}</h2>
+            <p>{t("Confira sua conexão e tente novamente.")}</p>
             <button type="button" onClick={() => window.location.reload()}>
-              Tentar novamente
-            </button>
+              {t("Tentar novamente")}</button>
           </div>
         ) : visible.length ? (
           <div className="catalog-grid">
@@ -138,26 +139,24 @@ export default function ExploreCatalog({
           <div className="catalog-empty">
             <h2>
               {searchQuery || prompts.length
-                ? "Nenhum prompt com essa busca ou filtros."
-                : "As primeiras publicações estão chegando."}
+                ? t("Nenhum prompt com essa busca ou filtros.")
+                : t("As primeiras publicações estão chegando.")}
             </h2>
             <p>
               {searchQuery || prompts.length
-                ? "Tente outra busca ou ajuste os filtros."
-                : "Crie um prompt na sua biblioteca e escolha quando publicar."}
+                ? t("Tente outra busca ou ajuste os filtros.")
+                : t("Crie um prompt na sua biblioteca e escolha quando publicar.")}
             </p>
             {!searchQuery && !prompts.length && (
               <button type="button" onClick={openNewPrompt}>
-                Criar meu primeiro prompt
-              </button>
+                {t("Criar meu primeiro prompt")}</button>
             )}
           </div>
         ))}
       {searchQuery && resources.length > 0 && (
         <section className="mt-12">
           <h2 className="mb-6 text-xl font-semibold">
-            Arquivos Markdown e MCPs
-          </h2>
+            {t("Arquivos Markdown e MCPs")}</h2>
           <div className="catalog-grid">
             {resources.map((resource) => (
               <ResourceCard key={resource.id} resource={resource} />

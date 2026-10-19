@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
@@ -24,6 +25,8 @@ import { CampaignEditor } from "./CampaignEditor";
 import "./campaign-manager.css";
 type Result = { campaigns: Campaign[]; total: number };
 function ManagerSession() {
+ const { t } = useI18n();
+
   const { user, authReady } = useOnboarding(),
     { requestLogin } = useSiteLayout();
   const [result, setResult] = useState<Result | null>(null),
@@ -88,7 +91,7 @@ function ManagerSession() {
     setEditor(null);
     setMessage(
       status === "active"
-        ? "Divulgação salva. O período escolhido define quando ela aparece no Explorar."
+        ? t("Divulgação salva. O período escolhido define quando ela aparece no Explorar.")
         : "Campanha salva fora do ar.",
     );
     reload();
@@ -121,7 +124,7 @@ function ManagerSession() {
       setError(
         failure instanceof Error
           ? failure.message
-          : "Não foi possível atualizar a campanha.",
+          : t("Não foi possível atualizar a campanha."),
       );
     } finally {
       lock.current = false;
@@ -131,23 +134,21 @@ function ManagerSession() {
   if (!authReady)
     return (
       <main className="campaign-manager">
-        <p role="status">Carregando sua conta…</p>
+        <p role="status">{t("Carregando sua conta…")}</p>
       </main>
     );
   if (!user)
     return (
       <main className="campaign-manager">
-        <h1>Campanhas</h1>
+        <h1>{t("Campanhas")}</h1>
         <p className="campaign-intro">
-          Entre na conta administradora para gerenciar divulgações.
-        </p>
+          {t("Entre na conta administradora para gerenciar divulgações.")}</p>
         <button
           type="button"
           className="workflow-button"
           onClick={requestLogin}
         >
-          Entrar
-        </button>
+          {t("Entrar")}</button>
       </main>
     );
   if (editor)
@@ -170,14 +171,12 @@ function ManagerSession() {
     <main className="campaign-manager">
       <Link className="campaign-back" href="/home/settings">
         <ArrowLeft size={16} />
-        Configurações
-      </Link>
+        {t("Configurações")}</Link>
       <div className="campaign-page-heading">
         <div>
-          <h1>Campanhas</h1>
+          <h1>{t("Campanhas")}</h1>
           <p>
-            Gerencie cards patrocinados e destaques de afiliados e parceiros.
-          </p>
+            {t("Gerencie cards patrocinados e destaques de afiliados e parceiros.")}</p>
         </div>
         <button
           type="button"
@@ -189,11 +188,10 @@ function ManagerSession() {
           }}
         >
           <Plus size={17} />
-          Nova campanha
-        </button>
+          {t("Nova campanha")}</button>
       </div>
       <div className="campaign-toolbar">
-        <h2>Suas campanhas</h2>
+        <h2>{t("Suas campanhas")}</h2>
         <button
           type="button"
           className="campaign-back"
@@ -201,36 +199,31 @@ function ManagerSession() {
           onClick={reload}
         >
           <RefreshCw size={15} />
-          {loading ? "Atualizando…" : "Atualizar"}
+          {loading ? t("Atualizando…") : t("Atualizar")}
         </button>
       </div>
       <p className="campaign-hint">
-        Escolha cards em Prompts, MCPs e Markdown, o hero do Explorar ou combine
-        os espaços. Exibimos no máximo uma campanha por página, sem repetir no
-        hero e na grade.
-      </p>
+        {t("Escolha cards em Prompts, MCPs e Markdown, o hero do Explorar ou combine os espaços. Exibimos no máximo uma campanha por página, sem repetir no hero e na grade.")}</p>
       {message && (
         <p className="campaign-message" role="status">
-          {message}
+          {t(message)}
         </p>
       )}
       {error && (
         <div className="campaign-error" role="alert">
-          <p>{error}</p>
+          <p>{t(error)}</p>
           <button
             type="button"
             className="workflow-button secondary"
             disabled={loading}
             onClick={reload}
           >
-            Tentar novamente
-          </button>
+            {t("Tentar novamente")}</button>
         </div>
       )}
       {loading ? (
         <div className="campaign-loading" role="status">
-          Carregando campanhas e métricas…
-        </div>
+          {t("Carregando campanhas e métricas…")}</div>
       ) : (
         result && (
           <>
@@ -243,7 +236,7 @@ function ManagerSession() {
             {result.total > 20 && (
               <nav
                 className="campaign-pagination"
-                aria-label="Páginas de campanhas"
+                aria-label={t("Páginas de campanhas")}
               >
                 <button
                   type="button"
@@ -254,9 +247,8 @@ function ManagerSession() {
                     setPage((v) => v - 1);
                   }}
                 >
-                  Anterior
-                </button>
-                <span>Página {page + 1}</span>
+                  {t("Anterior")}</button>
+                <span>{t("Página")}{" "}{page + 1}</span>
                 <button
                   type="button"
                   className="workflow-button secondary"
@@ -266,8 +258,7 @@ function ManagerSession() {
                     setPage((v) => v + 1);
                   }}
                 >
-                  Próxima
-                </button>
+                  {t("Próxima")}</button>
               </nav>
             )}
           </>
@@ -275,16 +266,11 @@ function ManagerSession() {
       )}
       <div className="campaign-footnote">
         <p>
-          Visualizações e cliques são estimativas: um evento de cada tipo por
-          sessão do navegador, por campanha e por dia UTC. A visualização conta
-          quando metade do destaque fica visível por um segundo ou quando a
-          pessoa clica.
-        </p>
+          {t("Visualizações e cliques são estimativas: um evento de cada tipo por sessão do navegador, por campanha e por dia UTC. A visualização conta quando metade do destaque fica visível por um segundo ou quando a pessoa clica.")}</p>
         <p>
-          Vendas e comissões são acompanhadas na plataforma de afiliados.{" "}
+          {t("Vendas e comissões são acompanhadas na plataforma de afiliados.")}{" "}
           <Link href="/explore">
-            Ver o Explorar
-            <ArrowUpRight size={13} />
+            {t("Ver o Explorar")}<ArrowUpRight size={13} />
           </Link>
         </p>
       </div>
@@ -302,15 +288,15 @@ export function CampaignList({
   onEdit: (c: Campaign) => void;
   onState: (c: Campaign, s: "paused" | "archived") => void;
 }) {
+ const { t, intlLocale } = useI18n();
+
   if (!items.length)
     return (
       <div className="campaign-empty">
         <Megaphone size={28} />
-        <h3>Seu próximo parceiro começa aqui.</h3>
+        <h3>{t("Seu próximo parceiro começa aqui.")}</h3>
         <p>
-          Crie uma campanha, confira a prévia e escolha quando colocá-la no ar.
-          Nada é publicado sem sua confirmação.
-        </p>
+          {t("Crie uma campanha, confira a prévia e escolha quando colocá-la no ar. Nada é publicado sem sua confirmação.")}</p>
       </div>
     );
   return (
@@ -332,28 +318,28 @@ export function CampaignList({
               </p>
               <p>
                 {c.advertiser} ·{" "}
-                {c.kind === "affiliate" ? "Afiliado" : "Parceria paga"}
+                {c.kind === "affiliate" ? t("Afiliado") : t("Parceria paga")}
               </p>
               <p>
                 {c.starts_at
-                  ? `${new Date(c.starts_at).toLocaleDateString("pt-BR")} → ${c.ends_at ? new Date(c.ends_at).toLocaleDateString("pt-BR") : "Sem data final"}`
-                  : "Período não definido"}
+                  ? t("{v0} → {v1}", {v0: (new Date(c.starts_at).toLocaleDateString(intlLocale)), v1: (c.ends_at ? new Date(c.ends_at).toLocaleDateString(intlLocale) : "Sem data final")})
+                  : t("Período não definido")}
               </p>
             </div>
             <dl className="campaign-metrics">
               <div>
-                <dt>Visualizações</dt>
-                <dd>{c.views.toLocaleString("pt-BR")}</dd>
+                <dt>{t("Visualizações")}</dt>
+                <dd>{c.views.toLocaleString(intlLocale)}</dd>
               </div>
               <div>
-                <dt>Cliques</dt>
-                <dd>{c.clicks.toLocaleString("pt-BR")}</dd>
+                <dt>{t("Cliques")}</dt>
+                <dd>{c.clicks.toLocaleString(intlLocale)}</dd>
               </div>
               <div>
-                <dt>Taxa de cliques</dt>
+                <dt>{t("Taxa de cliques")}</dt>
                 <dd>
                   {c.views
-                    ? `${((c.clicks / c.views) * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%`
+                    ? t("{v0}%", {v0: (((c.clicks / c.views) * 100).toLocaleString(intlLocale, { maximumFractionDigits: 1 }))})
                     : "—"}
                 </dd>
               </div>
@@ -365,14 +351,13 @@ export function CampaignList({
                 disabled={Boolean(busy)}
                 onClick={() => onEdit(c)}
               >
-                Editar e revisar
-              </button>
+                {t("Editar e revisar")}</button>
               {c.status === "active" && (
                 <button
                   type="button"
                   className="campaign-icon-button"
-                  title="Pausar campanha"
-                  aria-label={`Pausar ${c.name}`}
+                  title={t("Pausar campanha")}
+                  aria-label={t("Pausar {v0}", {v0: (c.name)})}
                   disabled={Boolean(busy)}
                   onClick={() => onState(c, "paused")}
                 >
@@ -383,8 +368,8 @@ export function CampaignList({
                 <button
                   type="button"
                   className="campaign-icon-button"
-                  title="Arquivar campanha"
-                  aria-label={`Arquivar ${c.name}`}
+                  title={t("Arquivar campanha")}
+                  aria-label={t("Arquivar {v0}", {v0: (c.name)})}
                   disabled={Boolean(busy)}
                   onClick={() => onState(c, "archived")}
                 >

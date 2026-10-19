@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import SponsoredCard from "@/components/campaigns/SponsoredCard";
 import type {PublicCampaign} from "@/lib/campaigns/types";
 import { useEffect, useMemo, useState } from "react";
@@ -25,6 +26,8 @@ export default function ResourceCatalog({
   query?: string;
   failed?: boolean;
 }) {
+ const { t, intlLocale } = useI18n();
+
   const { setSearchValue } = useSiteLayout();
   const [category, setCategory] = useState(""),
     [client, setClient] = useState(""),
@@ -48,10 +51,10 @@ export default function ResourceCatalog({
         )
         .sort((a, b) =>
           sort === "title"
-            ? a.document.title.localeCompare(b.document.title, "pt-BR")
+            ? a.document.title.localeCompare(b.document.title, intlLocale)
             : b.created_at.localeCompare(a.created_at),
         ),
-    [resources, category, client, sort],
+    [resources, category, client, sort, intlLocale],
   );
   return (
     <main className="catalog-page resource-catalog">
@@ -59,14 +62,14 @@ export default function ResourceCatalog({
       <div className="explore-heading">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            {kind === "markdown" ? "Arquivos Markdown" : "Diretório de MCPs"}
+            {kind === "markdown" ? t("Arquivos Markdown") : t("Diretório de MCPs")}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
             {query
-              ? `Resultados para “${query}”`
+              ? t("Resultados para “{v0}”", {v0: (query)})
               : kind === "markdown"
-                ? "Instruções, skills e sistemas de design para levar ao seu próximo projeto."
-                : "Descubra servidores que conectam suas ferramentas de IA a novos recursos."}
+                ? t("Instruções, skills e sistemas de design para levar ao seu próximo projeto.")
+                : t("Descubra servidores que conectam suas ferramentas de IA a novos recursos.")}
           </p>
         </div>
         <Link
@@ -74,41 +77,41 @@ export default function ResourceCatalog({
           className="workflow-button"
         >
           <Plus size={16} />
-          {kind === "markdown" ? "Novo arquivo" : "Divulgar MCP"}
+          {kind === "markdown" ? t("Novo arquivo") : t("Divulgar MCP")}
         </Link>
       </div>
       {!failed && (
         <div className="resource-filter-row">
           <span className="text-sm text-muted">
             {visible.length}{" "}
-            {visible.length === 1 ? "publicação" : "publicações"}
+            {visible.length === 1 ? t("publicação") : t("publicações")}
           </span>
           <div>
             <SearchSelect
-              label="Categoria"
+              label={t("Categoria")}
               value={category}
               onChange={setCategory}
               options={[
-                { value: "", label: "Todas as categorias" },
+                { value: "", label: t("Todas as categorias") },
                 ...categories.map((value) => ({ value, label: value })),
               ]}
             />
             <SearchSelect
-              label="Compatibilidade"
+              label={t("Compatibilidade")}
               value={client}
               onChange={setClient}
               options={[
-                { value: "", label: "Todas as ferramentas" },
+                { value: "", label: t("Todas as ferramentas") },
                 ...clients.map((value) => ({ value, label: value, icon: <ResourceClientIdentity value={value} iconOnly/> })),
               ]}
             />
             <SearchSelect
-              label="Ordenar"
+              label={t("Ordenar")}
               value={sort}
               onChange={setSort}
               options={[
-                { value: "recent", label: "Mais recentes" },
-                { value: "title", label: "Título A–Z" },
+                { value: "recent", label: t("Mais recentes") },
+                { value: "title", label: t("Título A–Z") },
               ]}
             />
           </div>
@@ -116,11 +119,10 @@ export default function ResourceCatalog({
       )}
       {failed ? (
         <div className="catalog-empty">
-          <h2>Esta área está sendo preparada.</h2>
-          <p>O catálogo ainda não está disponível. Tente novamente em breve.</p>
+          <h2>{t("Esta área está sendo preparada.")}</h2>
+          <p>{t("O catálogo ainda não está disponível. Tente novamente em breve.")}</p>
           <button type="button" onClick={() => window.location.reload()}>
-            Tentar novamente
-          </button>
+            {t("Tentar novamente")}</button>
         </div>
       ) : visible.length ? (
         <div className="catalog-grid">
@@ -133,25 +135,25 @@ export default function ResourceCatalog({
         <div className="catalog-empty">
           <h2>
             {query || category || client
-              ? "Nenhuma publicação com esses filtros."
+              ? t("Nenhuma publicação com esses filtros.")
               : kind === "markdown"
-                ? "Seu próximo projeto pode começar aqui."
-                : "As primeiras conexões vêm aí."}
+                ? t("Seu próximo projeto pode começar aqui.")
+                : t("As primeiras conexões vêm aí.")}
           </h2>
           <p>
             {query || category || client
-              ? "Tente outra busca ou ajuste os filtros."
+              ? t("Tente outra busca ou ajuste os filtros.")
               : kind === "markdown"
-                ? "Compartilhe seu DESIGN.md, SKILL.md ou CLAUDE.md com a comunidade."
-                : "Conhece um MCP útil? Divulgue os links oficiais e como usar."}
+                ? t("Compartilhe seu DESIGN.md, SKILL.md ou CLAUDE.md com a comunidade.")
+                : t("Conhece um MCP útil? Divulgue os links oficiais e como usar.")}
           </p>
           <Link
             href={`/home/resources/new?kind=${kind}`}
             className="workflow-button"
           >
             {kind === "markdown"
-              ? "Compartilhar um arquivo"
-              : "Divulgar um MCP"}
+              ? t("Compartilhar um arquivo")
+              : t("Divulgar um MCP")}
           </Link>
         </div>
       )}

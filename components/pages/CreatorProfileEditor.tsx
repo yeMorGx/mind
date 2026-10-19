@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,6 +9,8 @@ import ProfileEditorForm from "@/components/profile/ProfileEditorForm";
 import { ensureCreatorProfile, getOwnProfile, saveCreatorProfile, profileSaveErrorMessage, type CreatorProfile } from "@/lib/firebase/publication";
 
 export default function CreatorProfileEditor({ onSaved, onClose }: { onSaved: (profile: CreatorProfile) => void; onClose: () => void }) {
+ const { t } = useI18n();
+
   const { user, authReady, profileLoading, data } = useOnboarding();
   const router = useRouter();
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
@@ -32,7 +35,7 @@ export default function CreatorProfileEditor({ onSaved, onClose }: { onSaved: (p
     if (!file || !profile || pending) return;
     setPending(true); setMessage("");
     try { const image = await preparePromptImage(file); setProfile(current => current ? { ...current, [field]: image.url } : current); }
-    catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível preparar a imagem."); }
+    catch (error) { setMessage(error instanceof Error ? error.message : t("Não foi possível preparar a imagem.")); }
     finally { setPending(false); }
   }
   async function save() {
@@ -49,7 +52,7 @@ export default function CreatorProfileEditor({ onSaved, onClose }: { onSaved: (p
     finally { setPending(false); }
   }
   return <section id="editar-perfil" aria-labelledby="edit-profile-heading" className="profile-editor-v2">
-    {profile && loadedUid === user?.uid ? <ProfileEditorForm profile={profile} setProfile={setProfile} publicId={user.uid} pending={pending} message={message} onSave={()=>void save()} onClose={onClose} onUpload={(file,field)=>void upload(file,field)}/> : <div className="p-8"><h2 id="edit-profile-heading">Editar perfil</h2><p role="status" className="mt-4 text-muted">{message||"Carregando perfil…"}</p><button type="button" onClick={onClose} className="workflow-button secondary mt-5">Fechar</button></div>}
-    {user && adminUid === user.uid && <div className="profile-editor-admin"><Link href="/home/badges">Gerenciar emblemas da comunidade</Link></div>}
+    {profile && loadedUid === user?.uid ? <ProfileEditorForm profile={profile} setProfile={setProfile} publicId={user.uid} pending={pending} message={t(message)} onSave={()=>void save()} onClose={onClose} onUpload={(file,field)=>void upload(file,field)}/> : <div className="p-8"><h2 id="edit-profile-heading">{t("Editar perfil")}</h2><p role="status" className="mt-4 text-muted">{message||t("Carregando perfil…")}</p><button type="button" onClick={onClose} className="workflow-button secondary mt-5">{t("Fechar")}</button></div>}
+    {user && adminUid === user.uid && <div className="profile-editor-admin"><Link href="/home/badges">{t("Gerenciar emblemas da comunidade")}</Link></div>}
   </section>;
 }

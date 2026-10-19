@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import { requireSupabaseClient } from "@/lib/supabase/client";
 import type { CreatorProfile } from "@/lib/firebase/publication";
@@ -16,6 +17,8 @@ export default function ProfileResources({
   kind: ResourceKind;
   owner: boolean;
 }) {
+ const { t } = useI18n();
+
   const [result, setResult] = useState<{
       items: CatalogResource[];
       failed: boolean;
@@ -46,16 +49,14 @@ export default function ProfileResources({
   if (!result)
     return (
       <p role="status" className="py-16 text-center text-muted">
-        Carregando publicações…
-      </p>
+        {t("Carregando publicações…")}</p>
     );
   if (result.failed)
     return (
       <div className="catalog-empty">
-        <h3>Não foi possível carregar estes recursos.</h3>
+        <h3>{t("Não foi possível carregar estes recursos.")}</h3>
         <button type="button" onClick={() => setAttempt((value) => value + 1)}>
-          Tentar novamente
-        </button>
+          {t("Tentar novamente")}</button>
       </div>
     );
   return result.items.length ? (
@@ -68,20 +69,20 @@ export default function ProfileResources({
     <div className="catalog-empty">
       <h3 className="text-lg font-medium">
         {kind === "markdown"
-          ? "Nenhum arquivo publicado ainda."
-          : "Nenhum MCP divulgado ainda."}
+          ? t("Nenhum arquivo publicado ainda.")
+          : t("Nenhum MCP divulgado ainda.")}
       </h3>
       <p>
         {owner
-          ? "Seus rascunhos continuam privados até você publicar."
-          : "As próximas ideias deste criador aparecerão aqui."}
+          ? t("Seus rascunhos continuam privados até você publicar.")
+          : t("As próximas ideias deste criador aparecerão aqui.")}
       </p>
       {owner && (
         <Link
           href={`/home/resources/new?kind=${kind}`}
           className="workflow-button"
         >
-          {kind === "markdown" ? "Criar arquivo" : "Divulgar MCP"}
+          {kind === "markdown" ? t("Criar arquivo") : t("Divulgar MCP")}
         </Link>
       )}
     </div>

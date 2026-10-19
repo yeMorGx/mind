@@ -1,8 +1,11 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useRef } from "react";
 import { ArrowUpRight, FileCode2 } from "lucide-react";
 
 export default function MarkdownCardPreview({ fileName, content, active }: { fileName: string; content: string; active: boolean }) {
+ const { t } = useI18n();
+
   const viewport = useRef<HTMLDivElement>(null);
   const source = useRef<HTMLPreElement>(null);
   const lines = content.slice(0, 6000).split("\n").slice(0, 80);
@@ -34,6 +37,6 @@ export default function MarkdownCardPreview({ fileName, content, active }: { fil
     <div className="resource-code-viewport" ref={viewport} aria-hidden="true">
       <pre ref={source}>{lines.map((line, index) => <span className={`resource-code-line${/^#{1,6}\s/.test(line) ? " resource-code-heading" : /^\s*[-*]\s/.test(line) ? " resource-code-item" : /^```/.test(line) ? " resource-code-fence" : ""}`} key={index}><span className="resource-code-number">{index + 1}</span><span>{line || " "}</span></span>)}</pre>
     </div>
-    <span className="resource-code-hint">Prévia do arquivo <ArrowUpRight size={13} aria-hidden="true"/></span>
+    <span className="resource-code-hint">{t("Prévia do arquivo")}{" "}<ArrowUpRight size={13} aria-hidden="true"/></span>
   </div>;
 }

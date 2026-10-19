@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Creator images include optimized data URLs and external account avatars. */
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
@@ -13,6 +14,8 @@ type Props = {
   onSearch: (query?: string) => void;
 };
 function PersonAvatar({ name, src }: { name: string; src: string }) {
+ const { t } = useI18n();
+
   const [failed, setFailed] = useState<string | null>(null);
   if (src && failed !== src) {
     return (
@@ -29,11 +32,13 @@ function PersonAvatar({ name, src }: { name: string; src: string }) {
       aria-hidden="true"
       className="grid size-9 shrink-0 place-items-center rounded-full bg-media text-sm font-medium text-foreground"
     >
-      {Array.from(name.trim())[0]?.toUpperCase() || "M"}
+      {Array.from(name.trim())[0]?.toUpperCase() || t("M")}
     </span>
   );
 }
 export default function HeaderSearch({ value, onChange, onSearch }: Props) {
+ const { t } = useI18n();
+
   const router = useRouter();
   const root = useRef<HTMLFormElement>(null);
   const input = useRef<HTMLInputElement>(null);
@@ -146,8 +151,7 @@ export default function HeaderSearch({ value, onChange, onSearch }: Props) {
           className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-subtle"
         />
         <span className="sr-only">
-          Buscar prompts, arquivos, MCPs e criadores
-        </span>
+          {t("Buscar prompts, arquivos, MCPs e criadores")}</span>
         <input
           ref={input}
           type="text"
@@ -161,7 +165,7 @@ export default function HeaderSearch({ value, onChange, onSearch }: Props) {
           autoComplete="off"
           maxLength={80}
           value={value}
-          placeholder="Buscar ideias, arquivos, MCPs ou @criadores…"
+          placeholder={t("Buscar ideias, arquivos, MCPs ou @criadores…")}
           onFocus={() => setOpen(true)}
           onChange={(event) => {
             onChange(event.target.value);
@@ -204,7 +208,7 @@ export default function HeaderSearch({ value, onChange, onSearch }: Props) {
       {value && (
         <button
           type="button"
-          aria-label="Limpar busca"
+          aria-label={t("Limpar busca")}
           onClick={() => {
             onChange("");
             setActive(-1);
@@ -220,7 +224,7 @@ export default function HeaderSearch({ value, onChange, onSearch }: Props) {
           <div
             id={listId}
             role="listbox"
-            aria-label="Sugestões de busca"
+            aria-label={t("Sugestões de busca")}
             className="header-search-options"
           >
             {term.length < 2 ? (
@@ -228,13 +232,10 @@ export default function HeaderSearch({ value, onChange, onSearch }: Props) {
                 role="status"
                 className="px-4 py-5 text-sm leading-6 text-muted"
               >
-                Busque por prompts, arquivos Markdown, MCPs ou @ do criador.
-                Digite pelo menos 2 caracteres.
-              </p>
+                {t("Busque por prompts, arquivos Markdown, MCPs ou @ do criador. Digite pelo menos 2 caracteres.")}</p>
             ) : !current ? (
               <p role="status" className="px-4 py-5 text-sm text-muted">
-                Buscando sugestões…
-              </p>
+                {t("Buscando sugestões…")}</p>
             ) : (
               <>
                 {suggestions.map((item, index) => (
@@ -280,19 +281,17 @@ export default function HeaderSearch({ value, onChange, onSearch }: Props) {
                     role="status"
                     className="px-4 py-5 text-sm leading-6 text-muted"
                   >
-                    Nenhum resultado para “{term}”. Tente outro tema ou @.
-                  </p>
+                    {t("Nenhum resultado para “")}{term}{t("”. Tente outro tema ou @.")}</p>
                 )}
                 {current.failed && (
                   <div role="status" className="px-4 py-4 text-sm text-muted">
-                    <p>Não foi possível carregar todas as sugestões.</p>
+                    <p>{t("Não foi possível carregar todas as sugestões.")}</p>
                     <button
                       type="button"
                       onClick={() => setAttempt((value) => value + 1)}
                       className="mt-2 underline underline-offset-4"
                     >
-                      Tentar novamente
-                    </button>
+                      {t("Tentar novamente")}</button>
                   </div>
                 )}
               </>
@@ -303,13 +302,13 @@ export default function HeaderSearch({ value, onChange, onSearch }: Props) {
               type="submit"
               className="flex min-h-12 w-full items-center justify-between gap-3 border-t border-border px-4 py-3 text-left text-sm font-medium hover:bg-surface-hover"
             >
-              <span className="truncate">Ver resultados para “{term}”</span>
+              <span className="truncate">{t("Ver resultados para “")}{term}”</span>
               <Search size={16} className="shrink-0" />
             </button>
           )}
           <span className="sr-only" role="status" aria-live="polite">
             {open && current && suggestions.length
-              ? `${suggestions.length} sugestões. Use as setas para navegar e Enter para abrir.`
+              ? t("{v0} sugestões. Use as setas para navegar e Enter para abrir.", {v0: (suggestions.length)})
               : ""}
           </span>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,6 +10,8 @@ import { bootstrapAccount } from "@/lib/supabase/mind";
 import { selectNativeSession } from "@/lib/backend";
 
 export default function AuthCallbackPage() {
+ const { t } = useI18n();
+
   const router = useRouter();
   const started = useRef(false);
   const [error, setError] = useState("");
@@ -75,15 +78,15 @@ export default function AuthCallbackPage() {
   return (
     <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-md rounded-3xl border border-border bg-foreground/[0.03] p-8 text-center">
-        <p className="text-sm text-subtle">Mind · autenticação</p>
-        <h1 className="mt-3 text-2xl font-semibold">{error ? "Não foi possível entrar" : "Concluindo seu acesso…"}</h1>
+        <p className="text-sm text-subtle">{t("Mind · autenticação")}</p>
+        <h1 className="mt-3 text-2xl font-semibold">{error ? t("Não foi possível entrar") : t("Concluindo seu acesso…")}</h1>
         {error ? (
           <>
-            <p role="alert" className="mt-4 text-sm leading-6 text-red-700">{error}</p>
-            <Link href="/" className="mt-6 inline-flex rounded-xl bg-primary px-5 py-3 font-medium text-primary-foreground">Voltar ao Mind</Link>
+            <p role="alert" className="mt-4 text-sm leading-6 text-red-700">{t(error)}</p>
+            <Link href="/" className="mt-6 inline-flex rounded-xl bg-primary px-5 py-3 font-medium text-primary-foreground">{t("Voltar ao Mind")}</Link>
           </>
         ) : (
-          <p className="mt-3 text-sm text-muted">Aguarde enquanto confirmamos sua conta.</p>
+          <p className="mt-3 text-sm text-muted">{t("Aguarde enquanto confirmamos sua conta.")}</p>
         )}
       </div>
     </main>

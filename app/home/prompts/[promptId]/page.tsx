@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LibraryPromptPage from "@/components/prompts/LibraryPromptPage";
 
 export const metadata: Metadata = {
-  title: "Seu prompt · Mind",
+  title: "Your prompt · Mind",
   robots: { index: false, follow: false },
 };
 

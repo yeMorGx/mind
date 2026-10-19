@@ -24,7 +24,7 @@ O dono edita o perfil na própria página pública, pelo botão “Editar perfil
 
 ## Tema e navegação
 
-O proprietário escolheu somente o tema claro. Todas as páginas internas, incluindo login, cadastro, editores e estados de erro, compartilham cores semânticas e o layout de navegação raiz. Perfis e prompts públicos continuam acessíveis sem login; biblioteca e favoritos solicitam autenticação. A landing conserva sua apresentação e seu comportamento originais, sem header/sidebar globais. Não alterar essa página sem uma solicitação explícita.
+O proprietário atualizou a preferência: páginas internas oferecem tema claro, escuro e sistema. Todas as páginas internas, incluindo login, cadastro, editores e estados de erro, compartilham cores semânticas e o layout de navegação raiz. Perfis e prompts públicos continuam acessíveis sem login; biblioteca e favoritos solicitam autenticação. A landing conserva sua apresentação e seu comportamento originais, sem header/sidebar globais. Não alterar essa página sem uma solicitação explícita.
 
 A referência de catálogo orienta apenas as páginas internas: header com busca e criação de rascunhos, navegação horizontal e cards com capa. `/explore` lista e filtra os prompts públicos reais sem depender da landing. As ações da biblioteca e a escolha individual de publicação continuam preservadas.
 
@@ -88,7 +88,7 @@ A infraestrutura do catálogo foi ativada em 17/10/2026 no Mind (`rwltdjwjxrcmmx
 
 Extensão autorizada em 17/10/2026: `/plans` compara Free (2 novos prompts/dia UTC e 5 publicações), Plus (R$ 19,90/mês ou R$ 191,04/ano; 100 novos prompts/mês e 50 publicações), Premium (R$ 39,90/mês ou R$ 383,04/ano; desbloqueios e publicações ilimitados) e Enterprise sob proposta em `/business?subject=enterprise`. `/home/billing` reúne assinatura, saldo e gerenciamento pelo Stripe. Desbloqueios já realizados não gastam novamente; prompts livres pelo criador e conteúdo próprio não consomem créditos. Publicações existentes acima do limite são preservadas. O anual renova créditos mensalmente; saldo não acumula. Esta extensão autoriza assinaturas da plataforma; não introduz venda individual de prompts.
 
-O rodapé interno oferece Planos, Minha assinatura, Trabalhe conosco (`/work-with-us`) e Para empresas (`/business`). Candidaturas e propostas de publicidade, patrocínio, parceria ou Enterprise usam consentimento e persistência privada; `/home/inbox` exige conta com emblema administrativo `owner`. Não há envio de e-mail ou prazo de resposta prometido. As páginas herdam o tema claro e a navegação interna; a apresentação da landing é preservada.
+O rodapé interno oferece Planos, Minha assinatura, Trabalhe conosco (`/work-with-us`) e Para empresas (`/business`). Candidaturas e propostas de publicidade, patrocínio, parceria ou Enterprise usam consentimento e persistência privada; `/home/inbox` exige conta com emblema administrativo `owner`. Não há envio de e-mail ou prazo de resposta prometido. As páginas herdam o tema escolhido e a navegação interna; a apresentação da landing é preservada.
 
 Cobrança, limites e envio de formulários começam desligados. A migração SQL, o script Stripe e o guia existem, mas a migração remota não foi aplicada porque a conexão administrativa Supabase recusou o projeto. O proprietário confirmou conta Stripe existente e que configurará as chaves na Vercel; a conclusão não foi confirmada. ESLint e build de produção passaram; capturas locais mostram estados reais de visitante. Pagamentos, submissões, sessões autenticadas e testes de implementação não foram verificados. Escopo e evidências: `docs/design/billing-and-contact.md`; ativação administrativa: `docs/billing-setup.md`.
 
@@ -123,3 +123,23 @@ em duas colunas. A marca aparece sem caixa e o bloco do rodapé foi removido.
 A grade usa sete linhas para mostrar imagens menores e mais variedade. Essa direção foi escolhida explicitamente pelo dono. A composição compacta do celular mantém o fundo oculto.
 Sem resultados ou em caso de falha, permanece o fundo original; com movimento
 reduzido, a grade fica estática. A landing não participa desta alteração.
+
+## Settings, appearance and interface languages
+
+The default interface language is English. A header menu and Settings → Appearance
+let visitors choose English, Spanish, Japanese, Portuguese or French, with local
+SVG country flags and native language names. UI messages use `useI18n().t()`
+and versioned dictionaries in `lib/i18n/messages`; dates and numbers use the
+selected locale. Creator names, prompts, resource contents and campaign copy
+remain exactly as authored. No runtime translation service is called.
+
+Settings navigation opens separate routes at `/home/settings/{section}` for
+appearance, connections, security, preferences, billing and data. Only the active
+section mounts. Appearance is also available without an account; account actions
+retain their authentication requirements. Profile editing stays in the profile.
+
+`mind-theme` and `mind-locale` preference cookies persist for one year on this
+browser. Themes use shared semantic colors, including form controls, dropdowns,
+login, onboarding, cards, editors and account screens. System mode follows the
+device preference. The approved landing keeps its original presentation, language
+and metadata; it does not receive internal theme or language controls.

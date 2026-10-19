@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, Check, ImagePlus, Save, Trash2, Upload, Video } from "lucide-react";
 import { AnimatedCheckbox } from "@/components/ui/animated-checkbox";
@@ -54,6 +55,8 @@ export function CampaignEditor({
   ) => Promise<void>;
   onCancel: () => void;
 }) {
+ const { t, intlLocale } = useI18n();
+
   const [draft, setDraft] = useState<CampaignDraft>(() =>
     initial
       ? { ...empty, ...initial }
@@ -87,7 +90,7 @@ export function CampaignEditor({
     try {
       update(key, await uploadCampaignMedia(user, file));
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Não foi possível enviar o arquivo.");
+      setError(failure instanceof Error ? failure.message : t("Não foi possível enviar o arquivo."));
     } finally {
       setUploading("");
     }
@@ -105,11 +108,11 @@ export function CampaignEditor({
   function review(event: FormEvent) {
     event.preventDefault();
     if (uploading) {
-      setError("Aguarde o envio do arquivo terminar.");
+      setError(t("Aguarde o envio do arquivo terminar."));
       return;
     }
     if (!draft.placements.length) {
-      setError("Escolha ao menos um lugar para a divulgação aparecer.");
+      setError(t("Escolha ao menos um lugar para a divulgação aparecer."));
       return;
     }
     if (
@@ -123,7 +126,7 @@ export function CampaignEditor({
       !draft.starts_at
     ) {
       setError(
-        "Preencha anunciante, título, descrição, capa, descrição da imagem, botão, destino e início para ativar.",
+        t("Preencha anunciante, título, descrição, capa, descrição da imagem, botão, destino e início para ativar."),
       );
       return;
     }
@@ -133,7 +136,7 @@ export function CampaignEditor({
       (draft.logo_url && !campaignMedia(draft.logo_url)) ||
       (draft.video_url && !campaignMedia(draft.video_url))
     ) {
-      setError("Confira os arquivos anexados e o destino da divulgação.");
+      setError(t("Confira os arquivos anexados e o destino da divulgação."));
       return;
     }
     if (
@@ -141,7 +144,7 @@ export function CampaignEditor({
       (Date.parse(draft.ends_at) <= Date.parse(draft.starts_at) ||
         Date.parse(draft.ends_at) <= Date.now())
     ) {
-      setError("A data final precisa ser futura e depois do início.");
+      setError(t("A data final precisa ser futura e depois do início."));
       return;
     }
     setConfirmed(false);
@@ -153,12 +156,12 @@ export function CampaignEditor({
   async function save(status: CampaignStatus) {
     if (lock.current) return;
     if (uploading) {
-      setError("Aguarde o envio do arquivo terminar.");
+      setError(t("Aguarde o envio do arquivo terminar."));
       return;
     }
     if (status === "active" && !confirmed) return;
     if (!draft.name.trim()) {
-      setError("Dê um nome à campanha.");
+      setError(t("Dê um nome à campanha."));
       return;
     }
     if (
@@ -178,7 +181,7 @@ export function CampaignEditor({
       setError(
         failure instanceof Error
           ? failure.message
-          : "Não foi possível salvar. Tente novamente.",
+          : t("Não foi possível salvar. Tente novamente."),
       );
     } finally {
       lock.current = false;
@@ -219,21 +222,21 @@ export function CampaignEditor({
       <div className="campaign-media-upload">
         <div className={`campaign-media-preview${key === "logo_url" ? " is-logo" : ""}${kind === "video" ? " is-video" : ""}`}>
           {draft[key] ? kind === "video" ? (
-            <video src={draft[key]} controls muted playsInline preload="metadata" aria-label="Prévia do vídeo anexado" />
+            <video src={draft[key]} controls muted playsInline preload="metadata" aria-label={t("Prévia do vídeo anexado")} />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element -- Uploaded campaign assets use public Supabase Storage URLs.
-            <img src={draft[key]} alt={key === "logo_url" ? "Prévia do logo do anunciante" : draft.image_alt || "Prévia da capa da campanha"} />
+            <img src={draft[key]} alt={key === "logo_url" ? t("Prévia do logo do anunciante") : draft.image_alt || t("Prévia da capa da campanha")} />
           ) : kind === "video" ? <Video size={24} aria-hidden="true" /> : <ImagePlus size={24} aria-hidden="true" />}
         </div>
         <div className="campaign-media-actions">
-          <button type="button" className="workflow-button secondary" aria-label={`${draft[key] ? "Trocar" : "Anexar"} ${label.toLocaleLowerCase()}`} disabled={locked} onClick={() => mediaInputs.current[key]?.click()}>
+          <button type="button" className="workflow-button secondary" aria-label={t("{v0} {v1}", {v0: (draft[key] ? "Trocar" : "Anexar"), v1: (label.toLocaleLowerCase())})} disabled={locked} onClick={() => mediaInputs.current[key]?.click()}>
             <Upload size={15} />
-            {uploading === key ? "Enviando…" : draft[key] ? "Trocar arquivo" : "Anexar arquivo"}
+            {uploading === key ? t("Enviando…") : draft[key] ? t("Trocar arquivo") : t("Anexar arquivo")}
           </button>
-          {draft[key] && <button type="button" className="campaign-media-remove" aria-label={`Remover ${label.toLocaleLowerCase()}`} disabled={locked} onClick={() => update(key, "")}><Trash2 size={15} />Remover</button>}
-          <input ref={(element) => { mediaInputs.current[key] = element; }} type="file" hidden tabIndex={-1} accept={accept} aria-label={`Anexar ${label.toLocaleLowerCase()}`} disabled={locked} onChange={(event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ""; void attachMedia(key, file); }} />
+          {draft[key] && <button type="button" className="campaign-media-remove" aria-label={t("Remover {v0}", {v0: (label.toLocaleLowerCase())})} disabled={locked} onClick={() => update(key, "")}><Trash2 size={15} />{t("Remover")}</button>}
+          <input ref={(element) => { mediaInputs.current[key] = element; }} type="file" hidden tabIndex={-1} accept={accept} aria-label={t("Anexar {v0}", {v0: (label.toLocaleLowerCase())})} disabled={locked} onChange={(event) => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ""; void attachMedia(key, file); }} />
         </div>
-        {uploading === key && <p className="campaign-media-status" role="status">Enviando arquivo com segurança…</p>}
+        {uploading === key && <p className="campaign-media-status" role="status">{t("Enviando arquivo com segurança…")}</p>}
       </div>
       {hint && <small>{hint}</small>}
     </div>
@@ -254,25 +257,25 @@ export function CampaignEditor({
         }
       >
         <ArrowLeft size={16} />
-        {stage === "review" ? "Voltar aos detalhes" : "Todas as campanhas"}
+        {stage === "review" ? t("Voltar aos detalhes") : t("Todas as campanhas")}
       </button>
       <div className="campaign-page-heading">
         <div>
           <h1 ref={heading} tabIndex={-1}>
             {stage === "review"
-              ? "Confira antes de colocar no ar."
+              ? t("Confira antes de colocar no ar.")
               : initial
-                ? "Editar campanha"
-                : "Nova campanha"}
+                ? t("Editar campanha")
+                : t("Nova campanha")}
           </h1>
           <p>
             {stage === "review"
-              ? "Confira como a divulgação aparece nos espaços escolhidos."
-              : "Monte a divulgação, escolha o período e revise antes de ativar."}
+              ? t("Confira como a divulgação aparece nos espaços escolhidos.")
+              : t("Monte a divulgação, escolha o período e revise antes de ativar.")}
           </p>
         </div>
         <span className="campaign-step">
-          {stage === "review" ? "Revisão" : "Detalhes"}
+          {stage === "review" ? t("Revisão") : t("Detalhes")}
         </span>
       </div>
       {stage === "review" ? (
@@ -280,17 +283,17 @@ export function CampaignEditor({
           <CampaignPreview campaign={preview} />
           <dl className="campaign-review-details">
             <div>
-              <dt>Campanha</dt>
+              <dt>{t("Campanha")}</dt>
               <dd>{draft.name}</dd>
             </div>
             <div>
-              <dt>Onde aparece</dt>
+              <dt>{t("Onde aparece")}</dt>
               <dd>
                 {draft.placements.map((p) => CAMPAIGN_PLACEMENTS[p]).join(", ")}
               </dd>
             </div>
             <div>
-              <dt>Destino do botão</dt>
+              <dt>{t("Destino do botão")}</dt>
               <dd>
                 <a
                   href={campaignDestination(draft.target_url) || undefined}
@@ -302,23 +305,23 @@ export function CampaignEditor({
               </dd>
             </div>
             <div>
-              <dt>Início</dt>
+              <dt>{t("Início")}</dt>
               <dd>
-                {new Date(draft.starts_at!).toLocaleString("pt-BR")} ·{" "}
+                {new Date(draft.starts_at!).toLocaleString(intlLocale)} ·{" "}
                 {timezone}
               </dd>
             </div>
             <div>
-              <dt>Fim</dt>
+              <dt>{t("Fim")}</dt>
               <dd>
                 {draft.ends_at
-                  ? new Date(draft.ends_at).toLocaleString("pt-BR")
-                  : "Sem data final"}
+                  ? new Date(draft.ends_at).toLocaleString(intlLocale)
+                  : t("Sem data final")}
               </dd>
             </div>
           </dl>
           <AnimatedCheckbox
-            title="Conferi o conteúdo, os arquivos e o período desta divulgação."
+            title={t("Conferi o conteúdo, os arquivos e o período desta divulgação.")}
             checked={confirmed}
             disabled={locked}
             onCheckedChange={setConfirmed}
@@ -332,10 +335,10 @@ export function CampaignEditor({
             >
               <Check size={16} />
               {pending
-                ? "Salvando…"
+                ? t("Salvando…")
                 : draft.starts_at && Date.parse(draft.starts_at) > Date.now()
-                  ? "Confirmar agendamento"
-                  : "Confirmar ativação"}
+                  ? t("Confirmar agendamento")
+                  : t("Confirmar ativação")}
             </button>
             <button
               type="button"
@@ -343,15 +346,14 @@ export function CampaignEditor({
               disabled={locked}
               onClick={() => setStage("edit")}
             >
-              Editar detalhes
-            </button>
+              {t("Editar detalhes")}</button>
           </div>
         </div>
       ) : (
         <div className="campaign-edit-layout">
           <form onSubmit={review} className="campaign-form">
             <div className="campaign-form-section">
-              <h2>Organização</h2>
+              <h2>{t("Organização")}</h2>
               {field(
                 "Nome interno da campanha",
                 <input
@@ -361,13 +363,13 @@ export function CampaignEditor({
                   value={draft.name}
                   disabled={locked}
                   onChange={(event) => update("name", event.target.value)}
-                  placeholder="Ex.: MCPAI · divulgação de outubro"
+                  placeholder={t("Ex.: MCPAI · divulgação de outubro")}
                 />,
                 "Só a administração vê este nome.",
               )}
-              <div className="campaign-field"><SelectField label="Tipo de divulgação" value={draft.kind} disabled={locked} onValueChange={(value) => update("kind", value as CampaignDraft["kind"])} options={[{value:"affiliate",label:"Link de afiliado"},{value:"sponsored",label:"Parceria paga"}]}/></div>
+              <div className="campaign-field"><SelectField label={t("Tipo de divulgação")} value={draft.kind} disabled={locked} onValueChange={(value) => update("kind", value as CampaignDraft["kind"])} options={[{value:"affiliate",label:t("Link de afiliado")},{value:"sponsored",label:t("Parceria paga")}]}/></div>
               <fieldset className="campaign-placements">
-                <legend>Onde a campanha aparece</legend>
+                <legend>{t("Onde a campanha aparece")}</legend>
                 {(
                   Object.entries(CAMPAIGN_PLACEMENTS) as [
                     CampaignPlacement,
@@ -390,14 +392,11 @@ export function CampaignEditor({
                   />
                 ))}
                 <p className="campaign-hint">
-                  Cards entram na grade com a identificação Patrocinado. O hero
-                  é opcional; se marcar os dois, a posição alterna entre
-                  visitas.
-                </p>
+                  {t("Cards entram na grade com a identificação Patrocinado. O hero é opcional; se marcar os dois, a posição alterna entre visitas.")}</p>
               </fieldset>
             </div>
             <div className="campaign-form-section">
-              <h2>Anunciante e conteúdo</h2>
+              <h2>{t("Anunciante e conteúdo")}</h2>
               {field(
                 "Nome do anunciante",
                 input("advertiser", 80, "Ex.: MCPAI"),
@@ -417,7 +416,7 @@ export function CampaignEditor({
                   onChange={(event) =>
                     update("description", event.target.value)
                   }
-                  placeholder="Apresente a proposta sem prometer resultados que você não pode garantir."
+                  placeholder={t("Apresente a proposta sem prometer resultados que você não pode garantir.")}
                 />,
                 `${draft.description.length}/220 caracteres`,
               )}
@@ -430,7 +429,7 @@ export function CampaignEditor({
               {mediaField("video_url", "Vídeo da campanha (opcional)", "video", "video/mp4,video/webm", "MP4 ou WebM · até 30 MB. O card reproduz no hover/foco; no hero, a pessoa escolhe quando assistir.")}
             </div>
             <div className="campaign-form-section">
-              <h2>Destino e período</h2>
+              <h2>{t("Destino e período")}</h2>
               {field(
                 "Código de cupom (opcional)",
                 <input
@@ -441,7 +440,7 @@ export function CampaignEditor({
                   autoCapitalize="off"
                   autoCorrect="off"
                   spellCheck={false}
-                  placeholder="Ex.: MIND10"
+                  placeholder={t("Ex.: MIND10")}
                 />,
                 "Aparece no card para copiar e usar no site do anunciante. Não é aplicado à assinatura do Mind.",
               )}
@@ -455,13 +454,11 @@ export function CampaignEditor({
                 "Cole o link de afiliado completo, com seus parâmetros de acompanhamento.",
               )}
               <div className="campaign-field-row">
-                <div className="campaign-field"><CampaignDateTimeField label="Começar em" name="starts_at" value={draft.starts_at} disabled={locked} onChange={(value) => update("starts_at", value)} /></div>
-                <div className="campaign-field"><CampaignDateTimeField label="Encerrar em (opcional)" name="ends_at" required={false} value={draft.ends_at} disabled={locked} onChange={(value) => update("ends_at", value)} /></div>
+                <div className="campaign-field"><CampaignDateTimeField label={t("Começar em")} name="starts_at" value={draft.starts_at} disabled={locked} onChange={(value) => update("starts_at", value)} /></div>
+                <div className="campaign-field"><CampaignDateTimeField label={t("Encerrar em (opcional)")} name="ends_at" required={false} value={draft.ends_at} disabled={locked} onChange={(value) => update("ends_at", value)} /></div>
               </div>
               <p className="campaign-hint">
-                Horário do seu navegador: {timezone}. Ao terminar o período, a
-                divulgação sai do ar automaticamente.
-              </p>
+                {t("Horário do seu navegador:")}{" "}{timezone}{t(". Ao terminar o período, a divulgação sai do ar automaticamente.")}</p>
             </div>
             <div className="campaign-editor-actions">
               <button
@@ -469,8 +466,7 @@ export function CampaignEditor({
                 className="workflow-button"
                 disabled={locked}
               >
-                Revisar divulgação
-                <ArrowRight size={16} />
+                {t("Revisar divulgação")}<ArrowRight size={16} />
               </button>
               <button
                 type="button"
@@ -482,25 +478,24 @@ export function CampaignEditor({
               >
                 <Save size={16} />
                 {pending
-                  ? "Salvando…"
+                  ? t("Salvando…")
                   : initial?.status === "active"
-                    ? "Salvar e pausar"
-                    : "Salvar rascunho"}
+                    ? t("Salvar e pausar")
+                    : t("Salvar rascunho")}
               </button>
             </div>
           </form>
           <aside className="campaign-live-preview">
-            <h2>Prévia dos espaços</h2>
+            <h2>{t("Prévia dos espaços")}</h2>
             <p>
-              Prévia ilustrativa. Só aparece para visitantes após a ativação.
-            </p>
+              {t("Prévia ilustrativa. Só aparece para visitantes após a ativação.")}</p>
             <CampaignPreview campaign={preview} />
           </aside>
         </div>
       )}
       {error && (
         <p className="campaign-error" role="alert">
-          {error}
+          {t(error)}
         </p>
       )}
     </section>
@@ -508,6 +503,8 @@ export function CampaignEditor({
 }
 
 function CampaignPreview({ campaign }: { campaign: PublicCampaign }) {
+ const { t } = useI18n();
+
   const card = campaign.placements.some((p) => p !== "hero");
   return (
     <>
@@ -520,7 +517,7 @@ function CampaignPreview({ campaign }: { campaign: PublicCampaign }) {
         <SponsoredHero campaign={campaign} preview />
       )}
       {!card && !campaign.placements.includes("hero") && (
-        <p className="campaign-hint">Escolha onde a divulgação vai aparecer.</p>
+        <p className="campaign-hint">{t("Escolha onde a divulgação vai aparecer.")}</p>
       )}
     </>
   );

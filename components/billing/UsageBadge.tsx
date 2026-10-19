@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -11,13 +12,15 @@ import "./usage-badge.css";
 export type UsageBadgeState = { kind: "loading" | "open" | "error" } | { kind: "ready"; status: BillingStatus };
 
 export function UsageBadgeView({ state }: { state: UsageBadgeState }) {
+ const { t, intlLocale } = useI18n();
+
  const status = state.kind === "ready" ? state.status : null;
  const exhausted = Boolean(status && status.limit !== null && status.remaining === 0);
- const label = state.kind === "loading" ? "Conferindo seu uso…" : state.kind === "error" ? "Uso indisponível. Abra sua assinatura para atualizar." : state.kind === "open" ? "Uso livre. Os limites de assinatura ainda não estão ativos." : status?.limit === null ? `${PLANS[status.plan].name}: desbloqueios ilimitados.` : `${PLANS[status!.plan].name}: ${status!.used} de ${status!.limit} desbloqueios usados; ${status!.remaining} disponíveis. Renova em ${new Date(status!.resetsAt).toLocaleString("pt-BR")}. Prompts já desbloqueados não gastam outro crédito.`;
+ const label = state.kind === "loading" ? t("Conferindo seu uso…") : state.kind === "error" ? t("Uso indisponível. Abra sua assinatura para atualizar.") : state.kind === "open" ? t("Uso livre. Os limites de assinatura ainda não estão ativos.") : status?.limit === null ? `${PLANS[status.plan].name}: desbloqueios ilimitados.` : t("{v0}: {v1} de {v2} desbloqueios usados; {v3} disponíveis. Renova em {v4}. Prompts já desbloqueados não gastam outro crédito.", {v0: (PLANS[status!.plan].name), v1: (status!.used), v2: (status!.limit), v3: (status!.remaining), v4: (new Date(status!.resetsAt).toLocaleString(intlLocale))});
  return <Link href="/home/billing" className="header-usage-badge" data-exhausted={exhausted || undefined} title={label} aria-label={label}>
   <Gauge size={15} aria-hidden="true"/>
-  <span className="header-usage-label">Uso</span>
-  <span className="header-usage-value">{state.kind === "loading" ? "…" : state.kind === "error" ? "—" : state.kind === "open" ? "livre" : status?.limit === null ? <><InfinityIcon size={17} aria-hidden="true"/><span className="sr-only">ilimitado</span></> : `${status!.used}/${status!.limit}`}</span>
+  <span className="header-usage-label">{t("Uso")}</span>
+  <span className="header-usage-value">{state.kind === "loading" ? "…" : state.kind === "error" ? "—" : state.kind === "open" ? t("livre") : status?.limit === null ? <><InfinityIcon size={17} aria-hidden="true"/><span className="sr-only">{t("ilimitado")}</span></> : t("{v0}/{v1}", {v0: (status!.used), v1: (status!.limit)})}</span>
  </Link>;
 }
 

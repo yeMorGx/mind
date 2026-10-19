@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ImageIcon } from "lucide-react";
@@ -23,6 +24,8 @@ export default function CreatorProfileView({
   creatorId: string;
   promptsError?: boolean;
 }) {
+ const { t } = useI18n();
+
   const { user } = useOnboarding();
   const owner = user?.uid === creatorId;
   const [publicationTab, setPublicationTab] = useState<
@@ -57,7 +60,7 @@ export default function CreatorProfileView({
           {profile.bannerUrl && (
             <img
               src={profile.bannerUrl}
-              alt="Capa do perfil"
+              alt={t("Capa do perfil")}
               className="size-full object-cover"
             />
           )}
@@ -69,12 +72,12 @@ export default function CreatorProfileView({
                 {profile.avatarUrl ? (
                   <img
                     src={profile.avatarUrl}
-                    alt={`Foto de ${profile.name}`}
+                    alt={t("Foto de {v0}", {v0: (profile.name)})}
                     className="size-full object-cover"
                   />
                 ) : (
                   <span>
-                    {Array.from(profile.name)[0]?.toUpperCase() || "M"}
+                    {Array.from(profile.name)[0]?.toUpperCase() || t("M")}
                   </span>
                 )}
               </div>
@@ -107,8 +110,7 @@ export default function CreatorProfileView({
                   onClick={editProfile}
                   className="rounded-full border border-foreground/25 px-5 py-3 text-sm font-medium hover:bg-black/5"
                 >
-                  Editar perfil
-                </button>
+                  {t("Editar perfil")}</button>
               )}
             </div>
           </div>
@@ -122,7 +124,7 @@ export default function CreatorProfileView({
           )}
           {notice && (
             <p role="status" className="mt-3 text-sm text-muted">
-              {notice}
+              {t(notice)}
             </p>
           )}
         </section>
@@ -132,12 +134,12 @@ export default function CreatorProfileView({
             onSaved={(value) => {
               setUpdatedProfile({ ...profile, ...value });
               closeEditor();
-              setNotice("Perfil atualizado.");
+              setNotice(t("Perfil atualizado."));
             }}
           />
         )}
         <section className="mt-10">
-          <div className="resource-tabs" aria-label="Publicações do criador">
+          <div className="resource-tabs" aria-label={t("Publicações do criador")}>
             {(
               [
                 ["prompts", "Prompts"],
@@ -168,15 +170,13 @@ export default function CreatorProfileView({
               {promptsError ? (
                 <div className="py-16 text-center">
                   <p className="text-sm text-subtle">
-                    Não foi possível carregar os prompts deste criador.
-                  </p>
+                    {t("Não foi possível carregar os prompts deste criador.")}</p>
                   <button
                     type="button"
                     onClick={() => window.location.reload()}
                     className="mt-4 rounded-full border border-border px-4 py-2 text-sm"
                   >
-                    Tentar novamente
-                  </button>
+                    {t("Tentar novamente")}</button>
                 </div>
               ) : prompts.length > 0 ? (
                 <div className="mt-7 grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
@@ -220,7 +220,7 @@ export default function CreatorProfileView({
                         <p className="mt-1 text-xs text-subtle">
                           {[prompt.category, prompt.model]
                             .filter(Boolean)
-                            .join(" · ") || "Prompt de IA"}
+                            .join(" · ") || t("Prompt de IA")}
                         </p>
                       </Link>
                     );
@@ -229,20 +229,18 @@ export default function CreatorProfileView({
               ) : (
                 <div className="py-20 text-center">
                   <h3 className="text-lg font-medium">
-                    Os próximos prompts vêm aí.
-                  </h3>
+                    {t("Os próximos prompts vêm aí.")}</h3>
                   <p className="mt-2 text-sm text-subtle">
                     {owner
-                      ? "Publique os prompts da sua biblioteca para mostrá-los aqui."
-                      : "Este criador ainda não publicou prompts."}
+                      ? t("Publique os prompts da sua biblioteca para mostrá-los aqui.")
+                      : t("Este criador ainda não publicou prompts.")}
                   </p>
                   {owner && (
                     <Link
                       href="/home"
                       className="mt-5 inline-block rounded-full border border-black/20 px-4 py-2 text-sm font-medium hover:bg-black/5"
                     >
-                      Ir à biblioteca
-                    </Link>
+                      {t("Ir à biblioteca")}</Link>
                   )}
                 </div>
               )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -18,6 +19,8 @@ type PromptState = {
 };
 
 export default function LibraryPromptPage({ promptId, startEditing = false }: { promptId: string; startEditing?: boolean }) {
+ const { t } = useI18n();
+
   const router = useRouter();
   const { user, authReady, profileLoading, data } = useOnboarding();
   const [editing,setEditing]=useState(startEditing);
@@ -48,16 +51,16 @@ export default function LibraryPromptPage({ promptId, startEditing = false }: { 
   }, [authReady, user, profileLoading, data.onboardingComplete, workspaceId, promptId, requestKey]);
 
   if (!authReady || !user || profileLoading || !data.onboardingComplete || state?.key !== requestKey) {
-    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted"><p role="status">Carregando seu prompt…</p></main>;
+    return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background text-muted"><p role="status">{t("Carregando seu prompt…")}</p></main>;
   }
 
   if (state.error || !state.prompt) {
     return <main className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-background px-6 text-foreground">
       <div className="max-w-md text-center">
-        <h1 className="text-3xl font-semibold">{state.error ? "Não conseguimos carregar este prompt" : "Prompt não encontrado"}</h1>
-        <p className="mt-4 text-sm leading-6 text-muted">{state.error ? "Verifique sua conexão e tente novamente." : "Este prompt não está na sua biblioteca ou foi removido."}</p>
-        {state.error && <button type="button" onClick={() => setAttempt((value) => value + 1)} className="mt-6 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Tentar novamente</button>}
-        <Link href="/home" className="mt-6 block text-sm text-muted hover:text-foreground">Voltar à biblioteca</Link>
+        <h1 className="text-3xl font-semibold">{state.error ? t("Não conseguimos carregar este prompt") : t("Prompt não encontrado")}</h1>
+        <p className="mt-4 text-sm leading-6 text-muted">{state.error ? t("Verifique sua conexão e tente novamente.") : t("Este prompt não está na sua biblioteca ou foi removido.")}</p>
+        {state.error && <button type="button" onClick={() => setAttempt((value) => value + 1)} className="mt-6 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">{t("Tentar novamente")}</button>}
+        <Link href="/home" className="mt-6 block text-sm text-muted hover:text-foreground">{t("Voltar à biblioteca")}</Link>
       </div>
     </main>;
   }
@@ -72,7 +75,7 @@ export default function LibraryPromptPage({ promptId, startEditing = false }: { 
     finally {setPending(false);}
   }
   const profile = state.profile ?? { name: data.name || user.displayName || "Criador Mind", bio: "", avatarUrl: user.photoURL || "" };
-  return <><PublicPromptPage actions={<div className="workflow-actions"><button type="button" className="workflow-button secondary" onClick={()=>setEditing(true)}>Editar prompt</button><Link className="workflow-button" href={`/home/prompts/${encodeURIComponent(promptId)}/publish`}>{prompt.isPublished?"Gerenciar publicação":"Revisar e publicar"}</Link></div>} visibility="private" creatorProfile={profile} creatorHref={`/u/${user.uid}`} prompt={{
+  return <><PublicPromptPage actions={<div className="workflow-actions"><button type="button" className="workflow-button secondary" onClick={()=>setEditing(true)}>{t("Editar prompt")}</button><Link className="workflow-button" href={`/home/prompts/${encodeURIComponent(promptId)}/publish`}>{prompt.isPublished?t("Gerenciar publicação"):t("Revisar e publicar")}</Link></div>} visibility="private" creatorProfile={profile} creatorHref={`/u/${user.uid}`} prompt={{
     kind:prompt.kind,summary:prompt.summary,videoUrl:prompt.videoUrl,videoPath:prompt.videoPath,siteUrl:prompt.siteUrl,
     id: prompt.id,
     slug: prompt.id,

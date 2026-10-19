@@ -1,5 +1,5 @@
 import ResourceEditor from "@/components/resources/ResourceEditor";
-export const metadata = { title: "Novo recurso · Mind" };
+export const metadata = { title: "New resource · Mind" };
 export default async function Page({
   searchParams,
 }: {

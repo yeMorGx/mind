@@ -1,4 +1,9 @@
 import "./globals.css";
+import "./dark-surfaces.css";
+import "./preferences.css";
+import { cookies } from "next/headers";
+import PreferencesProvider from "@/components/preferences/PreferencesProvider";
+import { isLocale, isTheme } from "@/lib/i18n/config";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -6,8 +11,8 @@ import SiteLayout from "@/components/layout/SiteLayout";
 import { OnboardingProvider } from "./context/OnboardingContext";
 
 export const metadata = {
-  title: "Mind — sua biblioteca de prompts",
-  description: "Salve, organize e encontre seus prompts em um só lugar.",
+  title: "Mind — your prompt library",
+  description: "Save, organize and discover prompts in one place.",
 };
 
 const geist = Geist({
@@ -15,17 +20,25 @@ const geist = Geist({
   variable: "--font-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const saved = await cookies();
+  const localeCookie = saved.get("mind-locale")?.value;
+  const themeCookie = saved.get("mind-theme")?.value;
+  const locale = isLocale(localeCookie) ? localeCookie : "en";
+  const theme = isTheme(themeCookie) ? themeCookie : "light";
   return (
-    <html lang="pt-BR" className={geist.variable}>
+    <html lang={locale} data-theme={theme === "dark" ? "dark" : "light"} className={geist.variable} suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: `(()=>{try{const root=document.documentElement;const theme=${JSON.stringify(theme)};root.dataset.theme=location.pathname==='/'?'light':theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):theme;}catch{}})();` }}/></head>
       <body className={cn("font-sans bg-background text-foreground")}>
+        <PreferencesProvider initialLocale={locale} initialTheme={theme}>
         <OnboardingProvider>
           <SiteLayout>{children}</SiteLayout>
         </OnboardingProvider>
+        </PreferencesProvider>
       </body>
     </html>
   );

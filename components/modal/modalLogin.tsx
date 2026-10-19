@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog } from "radix-ui";
@@ -33,6 +34,8 @@ export default function LoginModal({
   isOpen,
   onClose,
 }: Props) {
+ const { t } = useI18n();
+
   const router = useRouter();
   const fieldId = useId();
   const returnFocus = useRef<HTMLElement | null>(null);
@@ -47,7 +50,7 @@ export default function LoginModal({
   async function nativeSignIn(provider:"github"|"discord"){
     setPending(true);setError("");
     try{const client=getSupabaseClient();if(!client)throw new Error();sessionStorage.removeItem("mind-migration-source");sessionStorage.setItem("mind-native-login-provider",provider);const {error}=await client.auth.signInWithOAuth({provider,options:{redirectTo:`${window.location.origin}/auth/callback`}});if(error)throw error;}
-    catch{setError("Não foi possível abrir este login. Tente novamente mais tarde.");setPending(false);}
+    catch{setError(t("Não foi possível abrir este login. Tente novamente mais tarde."));setPending(false);}
   }
 
   async function finishSignIn(action: () => Promise<UserCredential>) {
@@ -106,27 +109,27 @@ export default function LoginModal({
     setError("");
     setNotice("");
     if (!email.trim()) {
-      setError("Digite seu e-mail para receber o link de redefinição.");
+      setError(t("Digite seu e-mail para receber o link de redefinição."));
       return;
     }
 
     const services = getFirebaseServices();
     if (!services) {
-      setError("Configure o Firebase no arquivo .env.local.");
+      setError(t("Configure o Firebase no arquivo .env.local."));
       return;
     }
 
     setPending(true);
     try {
       await sendPasswordResetEmail(services.auth, email.trim());
-      setNotice("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha.");
+      setNotice(t("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha."));
     } catch (resetError) {
       const code =
         typeof resetError === "object" && resetError !== null && "code" in resetError
           ? String(resetError.code)
           : "";
       if (code === "auth/user-not-found") {
-        setNotice("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha.");
+        setNotice(t("Se houver uma conta com esse e-mail, enviaremos um link para redefinir a senha."));
       } else {
         setError(getFirebaseAuthMessage(resetError));
       }
@@ -141,36 +144,36 @@ export default function LoginModal({
       <Dialog.Content className="mind-login-dialog" aria-describedby={`${fieldId}-description`}
         onOpenAutoFocus={() => { returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; }}
         onCloseAutoFocus={event => { event.preventDefault(); if (returnFocus.current?.isConnected) returnFocus.current.focus(); }}>
-        <Dialog.Close className="mind-login-close" aria-label="Fechar login"><X size={19}/></Dialog.Close>
+        <Dialog.Close className="mind-login-close" aria-label={t("Fechar login")}><X size={19}/></Dialog.Close>
         <div className="mind-login-body">
           <div className="mind-login-heading">
             <span className="mind-login-logo" aria-hidden="true"><Logo/></span>
-            <Dialog.Title>Entre no Mind</Dialog.Title>
-            <Dialog.Description id={`${fieldId}-description`}>Acesse seus prompts e continue criando.</Dialog.Description>
+            <Dialog.Title>{t("Entre no Mind")}</Dialog.Title>
+            <Dialog.Description id={`${fieldId}-description`}>{t("Acesse seus prompts e continue criando.")}</Dialog.Description>
           </div>
-          <div className="mind-login-providers" aria-label="Entrar com outra conta">
-            <button type="button" disabled={pending} onClick={() => void handleGoogleSignIn()}><FcGoogle size={20} aria-hidden="true"/><span>Continuar com Google</span></button>
+          <div className="mind-login-providers" aria-label={t("Entrar com outra conta")}>
+            <button type="button" disabled={pending} onClick={() => void handleGoogleSignIn()}><FcGoogle size={20} aria-hidden="true"/><span>{t("Continuar com Google")}</span></button>
             <div className="mind-login-other-providers">
               <button type="button" disabled={pending} onClick={() => void handleDiscordSignIn()}><FaDiscord size={20} className="mind-login-discord" aria-hidden="true"/><span>Discord</span></button>
               {providers.github && <button type="button" disabled={pending} onClick={() => void nativeSignIn("github")}><FaGithub size={20} aria-hidden="true"/><span>GitHub</span></button>}
             </div>
           </div>
-          <div className="mind-login-divider"><span>ou entre com e-mail</span></div>
+          <div className="mind-login-divider"><span>{t("ou entre com e-mail")}</span></div>
           <form className="mind-login-form" aria-busy={pending} onSubmit={event => { event.preventDefault(); void handleEmailSignIn(); }}>
             <div className="mind-login-field">
-              <label htmlFor={`${fieldId}-email`}>E-mail</label>
-              <input id={`${fieldId}-email`} required type="email" autoComplete="email" inputMode="email" autoCapitalize="none" spellCheck={false} disabled={pending} value={email} onChange={event => setEmail(event.target.value)} placeholder="voce@exemplo.com"/>
+              <label htmlFor={`${fieldId}-email`}>{t("E-mail")}</label>
+              <input id={`${fieldId}-email`} required type="email" autoComplete="email" inputMode="email" autoCapitalize="none" spellCheck={false} disabled={pending} value={email} onChange={event => setEmail(event.target.value)} placeholder={t("voce@exemplo.com")}/>
             </div>
             <div className="mind-login-field">
-              <div className="mind-login-password-label"><label htmlFor={`${fieldId}-password`}>Senha</label><button type="button" onClick={() => void handlePasswordReset()} disabled={pending}>Esqueceu a senha?</button></div>
-              <div className="mind-login-password"><input id={`${fieldId}-password`} required type={showPassword ? "text" : "password"} autoComplete="current-password" disabled={pending} value={password} onChange={event => setPassword(event.target.value)} placeholder="Sua senha"/><button type="button" aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"} aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)}>{showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}</button></div>
+              <div className="mind-login-password-label"><label htmlFor={`${fieldId}-password`}>{t("Senha")}</label><button type="button" onClick={() => void handlePasswordReset()} disabled={pending}>{t("Esqueceu a senha?")}</button></div>
+              <div className="mind-login-password"><input id={`${fieldId}-password`} required type={showPassword ? "text" : "password"} autoComplete="current-password" disabled={pending} value={password} onChange={event => setPassword(event.target.value)} placeholder={t("Sua senha")}/><button type="button" aria-label={showPassword ? t("Ocultar senha") : t("Mostrar senha")} aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)}>{showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}</button></div>
             </div>
-            {error && <p role="alert" className="mind-login-message is-error">{error}</p>}
-            {notice && <p role="status" className="mind-login-message is-notice">{notice}</p>}
-            <button type="submit" className="mind-login-submit" disabled={pending || !email.trim() || !password}>{pending ? <><LoaderCircle size={17} className="mind-login-spinner"/>Aguarde…</> : <>Entrar <ArrowRight size={17}/></>}</button>
+            {error && <p role="alert" className="mind-login-message is-error">{t(error)}</p>}
+            {notice && <p role="status" className="mind-login-message is-notice">{t(notice)}</p>}
+            <button type="submit" className="mind-login-submit" disabled={pending || !email.trim() || !password}>{pending ? <><LoaderCircle size={17} className="mind-login-spinner"/>{t("Aguarde…")}</> : <>{t("Entrar")}{" "}<ArrowRight size={17}/></>}</button>
           </form>
         </div>
-        <div className="mind-login-signup"><span>Ainda não tem uma conta?</span><button type="button" disabled={pending} onClick={() => { onClose(); router.push("/register"); }}>Criar conta <ArrowRight size={14}/></button></div>
+        <div className="mind-login-signup"><span>{t("Ainda não tem uma conta?")}</span><button type="button" disabled={pending} onClick={() => { onClose(); router.push("/register"); }}>{t("Criar conta")}{" "}<ArrowRight size={14}/></button></div>
       </Dialog.Content>
     </Dialog.Portal>
   </Dialog.Root>;

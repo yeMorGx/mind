@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import * as React from "react";
 import QRCodeLib from "qrcode";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,8 @@ export function QRCode({
   className,
   ...props
 }: QRCodeProps) {
+ const { t } = useI18n();
+
   const qrData = React.useMemo(() => {
     try {
       return QRCodeLib.create(value, { errorCorrectionLevel });
@@ -79,7 +82,7 @@ export function QRCode({
       viewBox={`0 0 ${totalSize} ${totalSize}`}
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="QR Code"
+      aria-label={t("QR Code")}
       className={cn("block", className)}
       {...props}
     >

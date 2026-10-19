@@ -1,4 +1,5 @@
 "use client";
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useRef, useState } from "react";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useSiteLayout } from "@/components/layout/SiteLayout";
@@ -15,6 +16,8 @@ export default function PromptComments({
   promptId: string;
   resource?: boolean;
 }) {
+ const { t, intlLocale } = useI18n();
+
   const { user, authReady } = useOnboarding(),
     { requestLogin } = useSiteLayout();
   const [items, setItems] = useState<PromptComment[]>([]),
@@ -79,7 +82,7 @@ export default function PromptComments({
       draftId.current = null;
       setText("");
       setAttempt((value) => value + 1);
-      setNotice("Comentário enviado.");
+      setNotice(t("Comentário enviado."));
     } catch (failure) {
       const message =
         failure && typeof failure === "object" && "message" in failure
@@ -88,7 +91,7 @@ export default function PromptComments({
       setError(
         message.startsWith("Aguarde")
           ? message
-          : "Não foi possível enviar. Confira sua sessão e tente novamente.",
+          : t("Não foi possível enviar. Confira sua sessão e tente novamente."),
       );
     } finally {
       busy.current = false;
@@ -103,9 +106,9 @@ export default function PromptComments({
       await writeComment(user, creatorId, promptId, id, "", true);
       setItems((current) => current.filter((item) => item.id !== id));
       setConfirm("");
-      setNotice("Comentário removido.");
+      setNotice(t("Comentário removido."));
     } catch {
-      setError("Não foi possível remover. Tente novamente.");
+      setError(t("Não foi possível remover. Tente novamente."));
     } finally {
       setDeleting("");
     }
@@ -114,12 +117,12 @@ export default function PromptComments({
     <section className="prompt-comments" aria-labelledby="comments-heading">
       <div className="prompt-comments-heading">
         <MessageCircle size={21} />
-        <h2 id="comments-heading">Comentários</h2>
+        <h2 id="comments-heading">{t("Comentários")}</h2>
       </div>
       <p className="prompt-comments-intro">
         {resource
-          ? "Compartilhe sua experiência ou deixe uma pergunta sobre este recurso."
-          : "Compartilhe como foi usar este prompt ou deixe uma pergunta para o criador."}
+          ? t("Compartilhe sua experiência ou deixe uma pergunta sobre este recurso.")
+          : t("Compartilhe como foi usar este prompt ou deixe uma pergunta para o criador.")}
       </p>
       {user ? (
         <form
@@ -128,7 +131,7 @@ export default function PromptComments({
             void send();
           }}
         >
-          <label htmlFor={`comment-${promptId}`}>Seu comentário</label>
+          <label htmlFor={`comment-${promptId}`}>{t("Seu comentário")}</label>
           <textarea
             id={`comment-${promptId}`}
             maxLength={1500}
@@ -139,7 +142,7 @@ export default function PromptComments({
               setText(event.target.value);
               draftId.current = null;
             }}
-            placeholder="O que você achou do resultado?"
+            placeholder={t("O que você achou do resultado?")}
           />
           <div className="prompt-comment-compose-actions">
             <span>{text.length}/1.500</span>
@@ -149,7 +152,7 @@ export default function PromptComments({
               className="workflow-button"
             >
               <Send size={15} />
-              {pending ? "Enviando…" : "Enviar comentário"}
+              {pending ? t("Enviando…") : t("Enviar comentário")}
             </button>
           </div>
         </form>
@@ -160,21 +163,19 @@ export default function PromptComments({
           className="workflow-button secondary"
           onClick={requestLogin}
         >
-          Entre para comentar
-        </button>
+          {t("Entre para comentar")}</button>
       )}
       {error && (
         <p role="alert" className="settings-error">
-          {error}
+          {t(error)}
         </p>
       )}
       <p role="status" className="prompt-comment-notice">
-        {notice}
+        {t(notice)}
       </p>
       {!loaded ? (
         <p role="status" className="py-6 text-sm text-muted">
-          Carregando comentários…
-        </p>
+          {t("Carregando comentários…")}</p>
       ) : (
         <>
           {loadError && (
@@ -185,14 +186,12 @@ export default function PromptComments({
                 className="mt-2 underline"
                 onClick={() => setAttempt((value) => value + 1)}
               >
-                Tentar novamente
-              </button>
+                {t("Tentar novamente")}</button>
             </div>
           )}
           {!loadError && !items.length && (
             <p className="prompt-comments-empty">
-              Ainda não há comentários. Seja o primeiro a participar.
-            </p>
+              {t("Ainda não há comentários. Seja o primeiro a participar.")}</p>
           )}
           <ol className="prompt-comment-list">
             {items.map((item) => (
@@ -206,7 +205,7 @@ export default function PromptComments({
                     href={creatorProfileHref(item.actor_id, item.username)}
                   />
                   <time dateTime={item.created_at}>
-                    {new Date(item.created_at).toLocaleDateString("pt-BR", {
+                    {new Date(item.created_at).toLocaleDateString(intlLocale, {
                       day: "numeric",
                       month: "short",
                       year: "numeric",
@@ -219,31 +218,29 @@ export default function PromptComments({
                     <div className="prompt-comment-moderation">
                       {confirm === item.id ? (
                         <>
-                          <span>Remover este comentário?</span>
+                          <span>{t("Remover este comentário?")}</span>
                           <button
                             type="button"
                             disabled={Boolean(deleting)}
                             onClick={() => void remove(item.id)}
                           >
-                            {deleting === item.id ? "Removendo…" : "Remover"}
+                            {deleting === item.id ? t("Removendo…") : t("Remover")}
                           </button>
                           <button
                             type="button"
                             disabled={Boolean(deleting)}
                             onClick={() => setConfirm("")}
                           >
-                            Cancelar
-                          </button>
+                            {t("Cancelar")}</button>
                         </>
                       ) : (
                         <button
                           type="button"
-                          aria-label="Excluir comentário"
+                          aria-label={t("Excluir comentário")}
                           onClick={() => setConfirm(item.id)}
                         >
                           <Trash2 size={13} />
-                          Excluir
-                        </button>
+                          {t("Excluir")}</button>
                       )}
                     </div>
                   )}
@@ -257,7 +254,7 @@ export default function PromptComments({
               className="workflow-button secondary"
               onClick={() => void loadMore()}
             >
-              {loading ? "Carregando…" : "Carregar mais comentários"}
+              {loading ? t("Carregando…") : t("Carregar mais comentários")}
             </button>
           )}
         </>

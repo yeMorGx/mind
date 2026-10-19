@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Advertiser-owned HTTPS media loads directly without server-side URL fetching. */
+import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useRef, useState } from "react";
 import { ArrowUpRight, ExternalLink, ImageOff, VolumeX } from "lucide-react";
 import type { PublicCampaign } from "@/lib/campaigns/types";
@@ -28,6 +29,8 @@ function HeroContent({
   campaign: PublicCampaign;
   preview: boolean;
 }) {
+ const { t } = useI18n();
+
   const video = useRef<HTMLVideoElement>(null),
     element = useCampaignExposure(campaign.id, preview, video);
   const [imageFailed, setImageFailed] = useState(false),
@@ -43,7 +46,7 @@ function HeroContent({
     <aside
       ref={element}
       className="sponsored-hero"
-      aria-label={preview ? "Prévia da divulgação" : "Destaque patrocinado"}
+      aria-label={preview ? t("Prévia da divulgação") : t("Destaque patrocinado")}
     >
       <div className="sponsored-copy">
         <div className="sponsored-topline">
@@ -57,23 +60,23 @@ function HeroContent({
               />
             ) : (
               <span className="sponsored-brand-initial" aria-hidden="true">
-                {campaign.advertiser?.slice(0, 1) || "M"}
+                {campaign.advertiser?.slice(0, 1) || t("M")}
               </span>
             )}
-            <span>{campaign.advertiser || "Nome do anunciante"}</span>
+            <span>{campaign.advertiser || t("Nome do anunciante")}</span>
           </div>
           <div className="sponsored-disclosure">
-            {campaign.kind === "affiliate" ? "Link de afiliado" : "Patrocinado"}
+            {campaign.kind === "affiliate" ? t("Link de afiliado") : t("Patrocinado")}
           </div>
         </div>
-        <h2>{campaign.title || "O título da sua divulgação aparece aqui."}</h2>
+        <h2>{campaign.title || t("O título da sua divulgação aparece aqui.")}</h2>
         <p className="sponsored-description">
           {campaign.description ||
-            "Conte em poucas palavras o que a pessoa vai encontrar ao acessar."}
+            t("Conte em poucas palavras o que a pessoa vai encontrar ao acessar.")}
         </p>
         {preview ? (
           <span className="sponsored-cta" aria-disabled="true">
-            {campaign.cta_label || "Conhecer"}
+            {campaign.cta_label || t("Conhecer")}
             <ArrowUpRight size={18} />
           </span>
         ) : (
@@ -88,7 +91,7 @@ function HeroContent({
               {campaign.cta_label}
               <ArrowUpRight size={18} />
               {external && (
-                <span className="sr-only"> (abre em outra aba)</span>
+                <span className="sr-only"> {t("(abre em outra aba)")}</span>
               )}
             </a>
           )
@@ -96,8 +99,8 @@ function HeroContent({
         <CampaignCoupon code={campaign.coupon_code} />
         <p className="sponsored-note">
           {campaign.kind === "affiliate"
-            ? "Podemos receber uma comissão se você contratar pelo link."
-            : `Divulgação em parceria com ${campaign.advertiser || "o anunciante"}.`}
+            ? t("Podemos receber uma comissão se você contratar pelo link.")
+            : t("Divulgação em parceria com {v0}.", {v0: (campaign.advertiser || "o anunciante")})}
         </p>
       </div>
       <div className="sponsored-media">
@@ -115,8 +118,8 @@ function HeroContent({
             <ImageOff size={28} />
             <span>
               {preview
-                ? "Adicione a imagem da campanha"
-                : "Conheça o anunciante"}
+                ? t("Adicione a imagem da campanha")
+                : t("Conheça o anunciante")}
             </span>
           </div>
         )}
@@ -138,7 +141,7 @@ function HeroContent({
                 setVideoFailed(true);
                 setPlaying(false);
               }}
-              aria-label={`Vídeo de ${campaign.advertiser}`}
+              aria-label={t("Vídeo de {v0}", {v0: (campaign.advertiser)})}
             />
             {!playing && (
               <button
@@ -149,16 +152,14 @@ function HeroContent({
                 }
               >
                 <VolumeX size={16} />
-                Assistir sem som
-              </button>
+                {t("Assistir sem som")}</button>
             )}
           </>
         )}
         {!preview && external && (
           <span className="sponsored-media-caption">
             <ExternalLink size={13} />
-            Site do anunciante
-          </span>
+            {t("Site do anunciante")}</span>
         )}
       </div>
     </aside>
