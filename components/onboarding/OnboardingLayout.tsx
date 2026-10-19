@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check } from "lucide-react";
 import Logo from "@/components/ui/logo";
+import OnboardingBackground from "./OnboardingBackground";
 import { useOnboarding } from "@/app/context/OnboardingContext";
 import { useSiteLayout } from "@/components/layout/SiteLayout";
 import "./onboarding.css";
@@ -19,6 +20,7 @@ export default function OnboardingLayout({ children, step }: { children: ReactNo
   const { requestLogin, signOut } = useSiteLayout();
   return <main className="onboarding-shell">
     <aside className="onboarding-aside">
+      <OnboardingBackground/>
       <Link href="/explore" className="onboarding-brand" aria-label="Mind — explorar"><span><Logo/></span>Mind</Link>
       <div className="onboarding-journey"><h2>Da sua ideia<br/>ao próximo resultado.</h2><ol aria-label="Etapas do cadastro">{steps.map((item,index) => <li key={item.title} aria-current={step === index + 1 ? "step" : undefined} data-complete={step > index + 1 || undefined}><span className="onboarding-step-icon" aria-hidden="true">{step > index + 1 ? <Check size={16}/> : index + 1}</span><span><strong>{item.title}</strong><small>{item.detail}</small></span></li>)}</ol></div>
       <p className="onboarding-aside-note">Guarde suas ideias.<br/>Compartilhe quando quiser.</p>

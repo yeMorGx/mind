@@ -189,3 +189,13 @@ usa GradientASCII do React Bits em modo claro, forma horizon e paleta azul do
 anexo. Textos, ações, galeria e comunidade mantêm a composição existente.
 O efeito carrega no cliente, respeita movimento reduzido e pausa fora da tela,
 com a aba oculta e durante o login. Sem WebGL2, permanece o fundo azul claro.
+
+## Fundo do onboarding com resultados públicos
+
+O proprietário solicitou GridMotion do React Bits em `.onboarding-aside`, usando
+as imagens dos prompts públicos exibidos em Explorar. O layout de `/register`
+carrega somente URLs de resultados (gallery/after), sem imagens privadas ou de
+referência. A grade inclinada tem movimento suave e uma camada clara que preserva
+a leitura das etapas. A composição compacta do celular mantém o fundo oculto.
+Sem resultados ou em caso de falha, permanece o fundo original; com movimento
+reduzido, a grade fica estática. A landing não participa desta alteração.

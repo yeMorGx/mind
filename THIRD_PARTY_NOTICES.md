@@ -68,3 +68,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+
+## React Bits GridMotion
+
+`components/ui/GridMotion.jsx` and `GridMotion.css` are adapted from the React
+Bits source supplied by the owner. The React Bits / David Haz license reproduced
+above also applies here. Adaptations include effect-based settings synchronization,
+hidden-tab suspension, a static reduced-motion path, and image failure handling.
