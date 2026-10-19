@@ -199,3 +199,7 @@ referência. A grade inclinada tem movimento suave e uma camada clara que preser
 a leitura das etapas. A composição compacta do celular mantém o fundo oculto.
 Sem resultados ou em caso de falha, permanece o fundo original; com movimento
 reduzido, a grade fica estática. A landing não participa desta alteração.
+
+As imagens públicas atuais são incorporadas como `data:image` e já são
+validadas por `readPromptDetails`. A seleção do fundo deve preservar esse
+formato; filtrar somente por HTTP/HTTPS deixa a grade sem conteúdo.

@@ -8,8 +8,7 @@ export default async function RegisterLayout({ children }: { children: ReactNode
   const prompts = await getPublicPrompts(60).catch(() => []);
   const images = [...new Set(prompts.flatMap(prompt => prompt.images
     .filter(image => image.role === "gallery" || image.role === "after")
-    .map(image => image.url)
-    .filter(url => /^https?:\/\//i.test(url))))].slice(0, 24);
+    .map(image => image.url)))].slice(0, 24);
 
   return <OnboardingArtworkProvider images={images}>{children}</OnboardingArtworkProvider>;
 }
