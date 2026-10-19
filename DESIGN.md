@@ -198,7 +198,9 @@ carrega somente URLs de resultados (gallery/after), sem imagens privadas ou de
 referência. A grade inclinada preenche todo o painel lateral com as cores originais
 das imagens, sem máscaras de esmaecimento, degradê branco ou desfoque. O título
 e as etapas ficam sobre um painel escuro compacto de até 320 px, com etapas
-em duas colunas. A marca aparece sem caixa e o bloco do rodapé foi removido.
+em duas colunas. A marca mostra apenas o símbolo, sem palavra ou caixa, com área de 80 px
+no desktop e 56 px no celular, usando viewBox ajustado para remover a margem
+interna do SVG. O bloco do rodapé foi removido.
 A grade usa sete linhas para mostrar imagens menores e mais variedade. Essa direção foi escolhida explicitamente pelo dono. A composição compacta do celular mantém o fundo oculto.
 Sem resultados ou em caso de falha, permanece o fundo original; com movimento
 reduzido, a grade fica estática. A landing não participa desta alteração.

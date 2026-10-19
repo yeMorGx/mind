@@ -20,7 +20,7 @@ export default function OnboardingLayout({ children, step }: { children: ReactNo
   const { requestLogin, signOut } = useSiteLayout();
   return <main className="onboarding-shell">
     <aside className="onboarding-aside">
-      <Link href="/explore" className="onboarding-brand" aria-label="Mind — explorar"><span><Logo/></span>Mind</Link>
+      <Link href="/explore" className="onboarding-brand" aria-label="Mind — explorar"><span aria-hidden="true"><Logo viewBox="240 220 550 550"/></span></Link>
       <div className="onboarding-journey"><h2>Da sua ideia<br/>ao próximo resultado.</h2><ol aria-label="Etapas do cadastro">{steps.map((item,index) => <li key={item.title} aria-current={step === index + 1 ? "step" : undefined} data-complete={step > index + 1 || undefined}><span className="onboarding-step-icon" aria-hidden="true">{step > index + 1 ? <Check size={16}/> : index + 1}</span><span><strong>{item.title}</strong><small>{item.detail}</small></span></li>)}</ol></div>
       <OnboardingBackground/>
     </aside>
