@@ -1,0 +1,9 @@
+/* The avatar overlaps the cover, but its transparent row must not intercept it. */
+.site-app .profile-form-avatar-row { pointer-events:none; }
+.site-app .profile-form-avatar-row > div { pointer-events:auto; }
+.site-app .profile-form-banner .profile-image-action {
+ top:var(--ui-space-3);
+ bottom:auto;
+ min-height:var(--ui-control-height);
+ font-size:var(--ui-helper-size);
+}

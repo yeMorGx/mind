@@ -2,6 +2,8 @@
 import { useI18n } from "@/components/preferences/PreferencesProvider";
 import {useId,useRef,type Dispatch,type SetStateAction} from "react";
 import {Camera,ImagePlus,Upload,X} from "lucide-react";
+import "@/app/ui-tokens.css";
+import "./profile-editor-fields.css";
 import UsernameInput from "./UsernameInput";
 import CreatorBadges from "@/components/ui/CreatorBadges";
 import type {CreatorProfile} from "@/lib/firebase/publication";
@@ -17,7 +19,7 @@ export default function ProfileEditorForm({profile,setProfile,publicId,pending,m
     <div className="profile-form-banner">{profile.bannerUrl?
      // eslint-disable-next-line @next/next/no-img-element -- Optimized profile upload.
      <img src={profile.bannerUrl} alt={t("Prévia da capa do perfil")}/>:<span><ImagePlus size={28}/>{t("Uma capa para o seu espaço criativo")}</span>}
-     <button type="button" className="profile-image-action" onClick={()=>banner.current?.click()}><Upload size={15}/>{profile.bannerUrl?t("Alterar capa"):t("Adicionar capa")}</button>
+     <button type="button" className="profile-image-action" onClick={()=>banner.current?.click()}><Upload size={18}/>{profile.bannerUrl?t("Alterar capa"):t("Adicionar capa")}</button>
     </div>
     <div className="profile-form-avatar-row"><div className="profile-form-avatar">{profile.avatarUrl?
      // eslint-disable-next-line @next/next/no-img-element -- Optimized profile upload.
