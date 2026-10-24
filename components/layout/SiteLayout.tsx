@@ -179,7 +179,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         onVerified={() => {
           window.dispatchEvent(new Event("mind:session"));
           const target = sessionStorage.getItem("mind-auth-return-to");
-          if (target === "/home/settings#connections") {
+          if (target === "/admin" || target === "/home/settings#connections") {
             sessionStorage.removeItem("mind-auth-return-to");
             router.replace(target);
           }

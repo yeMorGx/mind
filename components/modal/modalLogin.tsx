@@ -2,7 +2,7 @@
 
 import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect, useId, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Dialog } from "radix-ui";
 import { ArrowRight, Eye, EyeOff, LoaderCircle, X } from "lucide-react";
 import "./login-modal.css";
@@ -37,6 +37,8 @@ export default function LoginModal({
  const { t } = useI18n();
 
   const router = useRouter();
+  const pathname = usePathname();
+  const adminLogin = pathname === "/admin" || pathname.startsWith("/admin/");
   const fieldId = useId();
   const returnFocus = useRef<HTMLElement | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -47,9 +49,9 @@ export default function LoginModal({
   const [pending, setPending] = useState(false);
   const [providers, setProviders] = useState<Record<string,boolean>>({});
   useEffect(()=>{if(!isOpen||!isSupabaseConfigured)return;let active=true;void getIdentityProviders().then(value=>{if(active)setProviders(value);}).catch(()=>{});return()=>{active=false;};},[isOpen]);
-  async function nativeSignIn(provider:"github"|"discord"){
+  async function nativeSignIn(provider:"google"|"github"|"discord"){
     setPending(true);setError("");
-    try{const client=getSupabaseClient();if(!client)throw new Error();sessionStorage.removeItem("mind-migration-source");sessionStorage.setItem("mind-native-login-provider",provider);const {error}=await client.auth.signInWithOAuth({provider,options:{redirectTo:`${window.location.origin}/auth/callback`}});if(error)throw error;}
+    try{const client=getSupabaseClient();if(!client)throw new Error();sessionStorage.removeItem("mind-migration-source");if(adminLogin)sessionStorage.setItem("mind-auth-return-to","/admin");sessionStorage.setItem("mind-native-login-provider",provider);const {error}=await client.auth.signInWithOAuth({provider,options:{redirectTo:`${window.location.origin}/auth/callback`,...(provider==="google"?{queryParams:{prompt:"select_account"}}:{})}});if(error)throw error;}
     catch{setError(t("Não foi possível abrir este login. Tente novamente mais tarde."));setPending(false);}
   }
 
@@ -87,6 +89,7 @@ export default function LoginModal({
   }
 
   function handleGoogleSignIn() {
+    if (adminLogin) return nativeSignIn("google");
     return finishSignIn(() => {
       const services = getFirebaseServices();
       if (!services) throw new Error("Configure o Firebase no arquivo .env.local.");
@@ -149,16 +152,16 @@ export default function LoginModal({
           <div className="mind-login-heading">
             <span className="mind-login-logo" aria-hidden="true"><Logo/></span>
             <Dialog.Title>{t("Entre no Mind")}</Dialog.Title>
-            <Dialog.Description id={`${fieldId}-description`}>{t("Acesse seus prompts e continue criando.")}</Dialog.Description>
+            <Dialog.Description id={`${fieldId}-description`}>{t(adminLogin ? "Entre na conta administradora." : "Acesse seus prompts e continue criando.")}</Dialog.Description>
           </div>
           <div className="mind-login-providers" aria-label={t("Entrar com outra conta")}>
             <button type="button" disabled={pending} onClick={() => void handleGoogleSignIn()}><FcGoogle size={20} aria-hidden="true"/><span>{t("Continuar com Google")}</span></button>
-            <div className="mind-login-other-providers">
+            {!adminLogin && <div className="mind-login-other-providers">
               <button type="button" disabled={pending} onClick={() => void handleDiscordSignIn()}><FaDiscord size={20} className="mind-login-discord" aria-hidden="true"/><span>Discord</span></button>
               {providers.github && <button type="button" disabled={pending} onClick={() => void nativeSignIn("github")}><FaGithub size={20} aria-hidden="true"/><span>GitHub</span></button>}
-            </div>
+            </div>}
           </div>
-          <div className="mind-login-divider"><span>{t("ou entre com e-mail")}</span></div>
+          {!adminLogin && <><div className="mind-login-divider"><span>{t("ou entre com e-mail")}</span></div>
           <form className="mind-login-form" aria-busy={pending} onSubmit={event => { event.preventDefault(); void handleEmailSignIn(); }}>
             <div className="mind-login-field">
               <label htmlFor={`${fieldId}-email`}>{t("E-mail")}</label>
@@ -171,9 +174,10 @@ export default function LoginModal({
             {error && <p role="alert" className="mind-login-message is-error">{t(error)}</p>}
             {notice && <p role="status" className="mind-login-message is-notice">{t(notice)}</p>}
             <button type="submit" className="mind-login-submit" disabled={pending || !email.trim() || !password}>{pending ? <><LoaderCircle size={17} className="mind-login-spinner"/>{t("Aguarde…")}</> : <>{t("Entrar")}{" "}<ArrowRight size={17}/></>}</button>
-          </form>
+          </form></>}
+          {adminLogin && error && <p role="alert" className="mind-login-message is-error">{t(error)}</p>}
         </div>
-        <div className="mind-login-signup"><span>{t("Ainda não tem uma conta?")}</span><button type="button" disabled={pending} onClick={() => { onClose(); router.push("/register"); }}>{t("Criar conta")}{" "}<ArrowRight size={14}/></button></div>
+        {!adminLogin && <div className="mind-login-signup"><span>{t("Ainda não tem uma conta?")}</span><button type="button" disabled={pending} onClick={() => { onClose(); router.push("/register"); }}>{t("Criar conta")}{" "}<ArrowRight size={14}/></button></div>}
       </Dialog.Content>
     </Dialog.Portal>
   </Dialog.Root>;

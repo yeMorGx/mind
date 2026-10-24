@@ -50,11 +50,12 @@ export default function AuthCallbackPage() {
           return;
         }
         const {data:activeSession}=await supabase.auth.getSession();
+        const returnTo = sessionStorage.getItem("mind-auth-return-to");
         const assurance = await supabase.auth.mfa.getAuthenticatorAssuranceLevel(activeSession.session?.access_token);
         if (assurance.error) throw assurance.error;
         if (assurance.data.nextLevel === "aal2" && assurance.data.currentLevel !== "aal2") {
           localStorage.setItem("mind-native-session", "1");
-          window.location.replace("/home");
+          window.location.replace(returnTo === "/admin" ? "/admin" : "/home");
           return;
         }
         const expected = sessionStorage.getItem("mind-migration-source");
@@ -63,9 +64,8 @@ export default function AuthCallbackPage() {
         sessionStorage.removeItem("mind-native-login-attempt");
         sessionStorage.removeItem("mind-native-login-provider");
         selectNativeSession(account.public_id);
-        const returnTo = sessionStorage.getItem("mind-auth-return-to");
         sessionStorage.removeItem("mind-auth-return-to");
-        const destination = returnTo === "/home/settings#connections" ? returnTo : "/home/profile";
+        const destination = returnTo === "/admin" || returnTo === "/home/settings#connections" ? returnTo : "/home/profile";
         window.location.replace(account.onboarding.onboardingComplete ? destination : "/register/step-2");
       } catch (callbackError) {
         const provider=sessionStorage.getItem("mind-native-login-provider");

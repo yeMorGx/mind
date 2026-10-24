@@ -8,6 +8,8 @@ A ativação está **fechada por padrão** no código. Em produção, o DNS IONO
 
 O modo escolhido pelo proprietário é `application`: autenticação e autorização no servidor, com MFA obrigatório, sem depender de Cloudflare Access. Ele exige configuração explícita; o padrão continua sendo `cloudflare`, e uma configuração inválida nunca muda automaticamente para outro modo. As variáveis de produção são `MIND_ADMIN_ACCESS_MODE=application`, `MIND_ADMIN_HOST=admin.mindapp.icu` e `MIND_ADMIN_ENABLED=true`. Alterações de ambiente entram em vigor em uma nova publicação.
 
+O login iniciado em `/admin` usa Google diretamente pelo Supabase, sem abrir o popup Firebase do fluxo público legado. O callback e o desafio MFA conservam somente o destino fixo `/admin`, sem aceitar URL de retorno arbitrária. O modal administrativo não oferece cadastro ou métodos Firebase; a navegação pública mantém seus métodos existentes. Essa escolha de interface não concede permissão: todas as APIs continuam exigindo associação privada e MFA no servidor.
+
 ## Controles implementados
 
 1. Habilitação explícita de servidor, hostname canônico e HTTPS obrigatórios. As APIs antigas usam a mesma autorização; `/home/campaigns`, `/home/badges` e `/home/inbox` redirecionam ao admin.
