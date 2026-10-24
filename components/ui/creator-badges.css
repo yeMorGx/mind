@@ -1,0 +1,17 @@
+.creator-badges { display:inline-flex; flex-wrap:wrap; align-items:center; gap:var(--ui-space-2); }
+.creator-badge { display:inline-flex; flex:none; align-items:center; justify-content:center; gap:var(--ui-space-2); border:0; border-radius:999px; padding:0; color:var(--foreground); background:transparent; cursor:help; line-height:1.2; }
+.creator-badge-labeled { padding:var(--ui-space-2) var(--ui-space-3); font-size:var(--ui-helper-size); font-weight:600; }
+.creator-badge-icon { display:inline-block; flex:none; background:currentColor; }
+.creator-badge:focus-visible,.creator-badge-overflow:focus-visible { outline:2px solid var(--foreground); outline-offset:var(--ui-space-2); }
+.creator-badge-overflow { display:inline-flex; min-width:var(--ui-badge-overflow-size); min-height:var(--ui-badge-overflow-size); align-items:center; justify-content:center; padding-inline:var(--ui-space-2); border-radius:999px; color:var(--foreground); background:var(--surface-hover); font-size:var(--ui-helper-size); font-weight:600; font-variant-numeric:tabular-nums; cursor:help; }
+.creator-badge-tooltip { z-index:220; width:min(var(--ui-tooltip-width),calc(100vw - 32px)); max-height:60vh; overflow:auto; padding:var(--ui-tooltip-padding); border-radius:var(--ui-tooltip-radius); color:var(--foreground); background:var(--surface); box-shadow:var(--ui-tooltip-shadow); font-size:var(--ui-helper-size); line-height:1.5; overflow-wrap:anywhere; animation:creator-badge-tooltip-in var(--ui-motion-fast) var(--ui-motion-ease-out) both; }
+.creator-badge-tooltip-list { display:grid; gap:var(--ui-space-3); }
+.creator-badge-detail { display:grid; grid-template-columns:var(--ui-tooltip-icon-size) minmax(0,1fr); align-items:center; gap:var(--ui-space-3); }
+.creator-badge-detail-icon { display:grid; width:var(--ui-tooltip-icon-size); height:var(--ui-tooltip-icon-size); place-items:center; border-radius:50%; }
+.creator-badge-detail-glyph { display:block; width:var(--ui-tooltip-glyph-size); height:var(--ui-tooltip-glyph-size); }
+.creator-badge-detail-copy { display:grid; gap:var(--ui-space-2); min-width:0; }
+.creator-badge-detail-copy strong { color:var(--foreground); font-size:var(--ui-body-size); font-weight:600; }
+.creator-badge-detail-copy > span { color:var(--muted); }
+.creator-badge-tooltip-arrow { fill:var(--surface); }
+@keyframes creator-badge-tooltip-in { from { opacity:0; transform:translateY(var(--ui-space-2)); } to { opacity:1; transform:translateY(0); } }
+@media (prefers-reduced-motion:reduce) { .creator-badge-tooltip { animation:none; } }

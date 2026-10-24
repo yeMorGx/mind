@@ -23,6 +23,17 @@
  --ui-badge-educator-bg:#f0ebfa;
  --ui-badge-developer:#3d5870;
  --ui-badge-developer-bg:#e8f0f7;
+ --ui-tooltip-width:360px;
+ --ui-tooltip-padding:16px;
+ --ui-tooltip-icon-size:36px;
+ --ui-tooltip-glyph-size:20px;
+ --ui-badge-overflow-size:36px;
+ --ui-admin-person-min-width:224px;
+ --ui-admin-sales-table-width:760px;
+ --ui-tooltip-radius:12px;
+ --ui-tooltip-shadow:0 12px 32px rgb(0 0 0 / .18);
+ --ui-motion-fast:150ms;
+ --ui-motion-ease-out:cubic-bezier(.16,1,.3,1);
  --ui-space-2:8px;
  --ui-space-3:12px;
  --ui-space-4:16px;

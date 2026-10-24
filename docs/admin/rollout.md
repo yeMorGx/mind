@@ -2,7 +2,7 @@
 
 ## Estado
 
-A base inclui visão geral, busca paginada de perfis, gestão de emblemas com motivo, campanhas, propostas recebidas e histórico. A tag GA4 `G-PVW65CG68J` está instalada nas páginas públicas, incluindo a landing por autorização explícita, e seu status aparece no admin. Relatórios GA4 no painel e performance continuam pendentes, sem números simulados. Conteúdo, assinaturas, convites de equipe, relatórios GA4 e telemetria de performance são próximas entregas; não estão implementados como gestão completa neste pacote. O escopo da medição está em `docs/analytics.md`.
+A base inclui visão geral, busca paginada de perfis, gestão de emblemas com motivo, vendas e planos, campanhas, propostas recebidas e histórico. A seção de vendas separa faturas pagas de assinaturas registradas no Mind das concessões manuais de Premium. O painel não estima vendas a partir do preço do plano: receita e pagamentos vêm de faturas reais da Stripe. A tag GA4 `G-PVW65CG68J` está instalada nas páginas públicas, incluindo a landing por autorização explícita, e seu status aparece no admin. Relatórios GA4 no painel e performance continuam pendentes, sem números simulados. O escopo da medição está em `docs/analytics.md`.
 
 A ativação está **fechada por padrão** no código. Em produção, o DNS IONOS e o HTTPS de `admin.mindapp.icu` foram confirmados em 24/10/2026, e o proprietário confirmou o cadastro do retorno de login no Supabase. As variáveis de habilitação foram configuradas para o domínio administrativo; consultas e alterações continuam exigindo todas as barreiras do modo configurado. O owner inicial é a conta existente `gabrielmcgoes@gmail.com`, resolvida pelo banco; o perfil institucional `@mind` não recebe poderes automaticamente.
 
@@ -18,9 +18,10 @@ O catálogo de emblemas contém dez opções atribuíveis: verificado, moderador
 2. No modo opcional `cloudflare`, JWT Access com assinatura RS256, issuer, audience e expiração verificados por JWKS fixado na configuração do servidor. No modo `application`, essa barreira externa não existe; as proteções de login, associação privada, MFA, sessão e origem continuam obrigatórias. DNS e nomes difíceis de adivinhar não autorizam acesso.
 3. Login Supabase verificado no Auth, com e-mail confirmado. No modo Cloudflare, o e-mail também deve corresponder ao titular do token Access. Firebase não é aceito no admin; o login público existente é preservado.
 4. Funções `owner`, `admin`, `moderator` em tabela privada, separada de emblemas e `user_metadata`. Somente o proprietário existente foi provisionado. Não há endpoint de autopromoção ou atribuição de função nesta entrega.
-5. AAL2 e desafio MFA feito nos últimos 15 minutos. Atualizar o JWT não substitui um desafio recente. Sessão deve existir em `auth.sessions` e não estar expirada/revogada.
-6. Limite distribuído de 60 requisições por minuto por administrador. O limite não substitui rate limiting/DDoS na borda.
-7. Emblemas e campanhas gravam auditoria na mesma transação da alteração. Consultas à caixa de entrada registram acesso. Não há API para apagar histórico; a administração do banco continua tecnicamente capaz de alterá-lo.
+5. Vendas e concessões usam a mesma exigência de associação ativa e MFA recente. As faturas pagas são filtradas pelas assinaturas Stripe vinculadas ao Mind. Concessões Premium usam `mind_plan_grants`, ficam fora dos totais de venda, exigem um motivo e validade opcional, e registram concessão/revogação em `mind_admin_audit`. A chave de serviço não é enviada ao navegador.
+6. AAL2 e desafio MFA feito nos últimos 15 minutos. Atualizar o JWT não substitui um desafio recente. Sessão deve existir em `auth.sessions` e não estar expirada/revogada.
+7. Limite distribuído de 60 requisições por minuto por administrador. O limite não substitui rate limiting/DDoS na borda.
+8. Emblemas e campanhas gravam auditoria na mesma transação da alteração. Consultas à caixa de entrada registram acesso. Não há API para apagar histórico; a administração do banco continua tecnicamente capaz de alterá-lo.
 8. Escrita direta de emblemas por clientes Supabase revogada; RPCs administrativas somente para `service_role`. Fundador protegido. Usuários legados recebem emblemas no diretório, sem violar o vínculo de contas nativas.
 9. Sem cache para respostas administrativas; frame embedding bloqueado, tipo de conteúdo protegido e referrer restrito no admin.
 

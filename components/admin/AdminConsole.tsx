@@ -13,13 +13,14 @@ import type {BadgeKind} from "@/lib/firebase/badges";
 import CodeSlots from "@/components/ui/react-bits/CodeSlots";
 import CampaignManager from "@/components/campaigns/CampaignManager";
 import InquiryInbox from "@/components/contact/InquiryInbox";
+import AdminSales from "./AdminSales";
 import {ShieldCheck} from "lucide-react";
 import "@/app/ui-tokens.css";
 import "./admin.css";
 type Session={role:string;permissions:string[]};
 type Person={public_id:string;name:string;username:string;avatar:string;badges:BadgeKind[];plan:string};
 type RecordRow={id:string;actor_id:string;action:string;target_id:string;details:Record<string,unknown>;created_at:string};
-const sections=[['overview','Visão geral'],['users','Usuários e emblemas'],['campaigns','Campanhas'],['inbox','Caixa de entrada'],['analytics','Analytics e performance'],['audit','Histórico']] as const;
+const sections=[['overview','Visão geral'],['users','Usuários e emblemas'],['sales','Vendas e planos'],['campaigns','Campanhas'],['inbox','Caixa de entrada'],['analytics','Analytics e performance'],['audit','Histórico']] as const;
 function AdminSession({section="overview"}:{section?:string}){
  const {t,intlLocale}=useI18n();const {user,authReady}=useOnboarding();const {requestLogin}=useSiteLayout();
  const [session,setSession]=useState<Session|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(""),[code,setCode]=useState(""),[version,setVersion]=useState(0),[otp,setOtp]=useState(""),[pending,setPending]=useState(false);
@@ -49,7 +50,7 @@ function AdminSession({section="overview"}:{section?:string}){
  {code==="admin_mfa_required"&&<form className="admin-auth" onSubmit={verify}><h2>{t("Confirmar acesso")}</h2><p role="alert">{t(error)}</p><CodeSlots value={otp} onChange={setOtp} disabled={pending} ariaLabel={t("Código do autenticador")}/><button className="workflow-button" disabled={pending||otp.length!==6}>{t("Confirmar acesso")}</button></form>}
  <div inert={code==="admin_mfa_required"}>
  {notice&&<p role="status">{t(notice)}</p>}
- {section==="campaigns"&&<CampaignManager/>}{section==="inbox"&&<InquiryInbox/>}
+ {section==="campaigns"&&<CampaignManager/>}{section==="inbox"&&<InquiryInbox/>}{section==="sales"&&<AdminSales user={user}/>}
  {section==="overview"&&<main><h2>{t("Visão geral")}</h2><dl className="admin-metrics">{([['profiles','Perfis cadastrados'],['publications','Publicações'],['copiesToday','Cópias hoje (UTC)'],['activeCampaigns','Campanhas ativas']] as const).map(([key,label])=><div key={key}><dt>{t(label)}</dt><dd>{typeof data[key]==="number"?Number(data[key]).toLocaleString(intlLocale):"—"}</dd></div>)}</dl><p>{t("Os números vêm dos registros do Mind. Analytics e performance exigem integração.")}</p></main>}
  {section==="users"&&<main><h2>{t("Usuários e emblemas")}</h2><form className="admin-search" onSubmit={e=>{e.preventDefault();setPage(0);setSearch(query.trim());reload();}}><label>{t("Buscar por nome ou @")}<input value={query} maxLength={80} onChange={e=>setQuery(e.target.value)} placeholder={t("Nome ou @ da pessoa")}/></label><button className="workflow-button">{t("Buscar")}</button></form><div className="admin-table-wrap"><table><thead><tr><th>{t("Pessoa")}</th><th>{t("Plano")}</th><th>{t("Emblemas")}</th><th>{t("Ações")}</th></tr></thead><tbody>{people.map(person=><tr key={person.public_id}><td><Link href={`/u/${person.public_id}`} className="admin-person">{person.avatar&&<img src={person.avatar} alt=""/>}<span><strong>{person.name}</strong><small>@{person.username}</small></span></Link></td><td>{person.plan}</td><td><CreatorBadges badges={person.badges}/></td><td>{session.permissions.includes("badges")&&!person.badges.includes("owner")&&<button className="workflow-button secondary" onClick={()=>{setSelected(person);setBadges(person.badges.filter(v=>v!=="owner"));setReason("");setNotice("");}}>{t("Editar emblemas")}</button>}</td></tr>)}</tbody></table></div>{!people.length&&<p>{t("Nenhuma pessoa encontrada.")}</p>}
  {selected&&<BadgeEditor person={selected} badges={badges} onBadgesChange={setBadges} reason={reason} onReasonChange={setReason} pending={pending} onSubmit={saveBadges} onCancel={()=>setSelected(null)}/>}</main>}

@@ -89,6 +89,6 @@ export function apiError(error: unknown) {
 export const noStore = { "Cache-Control": "private, no-store, max-age=0", Vary: "Authorization, X-Mind-Backend" };
 export function databaseError(error: { message: string } | null) {
  if (!error) return;
- const allowed = /^(Seu plano permite|Muitas mensagens|Já há um checkout|Gerencie sua assinatura|Este prompt não está público|Publique o prompt|Escolha uma opção)/;
+ const allowed = /^(Seu plano permite|Muitas mensagens|Já há um checkout|Gerencie sua assinatura|Este prompt não está público|Publique o prompt|Escolha uma opção|Conta não encontrada|Nenhuma concessão manual|Confira a conta, a validade|Confira a conta e o motivo)/;
  throw new ServiceError(allowed.test(error.message) ? error.message : "Não foi possível concluir esta ação. Tente novamente.", allowed.test(error.message) ? 409 : 503);
 }

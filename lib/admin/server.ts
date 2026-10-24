@@ -1,8 +1,8 @@
 import "server-only";
 import { createRemoteJWKSet, decodeJwt, jwtVerify } from "jose";
 import { adminClient, apiError, ServiceError } from "@/lib/billing/server";
-export type AdminPermission = "overview"|"users"|"badges"|"campaigns"|"inbox"|"audit"|"analytics";
-const capabilities:Record<string,AdminPermission[]>={owner:["overview","users","badges","campaigns","inbox","audit","analytics"],admin:["overview","users","badges","campaigns","inbox","audit","analytics"],moderator:["overview","users"]};
+export type AdminPermission = "overview"|"users"|"badges"|"campaigns"|"inbox"|"audit"|"analytics"|"sales";
+const capabilities:Record<string,AdminPermission[]>={owner:["overview","users","badges","campaigns","inbox","audit","analytics","sales"],admin:["overview","users","badges","campaigns","inbox","audit","analytics","sales"],moderator:["overview","users"]};
 export class AdminError extends ServiceError {constructor(message:string,status:number,public code:string){super(message,status);}}
 const remoteKeys=new Map<string,ReturnType<typeof createRemoteJWKSet>>();
 export async function requireAdmin(request:Request,permission:AdminPermission="overview") {
