@@ -1,5 +1,6 @@
 import { requireAdmin, adminApiError, type AdminPermission } from "@/lib/admin/server";
 import { databaseError, noStore, readBody, ServiceError } from "@/lib/billing/server";
+import { editableBadgeKinds } from "@/lib/badges";
 import { GOOGLE_ANALYTICS_ID } from "@/lib/analytics/config";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -22,7 +23,7 @@ export async function POST(request:Request,context:Context) {
    return Response.json(result.data,{headers:noStore});
   }
   if(action==="badges"){
-   if(typeof body.target!=="string"||!/^[A-Za-z0-9_-]{1,128}$/.test(body.target)||!Array.isArray(body.badges)||!body.badges.every(v=>typeof v==="string"&&["verified","moderator","creator","partner"].includes(v))||typeof body.reason!=="string"||body.reason.trim().length<5||body.reason.length>500)throw new ServiceError("Confira os emblemas e o motivo.");
+   if(typeof body.target!=="string"||!/^[A-Za-z0-9_-]{1,128}$/.test(body.target)||!Array.isArray(body.badges)||body.badges.length>editableBadgeKinds.length||new Set(body.badges).size!==body.badges.length||!body.badges.every(v=>typeof v==="string"&&editableBadgeKinds.some(kind=>kind===v))||typeof body.reason!=="string"||body.reason.trim().length<5||body.reason.length>500)throw new ServiceError("Confira os emblemas e o motivo.");
    const result=await admin.rpc("mind_admin_set_badges",{actor,target:body.target,desired:body.badges,reason:body.reason.trim()});databaseError(result.error);
    return Response.json({saved:true},{headers:noStore});
   }

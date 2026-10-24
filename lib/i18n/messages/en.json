@@ -1499,5 +1499,22 @@
   "Permissões administrativas são gerenciadas separadamente dos emblemas.": "Administrative permissions are managed separately from badges.",
   "Explique o motivo desta alteração.": "Explain the reason for this change.",
   "Tag de medição instalada.": "Measurement tag installed.",
-  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "View your data in Google Analytics. Reports in this dashboard are not connected yet."
+  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "View your data in Google Analytics. Reports in this dashboard are not connected yet.",
+  "Equipe Mind": "Mind team",
+  "Integrante reconhecido da equipe Mind.": "Recognized member of the Mind team.",
+  "Embaixador": "Ambassador",
+  "Representa e aproxima a comunidade Mind.": "Represents and connects the Mind community.",
+  "Colaborador": "Contributor",
+  "Contribui com recursos e iniciativas para a comunidade.": "Contributes resources and initiatives to the community.",
+  "Pioneiro": "Pioneer",
+  "Participante reconhecido dos primeiros passos do Mind.": "Recognized participant in Mind’s early days.",
+  "Educador": "Educator",
+  "Compartilha conhecimento e ajuda outras pessoas a criar com IA.": "Shares knowledge and helps others create with AI.",
+  "Cria ferramentas, integrações e recursos para a comunidade.": "Builds tools, integrations and resources for the community.",
+  "Emblemas disponíveis": "Available badges",
+  "Prévia ao vivo": "Live preview",
+  "Assim os emblemas aparecem ao lado do nome nos cards e comentários.": "This is how badges appear beside the name on cards and comments.",
+  "Selecione um emblema para visualizar.": "Select a badge to preview it.",
+  "A prévia não altera o perfil. Salve para aplicar.": "Previewing does not change the profile. Save to apply.",
+  "Identidade reconhecida e verificada pela equipe Mind.": "Identity recognized and verified by the Mind team."
 }

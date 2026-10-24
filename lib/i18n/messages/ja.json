@@ -1496,5 +1496,22 @@
   "Permissões administrativas são gerenciadas separadamente dos emblemas.": "管理権限はバッジとは別に管理されます。",
   "Explique o motivo desta alteração.": "この変更の理由を説明してください。",
   "Tag de medição instalada.": "測定タグを設置済みです。",
-  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "データは Google アナリティクスで確認できます。この管理画面のレポート連携はまだ設定されていません。"
+  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "データは Google アナリティクスで確認できます。この管理画面のレポート連携はまだ設定されていません。",
+  "Equipe Mind": "Mind チーム",
+  "Integrante reconhecido da equipe Mind.": "Mind チームのメンバー。",
+  "Embaixador": "アンバサダー",
+  "Representa e aproxima a comunidade Mind.": "Mind コミュニティを代表し、人々をつなぎます。",
+  "Colaborador": "コントリビューター",
+  "Contribui com recursos e iniciativas para a comunidade.": "コミュニティのリソースや活動に貢献しています。",
+  "Pioneiro": "パイオニア",
+  "Participante reconhecido dos primeiros passos do Mind.": "Mind の初期から参加しているメンバー。",
+  "Educador": "エデュケーター",
+  "Compartilha conhecimento e ajuda outras pessoas a criar com IA.": "知識を共有し、AI を使った創作を支援しています。",
+  "Cria ferramentas, integrações e recursos para a comunidade.": "コミュニティ向けのツールや連携機能、リソースを開発しています。",
+  "Emblemas disponíveis": "利用できるバッジ",
+  "Prévia ao vivo": "ライブプレビュー",
+  "Assim os emblemas aparecem ao lado do nome nos cards e comentários.": "カードやコメントでは、このように名前の横にバッジが表示されます。",
+  "Selecione um emblema para visualizar.": "バッジを選択するとプレビューできます。",
+  "A prévia não altera o perfil. Salve para aplicar.": "プレビューではプロフィールは変更されません。保存すると反映されます。",
+  "Identidade reconhecida e verificada pela equipe Mind.": "Mind チームが認識し、確認したアカウントです。"
 }

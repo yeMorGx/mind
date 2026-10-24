@@ -1496,5 +1496,22 @@
   "Permissões administrativas são gerenciadas separadamente dos emblemas.": "Les autorisations administratives sont gérées séparément des badges.",
   "Explique o motivo desta alteração.": "Expliquez la raison de cette modification.",
   "Tag de medição instalada.": "Balise de mesure installée.",
-  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "Consultez vos données dans Google Analytics. Les rapports de ce tableau de bord ne sont pas encore connectés."
+  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "Consultez vos données dans Google Analytics. Les rapports de ce tableau de bord ne sont pas encore connectés.",
+  "Equipe Mind": "Équipe Mind",
+  "Integrante reconhecido da equipe Mind.": "Membre reconnu de l’équipe Mind.",
+  "Embaixador": "Ambassadeur",
+  "Representa e aproxima a comunidade Mind.": "Représente et rassemble la communauté Mind.",
+  "Colaborador": "Contributeur",
+  "Contribui com recursos e iniciativas para a comunidade.": "Contribue aux ressources et initiatives de la communauté.",
+  "Pioneiro": "Pionnier",
+  "Participante reconhecido dos primeiros passos do Mind.": "Participant reconnu des débuts de Mind.",
+  "Educador": "Formateur",
+  "Compartilha conhecimento e ajuda outras pessoas a criar com IA.": "Partage ses connaissances et aide les autres à créer avec l’IA.",
+  "Cria ferramentas, integrações e recursos para a comunidade.": "Crée des outils, des intégrations et des ressources pour la communauté.",
+  "Emblemas disponíveis": "Badges disponibles",
+  "Prévia ao vivo": "Aperçu en direct",
+  "Assim os emblemas aparecem ao lado do nome nos cards e comentários.": "Voici les badges à côté du nom sur les cartes et les commentaires.",
+  "Selecione um emblema para visualizar.": "Sélectionnez un badge pour l’aperçu.",
+  "A prévia não altera o perfil. Salve para aplicar.": "L’aperçu ne modifie pas le profil. Enregistrez pour appliquer.",
+  "Identidade reconhecida e verificada pela equipe Mind.": "Identité reconnue et vérifiée par l’équipe Mind."
 }

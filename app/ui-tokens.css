@@ -6,6 +6,23 @@
  --ui-page-title-size:32px;
  --ui-body-size:14px;
  --ui-metric-min-width:192px;
+ --ui-badge-icon-size:24px;
+ --ui-badge-compact-size:18px;
+ --ui-badge-column-width:320px;
+ --ui-badge-choice-width:256px;
+ --ui-admin-preview-top:112px;
+ --ui-badge-team:#4054a8;
+ --ui-badge-team-bg:#edf0ff;
+ --ui-badge-ambassador:#934c14;
+ --ui-badge-ambassador-bg:#fff0df;
+ --ui-badge-contributor:#136b60;
+ --ui-badge-contributor-bg:#e1f5ef;
+ --ui-badge-pioneer:#8b3970;
+ --ui-badge-pioneer-bg:#faeaf4;
+ --ui-badge-educator:#6850a8;
+ --ui-badge-educator-bg:#f0ebfa;
+ --ui-badge-developer:#3d5870;
+ --ui-badge-developer-bg:#e8f0f7;
  --ui-space-2:8px;
  --ui-space-3:12px;
  --ui-space-4:16px;
@@ -28,4 +45,18 @@
  --ui-crop-outline:rgb(255 255 255 / .8);
  --ui-error-text:#9c2923;
 }
-:root[data-theme="dark"] { --ui-error-text:#ffb4ab; }
+:root[data-theme="dark"] {
+ --ui-error-text:#ffb4ab;
+ --ui-badge-team:#b2bfff;
+ --ui-badge-team-bg:#252d4a;
+ --ui-badge-ambassador:#ffc58f;
+ --ui-badge-ambassador-bg:#3b2b20;
+ --ui-badge-contributor:#8edac5;
+ --ui-badge-contributor-bg:#1d3832;
+ --ui-badge-pioneer:#f1abd6;
+ --ui-badge-pioneer-bg:#3e2738;
+ --ui-badge-educator:#ccb8ff;
+ --ui-badge-educator-bg:#30293f;
+ --ui-badge-developer:#b4d2eb;
+ --ui-badge-developer-bg:#253440;
+}

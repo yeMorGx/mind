@@ -10,6 +10,8 @@ O modo escolhido pelo proprietário é `application`: autenticação e autoriza�
 
 O login iniciado em `/admin` usa Google diretamente pelo Supabase, sem abrir o popup Firebase do fluxo público legado. O callback e o desafio MFA conservam somente o destino fixo `/admin`, sem aceitar URL de retorno arbitrária. O modal administrativo não oferece cadastro ou métodos Firebase; a navegação pública mantém seus métodos existentes. Essa escolha de interface não concede permissão: todas as APIs continuam exigindo associação privada e MFA no servidor.
 
+O catálogo de emblemas contém dez opções atribuíveis: verificado, moderador, criador, parceiro, equipe, embaixador, colaborador, pioneiro, educador e desenvolvedor. Fundador continua fora desse conjunto e protegido no banco. A prévia usa os dados da pessoa selecionada e muda apenas em memória até salvar, mantendo motivo obrigatório e auditoria transacional. A migração `20261024202656` amplia a validação da RPC sem conceder execução a clientes ou alterar associações administrativas. A conferência posterior confirmou o catálogo ampliado, o histórico da migração e a execução restrita ao servidor; nenhum emblema real foi alterado nessa conferência.
+
 ## Controles implementados
 
 1. Habilitação explícita de servidor, hostname canônico e HTTPS obrigatórios. As APIs antigas usam a mesma autorização; `/home/campaigns`, `/home/badges` e `/home/inbox` redirecionam ao admin.

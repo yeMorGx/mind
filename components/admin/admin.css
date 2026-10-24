@@ -28,3 +28,21 @@
 .admin-workspace .billing-page,.admin-workspace .campaign-manager { padding-inline:0; }
 .admin-workspace button:disabled { opacity:.5; cursor:not-allowed; }
 .admin-workspace pre { white-space:pre-wrap; overflow-wrap:anywhere; max-width:var(--ui-reading-width); font-size:var(--ui-helper-size); }
+.admin-workspace .admin-badge-editor { max-width:none; }
+.admin-badge-layout { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ui-badge-column-width)),1fr)); gap:var(--ui-space-8); align-items:start; }
+.admin-badge-options { min-width:0; border:0; padding:0; margin:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ui-badge-choice-width)),1fr)); gap:var(--ui-space-2); }
+.admin-badge-options legend { margin-bottom:var(--ui-space-4); font-weight:600; }
+.admin-workspace label.admin-badge-choice { display:flex; align-items:center; padding:var(--ui-space-3); gap:var(--ui-space-3); border-radius:var(--ui-radius-control); }
+.admin-badge-choice:hover,.admin-badge-choice:has(input:checked) { background:var(--surface-hover); }
+.admin-badge-option-title { display:flex; align-items:center; gap:var(--ui-space-2); }
+.admin-badge-option-title strong { font-size:var(--ui-body-size); font-weight:600; }
+.admin-badge-option-description { display:block; margin-top:var(--ui-space-2); color:var(--muted); font-size:var(--ui-helper-size); }
+.admin-badge-preview { min-width:0; position:sticky; top:var(--ui-admin-preview-top); }
+.admin-badge-preview h3 { margin-bottom:var(--ui-space-6); }
+.admin-workspace .admin-badge-preview .creator-identity { display:flex; align-items:center; gap:var(--ui-space-3); }
+.admin-badge-preview .creator-identity-name-row { flex-wrap:wrap; }
+.admin-badge-preview .creator-identity-text { min-width:0; }
+.admin-badge-preview .creator-identity-name { overflow-wrap:anywhere; }
+.admin-badge-preview p { font-size:var(--ui-helper-size); }
+.admin-badge-actions { display:flex; flex-wrap:wrap; gap:var(--ui-space-3); }
+@media (max-width:760px) { .admin-badge-preview { grid-row:1; position:static; } }

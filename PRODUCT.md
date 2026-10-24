@@ -8,6 +8,7 @@ Mind é um lugar gratuito para criadores e influenciadores de IA publicarem prom
 - Visitantes podem abrir perfis e prompts públicos sem conta.
 - Sem venda, pagamento ou números fictícios de seguidores/curtidas.
 - Emblemas: fundador, verificado, moderador, criador de conteúdo e parceiro patrocinado. Atribuição administrativa; usuários não se verificam.
+- O catálogo também inclui equipe Mind, embaixador, colaborador, pioneiro, educador e desenvolvedor. O editor administrativo mostra a identidade real da pessoa e a seleção em uma prévia antes de salvar. Esses emblemas não concedem funções administrativas ou assinatura.
 - Emblema especial de fundador solicitado para a conta do proprietário; depende de credenciais administrativas para atribuir.
 - O proprietário autoriza commit, push para master e publicação na Vercel após as verificações relevantes.
 - A configuração administrativa do Firebase não está disponível neste ambiente. Código publicado na Vercel não substitui a ativação das regras do Firestore.
