@@ -4,13 +4,15 @@
 
 A base inclui visão geral, busca paginada de perfis, gestão de emblemas com motivo, campanhas, propostas recebidas e histórico. Analytics/performance mostram a integração pendente, sem números simulados. Conteúdo, assinaturas, convites de equipe, relatórios GA4 e telemetria de performance são próximas entregas; não estão implementados como gestão completa neste pacote.
 
-A ativação está **fechada por padrão**. A interface pode ser vista em `/admin`, mas nenhuma consulta ou alteração administrativa é liberada sem todas as barreiras. Nenhuma configuração externa Cloudflare, DNS ou GA4 foi aplicada nesta sessão. O owner inicial é a conta existente `gabrielmcgoes@gmail.com`, resolvida pelo banco; o perfil institucional `@mind` não recebe poderes automaticamente.
+A ativação está **fechada por padrão**. A interface pode ser vista em `/admin`, mas nenhuma consulta ou alteração administrativa é liberada sem as barreiras do modo configurado. O DNS permanece na IONOS. O subdomínio `admin.mindapp.icu` foi associado ao projeto Mind na Vercel; o registro DNS ainda precisa ser salvo na IONOS. O owner inicial é a conta existente `gabrielmcgoes@gmail.com`, resolvida pelo banco; o perfil institucional `@mind` não recebe poderes automaticamente.
+
+O modo escolhido pelo proprietário é `application`: autenticação e autorização no servidor, com MFA obrigatório, sem depender de Cloudflare Access. Ele exige configuração explícita; o padrão continua sendo `cloudflare`, e uma configuração inválida nunca muda automaticamente para outro modo. A variável de produção `MIND_ADMIN_ACCESS_MODE=application` está preparada, mas `MIND_ADMIN_ENABLED=true` ainda não foi ativada.
 
 ## Controles implementados
 
 1. Habilitação explícita de servidor, hostname canônico e HTTPS obrigatórios. As APIs antigas usam a mesma autorização; `/home/campaigns`, `/home/badges` e `/home/inbox` redirecionam ao admin.
-2. JWT Cloudflare Access com assinatura RS256, issuer, audience e expiração verificados por JWKS fixado na configuração do servidor. Cabeçalhos de e-mail ou `Host` sozinhos não autorizam acesso.
-3. Login Supabase verificado no Auth, com e-mail correspondente ao titular do token Access. Firebase não é aceito no admin; o login público existente é preservado.
+2. No modo opcional `cloudflare`, JWT Access com assinatura RS256, issuer, audience e expiração verificados por JWKS fixado na configuração do servidor. No modo `application`, essa barreira externa não existe; as proteções de login, associação privada, MFA, sessão e origem continuam obrigatórias. DNS e nomes difíceis de adivinhar não autorizam acesso.
+3. Login Supabase verificado no Auth, com e-mail confirmado. No modo Cloudflare, o e-mail também deve corresponder ao titular do token Access. Firebase não é aceito no admin; o login público existente é preservado.
 4. Funções `owner`, `admin`, `moderator` em tabela privada, separada de emblemas e `user_metadata`. Somente o proprietário existente foi provisionado. Não há endpoint de autopromoção ou atribuição de função nesta entrega.
 5. AAL2 e desafio MFA feito nos últimos 15 minutos. Atualizar o JWT não substitui um desafio recente. Sessão deve existir em `auth.sessions` e não estar expirada/revogada.
 6. Limite distribuído de 60 requisições por minuto por administrador. O limite não substitui rate limiting/DDoS na borda.
@@ -18,23 +20,23 @@ A ativação está **fechada por padrão**. A interface pode ser vista em `/admi
 8. Escrita direta de emblemas por clientes Supabase revogada; RPCs administrativas somente para `service_role`. Fundador protegido. Usuários legados recebem emblemas no diretório, sem violar o vínculo de contas nativas.
 9. Sem cache para respostas administrativas; frame embedding bloqueado, tipo de conteúdo protegido e referrer restrito no admin.
 
-## Configuração externa necessária
+## Configuração externa necessária — IONOS
 
-1. Confirmar onde o DNS está hospedado e obter acesso da conta Cloudflare. Ao adicionar a zona, revisar todos os registros, incluindo MX/TXT; preservar e-mail e serviços existentes antes de qualquer troca de nameservers.
-2. Associar `admin.mindapp.icu` ao projeto na Vercel, configurar o registro indicado pela plataforma e ativar o proxy Cloudflare com TLS Full (strict). Esta associação e a migração de DNS não foram feitas automaticamente.
-3. Criar uma aplicação self-hosted no Cloudflare Zero Trust abrangendo **todo** o hostname `admin.mindapp.icu`, incluindo `/api/*` e `/auth/callback`. Política allow somente para o e-mail do proprietário inicialmente, com MFA no provedor; sem bypass público.
-4. Na Vercel, configurar variáveis **de servidor**, nunca `NEXT_PUBLIC_`:
-   - `MIND_ADMIN_HOST=admin.mindapp.icu`
-   - `CLOUDFLARE_ACCESS_TEAM_DOMAIN=https://<equipe>.cloudflareaccess.com`
-   - `CLOUDFLARE_ACCESS_AUD=<Application Audience do Access>`
-   - `MIND_ADMIN_ENABLED=true` **somente após configurar e conferir os itens anteriores**.
-5. No Supabase Auth, autorizar `https://admin.mindapp.icu/auth/callback`. O login no admin usa sessão própria dessa origem, sem transportar tokens em URLs. Cadastrar e verificar TOTP no Mind; entrar novamente no domínio administrativo.
-6. Ativar logging, alertas e limites de borda no Cloudflare. Nenhum alerta externo ou entrega de e-mail foi configurado aqui.
-7. Conferir rotas do domínio protegido e os aliases originais da Vercel. A aplicação exige o token Access assinado mesmo na origem; usar regras de firewall da Vercel para reduzir tráfego direto quando disponíveis. Proteção de rede da origem não foi configurada.
+1. Em IONOS → Domínios e SSL → `mindapp.icu` → DNS, cadastrar `CNAME`, nome `admin`, destino `a53f877b761f8550.vercel-dns-017.com`. Esse é o valor recomendado pela Vercel para este projeto. Se houver A/AAAA/CNAME especificamente em `admin`, substituir somente esses registros conflitantes. Preservar `@`, `www`, MX, TXT e nameservers. Não há migração de zona para Cloudflare.
+2. Conferir a propagação e o certificado HTTPS pela Vercel. A associação ao projeto já foi feita; a verificação atual ainda aponta DNS inválido, com IP IONOS `74.208.236.161`.
+3. No Supabase → Authentication → URL Configuration, adicionar `https://admin.mindapp.icu/auth/callback` aos Redirect URLs, preservando os endereços existentes e o Site URL público. A API administrativa recusou esta configuração (HTTP 403); não foi possível confirmar ou alterar a lista nesta sessão.
+4. Na Vercel, usar variáveis **de servidor**, nunca `NEXT_PUBLIC_`: `MIND_ADMIN_HOST=admin.mindapp.icu` e `MIND_ADMIN_ACCESS_MODE=application`. Depois de DNS/HTTPS e login configurados, habilitar `MIND_ADMIN_ENABLED=true` e publicar novamente. Não habilitar automaticamente por uma resposta pública de DNS.
+5. Cadastrar e verificar TOTP no Mind; entrar novamente no domínio administrativo e concluir o desafio. O login no admin usa sessão própria dessa origem, sem transportar tokens entre domínios em URLs.
+6. Conferir as negações e o acesso permitido antes de considerar o painel operacional. A IONOS fornece DNS; não há proxy de identidade externo, bloqueio de rede da origem ou alerta externo configurado. Regras adicionais na borda da Vercel dependem do plano e da configuração da conta.
+
+### Camada Cloudflare opcional
+
+Se adotada posteriormente, configurar `MIND_ADMIN_ACCESS_MODE=cloudflare`, `CLOUDFLARE_ACCESS_TEAM_DOMAIN=https://<equipe>.cloudflareaccess.com` e `CLOUDFLARE_ACCESS_AUD=<audience>`, com uma aplicação Access cobrindo todo o hostname, incluindo APIs e callback. O servidor verifica assinatura e vincula o e-mail Access à conta Supabase. Uma falha de configuração não libera o modo `application`.
 
 ## Verificações para liberar produção
 
-- Sem Access, token forjado, issuer/audience incorretos ou expirado: bloqueado.
+- No modo Cloudflare: sem Access, token forjado, issuer/audience incorretos ou expirado: bloqueado.
+- No modo application: sem Bearer válido, e-mail não confirmado, hostname/HTTPS/origem incorretos: bloqueado.
 - Login comum, usuário sem associação ativa, Firebase, membro revogado: bloqueado.
 - AAL1, MFA antigo, sessão revogada: bloqueado.
 - Conta autorizada + Access válido + AAL2 recente: consultas por função e alterações permitidas.
@@ -43,7 +45,7 @@ A ativação está **fechada por padrão**. A interface pode ser vista em `/admi
 - Ações com corpo inválido, origem externa, volume excedido e versão antiga da campanha: bloqueadas.
 - Campanha e emblema com auditoria ausente: a transação deve falhar.
 
-Os fluxos com Access real e MFA real permanecem pendentes até a configuração externa. Não chamar essa entrega de teste de invasão, auditoria formal concluída ou garantia de invulnerabilidade. As referências complementares da skill `codex-security:threat-model` estavam inacessíveis; não foi produzido um artefato formal dessa skill. Políticas administrativas legadas do Firebase não foram auditadas/alteradas; os poderes do novo admin são decididos exclusivamente na associação privada Supabase.
+O fluxo completo no subdomínio com MFA real permanece pendente até a configuração externa. O modo Cloudflare não foi ativado nem validado com Access real. Não chamar essa entrega de teste de invasão, auditoria formal concluída ou garantia de invulnerabilidade. As referências complementares da skill `codex-security:threat-model` estavam inacessíveis; não foi produzido um artefato formal dessa skill. Políticas administrativas legadas do Firebase não foram auditadas/alteradas; os poderes do novo admin são decididos exclusivamente na associação privada Supabase.
 
 ## Manutenção
 
