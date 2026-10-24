@@ -1,0 +1,16 @@
+.profile-crop-dialog { position:fixed; inset:0; margin:auto; width:min(var(--ui-dialog-width),calc(100vw - var(--ui-space-8))); max-height:calc(100dvh - var(--ui-space-8)); overflow-y:auto; border:0; border-radius:var(--ui-radius-dialog); padding:var(--ui-space-6); color:var(--foreground); background:var(--surface); box-shadow:var(--ui-dialog-shadow); }
+.profile-crop-dialog::backdrop { background:var(--ui-overlay); }
+.profile-crop-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:var(--ui-space-5); margin-bottom:var(--ui-space-5); }
+.profile-crop-heading h2 { font-size:var(--ui-section-size); font-weight:600; line-height:1.4; }
+.profile-crop-heading p { margin-top:var(--ui-space-2); font-size:var(--ui-helper-size); color:var(--muted); line-height:1.6; }
+.profile-crop-stage { position:relative; height:var(--ui-crop-stage-height); overflow:hidden; border-radius:var(--ui-radius-control); background:var(--ui-crop-stage); }
+.profile-crop-stage[data-banner] { height:var(--ui-crop-banner-height); }
+.profile-crop-stage .reactEasyCrop_CropArea { color:var(--ui-crop-mask); border-color:var(--ui-crop-outline); }
+.profile-crop-tools { display:flex; align-items:center; gap:var(--ui-space-5); margin-block:var(--ui-space-5); }
+.profile-crop-tools label { display:flex; align-items:center; flex:1; gap:var(--ui-space-3); font-size:var(--ui-helper-size); min-width:0; }
+.profile-crop-tools input { width:100%; min-width:var(--ui-control-min-width); accent-color:var(--foreground); }
+.profile-crop-tools input[type="range"] { min-height:var(--ui-control-height); }
+.profile-crop-actions { display:flex; align-items:center; justify-content:flex-end; gap:var(--ui-space-3); }
+.profile-crop-error { color:var(--ui-error-text); font-size:var(--ui-helper-size); line-height:1.6; margin-block:var(--ui-space-4); }
+.profile-crop-dialog :is(button,input):focus-visible { outline:2px solid var(--foreground); outline-offset:var(--ui-space-2); }
+@media(max-width:540px) { .profile-crop-dialog { padding:var(--ui-space-4); } .profile-crop-tools { gap:var(--ui-space-3); } .profile-crop-tools label > span { display:none; } }

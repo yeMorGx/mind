@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, setDoc, where, writeBatch } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, runTransaction, serverTimestamp, where, writeBatch } from "firebase/firestore";
 import { usingSupabase, setNativeBackend, selectNativeSession, type MindUser as User } from "@/lib/backend";
 import * as native from "@/lib/supabase/mind";
 import { isSupabaseConfigured, requireSupabaseClient } from "@/lib/supabase/client";
@@ -21,6 +21,10 @@ function readProfile(value: Record<string, unknown>): CreatorProfile {
 }
 export async function getOwnProfile(uid: string): Promise<CreatorProfile | null> {
   if (usingSupabase()) return native.getNativeOwnProfile();
+  if (isSupabaseConfigured) {
+    const directory = await native.getNativePublicCreator(uid);
+    if (directory) return directory;
+  }
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "users", uid));
   const value = snapshot.data()?.creatorProfile;
@@ -30,11 +34,12 @@ export function profileSaveErrorMessage(error: unknown): string {
   const cause = error;
   const code = typeof cause === "object" && cause !== null && "code" in cause ? String(cause.code).replace(/^firestore\//, "") : "";
   if (code === "permission-denied") return "O site não permitiu salvar seu perfil público. A administração precisa conferir as permissões da conta.";
+  if (code === "42501") return "Confirme sua sessão e o autenticador para editar o perfil.";
   if (code === "unauthenticated") return "Sua sessão expirou. Entre novamente na conta e tente salvar.";
   if (code === "unavailable" || code === "deadline-exceeded") return "Não foi possível conectar ao serviço. Confira sua conexão e tente novamente.";
   if (code === "resource-exhausted") return "O serviço está temporariamente sem capacidade para salvar. Tente novamente mais tarde.";
   const message = cause && typeof cause === "object" && "message" in cause ? String(cause.message) : "";
-  if (message.startsWith("Este @") || message.startsWith("Use de 3")) return message;
+  if (message.startsWith("Este @") || message.startsWith("Use de 3") || message.startsWith("GIFs")) return message;
   if (cause instanceof Error && cause.message.startsWith("Informe")) return cause.message;
   if (cause instanceof Error && cause.message.startsWith("Sua conta já foi migrada")) return "Sua sessão precisa ser renovada. Entre novamente com Google para continuar.";
   if (cause instanceof Error && (cause.message.startsWith("Sua conta já foi migrada") || cause.message.startsWith("Não foi possível atualizar") || cause.message.startsWith("Entre novamente"))) return cause.message;
@@ -50,14 +55,13 @@ export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
     if (recovered) { setNativeBackend(true); selectNativeSession(recovered.public_id); }
   }
   if (usingSupabase()) return native.saveNativeProfile({ name, bio, username, headline: (profile.headline ?? "").trim().slice(0,100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) });
-  const { db } = requireFirebaseServices();
   const values = { name, bio, headline: (profile.headline ?? "").trim().slice(0, 100), avatarUrl: imageValue(profile.avatarUrl), bannerUrl: imageValue(profile.bannerUrl) };
-  const userRef = doc(db, "users", uid);
   if (isSupabaseConfigured) {
     await syncLegacyProfile(uid, { ...values, username });
-    await setDoc(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
     return;
   }
+  const { db } = requireFirebaseServices();
+  const userRef = doc(db, "users", uid);
   const batch = writeBatch(db);
   // Keep the legacy flag true for compatibility with the deployed Firestore rules.
   batch.set(userRef, { creatorProfile: { ...values, published: true } }, { merge: true });
@@ -65,6 +69,10 @@ export async function saveCreatorProfile(uid: string, profile: CreatorProfile) {
   await batch.commit();
 }
 export async function ensureCreatorProfile(user: User) {
+  if (!usingSupabase() && isSupabaseConfigured) {
+    const recovered = await native.restoreNativeAccount(user.uid);
+    if (recovered) { setNativeBackend(true); selectNativeSession(recovered.public_id); }
+  }
   if (usingSupabase()) { await native.bootstrapAccount(); return; }
   if (isSupabaseConfigured) {
     const profile = await getOwnProfile(user.uid);
@@ -90,17 +98,11 @@ export async function ensureCreatorProfile(user: User) {
 async function syncLegacyProfile(uid: string, profile: CreatorProfile, ensure = false) {
   const user = requireFirebaseServices().auth.currentUser;
   if (!user || user.uid !== uid) throw new Error("Entre novamente na sua conta.");
-  const { error } = await requireSupabaseClient().functions.invoke("sync-creator-profile", {
-    headers: { Authorization: `Bearer ${await user.getIdToken()}` }, body: { profile, ensure },
+  const response = await fetch(`/api/profile/${ensure ? "ensure" : "save"}`, {
+    method: "POST", headers: { Authorization: `Bearer ${await user.getIdToken()}`, "X-Mind-Backend": "firebase", "Content-Type": "application/json" }, body: JSON.stringify({ profile }),
   });
-  if (error) {
-    const response = "context" in error ? error.context : null;
-    if (response instanceof Response) {
-      const body = await response.json().catch(() => null);
-      if (body?.error) throw new Error(body.error);
-    }
-    throw new Error("Não foi possível atualizar o perfil público. Tente novamente.");
-  }
+  const result = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(result?.error || "Não foi possível atualizar o perfil público. Tente novamente.");
 }
 export async function setPromptPublication(workspaceId: string, uid: string, promptId: string, published: boolean) {
   if (usingSupabase()) return native.publishNativePrompt(workspaceId, promptId, published);

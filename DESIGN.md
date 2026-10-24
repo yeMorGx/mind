@@ -241,3 +241,11 @@ A grade principal de prompts usa encaixe pela coluna de menor altura, adaptado d
 ## Cartões de assinatura
 
 Os quatro planos em `/plans` usam o PixelCard React Bits anexado pelo proprietário, com pixels neutros e baixa opacidade no hover/foco. Mantêm os preços, recursos e ações reais; o efeito fica atrás do conteúdo e acompanha o tema. O cartão de assinatura em `/home/billing` usa o ReflectiveCard fornecido, em proporção horizontal próxima de um cartão bancário: logo Mind, plano, nome do titular, status e saldo real. Sem números financeiros, dados fictícios ou captura de câmera; reflexo de estúdio, inclinação discreta e suporte a movimento reduzido. Informações de cobrança e ações Stripe ficam ao lado, fora da superfície reflexiva. No celular, as ações ficam abaixo. A superfície continua legível mesmo sem WebGL.
+
+## Recorte de perfil e alinhamento da galeria
+
+Foto e banner abrem um recortador modal com arraste, zoom, redefinição, cancelamento e aplicação, com foco protegido e adaptação ao celular. Avatar usa recorte quadrado com prévia circular; capa usa 4:1. O usuário mantém acesso ao formulário se uma tentativa de inicialização falhar, e pode tentar novamente. GIF é uma opção de assinantes Plus/Premium e mantém a animação no processamento.
+
+O Masonry conserva proporções variadas e a ordem escolhida; após o encaixe natural, distribui a diferença de altura entre as capas de cada coluna para fechar a galeria na mesma linha. O bloco de informações do criador não é esticado. Uma coluna no celular mantém as proporções naturais.
+
+Os novos controles de recorte usam `app/ui-tokens.css` como fonte única de tamanhos, espaçamentos, raios, cores de edição, tipografia e elevação. São tokens adicionados para controles internos, sem substituir tokens existentes ou alterar a landing. A ação de recortar preserva a estrutura do editor; não é uma refatoração visual geral. Dependências adicionadas: `react-easy-crop` (gestos, teclado e cálculo do recorte) e `sharp` (processamento de alta qualidade e GIF multipágina), com versões fixadas e licenças incluídas. Os cards e a navegação preexistentes conservam seus estilos; somente a geometria de fechamento do Masonry foi ajustada.

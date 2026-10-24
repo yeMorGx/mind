@@ -46,16 +46,34 @@ export default function Masonry({ children }: { children: ReactNode }) {
       const rowGap = parseFloat(styles.rowGap) || 30;
       const width = (container.clientWidth - gap * (columns - 1)) / columns;
       const heights = new Array<number>(columns).fill(0);
-      // Set widths together before measuring to avoid repeated read/write layout.
-      tiles.forEach(tile => { tile.style.width = `${width}px`; });
+      // Measure natural proportions first; reset the previous balancing pass.
+      const covers = tiles.map(tile => tile.querySelector<HTMLElement>(".catalog-card-cover"));
+      tiles.forEach((tile,index) => { tile.style.width = `${width}px`; if(covers[index]) covers[index]!.style.height = ""; });
       const sizes = tiles.map(tile => (tile.firstElementChild as HTMLElement).getBoundingClientRect().height);
-      tiles.forEach((tile, index) => {
-        const column = heights.indexOf(Math.min(...heights));
-        const x = column * (width + gap), y = heights[column];
-        tile.style.transform = `translate3d(${x}px,${y}px,0)`;
-        heights[column] += sizes[index] + rowGap;
+      const coverSizes = covers.map(cover => cover?.getBoundingClientRect().height ?? 0);
+      const columnItems: number[][] = Array.from({length:columns},()=>[]);
+      sizes.forEach((height,index)=>{
+        const column=heights.indexOf(Math.min(...heights));
+        columnItems[column].push(index);heights[column]+=height+rowGap;
       });
-      container.style.height = `${Math.max(0, ...heights) - (tiles.length ? rowGap : 0)}px`;
+      // Spread the shortfall across a column's images, keeping varied heights while
+      // giving the gallery one straight lower edge. Text/details are never stretched.
+      const baseline=Math.max(0,...heights);
+      columnItems.forEach((indices,column)=>{
+        const media=indices.reduce((sum,index)=>sum+coverSizes[index],0);
+        if(!media)return;
+        const extra=Math.max(0,baseline-heights[column]);
+        indices.forEach(index=>{if(covers[index])covers[index]!.style.height=`${coverSizes[index]+extra*coverSizes[index]/media}px`;});
+      });
+      const balancedSizes=tiles.map(tile=>(tile.firstElementChild as HTMLElement).getBoundingClientRect().height);
+      columnItems.forEach((indices,column)=>{
+        let y=0;
+        indices.forEach(index=>{
+          tiles[index].style.transform=`translate3d(${column*(width+gap)}px,${y}px,0)`;
+          y+=balancedSizes[index]+rowGap;
+        });
+      });
+      container.style.height = `${Math.max(0,baseline-(tiles.length?rowGap:0))}px`;
       container.dataset.ready = "true";
       tiles.forEach(tile => { if (!revealed.has(tile)) reveal.observe(tile); });
     }

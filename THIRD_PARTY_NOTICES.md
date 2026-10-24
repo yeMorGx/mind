@@ -99,3 +99,10 @@ icon dependency. Mind supplies the plan content and the membership card face.
 License and attribution: [React Bits / David Haz](docs/licenses/react-bits.md).
 These effects are used inside the application, not distributed as standalone
 component products.
+
+## Profile media dependencies
+
+The profile crop UI uses `react-easy-crop` 6.2.4, MIT, copyright 2022 Valentin Hervieu.
+[License](docs/licenses/react-easy-crop.txt).
+Profile media processing uses `sharp` 0.34.5 under the Apache License 2.0.
+[License](docs/licenses/sharp.txt).

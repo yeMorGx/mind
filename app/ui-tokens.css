@@ -1,0 +1,26 @@
+/* Shared semantic tokens for new internal controls. Existing surfaces, including
+   the protected landing, do not reference these additions. */
+:root {
+ --ui-space-2:8px;
+ --ui-space-3:12px;
+ --ui-space-4:16px;
+ --ui-space-5:20px;
+ --ui-space-6:24px;
+ --ui-space-8:32px;
+ --ui-control-height:44px;
+ --ui-control-min-width:40px;
+ --ui-section-size:18px;
+ --ui-helper-size:13px;
+ --ui-radius-control:12px;
+ --ui-radius-dialog:16px;
+ --ui-dialog-width:680px;
+ --ui-crop-stage-height:min(384px,45dvh);
+ --ui-crop-banner-height:min(304px,40dvh);
+ --ui-dialog-shadow:0 24px 80px rgb(0 0 0 / .3);
+ --ui-overlay:rgb(0 0 0 / .65);
+ --ui-crop-stage:#15161a;
+ --ui-crop-mask:rgb(0 0 0 / .55);
+ --ui-crop-outline:rgb(255 255 255 / .8);
+ --ui-error-text:#9c2923;
+}
+:root[data-theme="dark"] { --ui-error-text:#ffb4ab; }

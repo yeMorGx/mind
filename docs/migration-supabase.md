@@ -97,3 +97,11 @@ O crachá 3D fica dentro de “Conheça o criador”, sem faixa fixa à esquerda
 A conexão administrativa Supabase via MCP está disponível. O acesso aos dados Firebase ainda deve vir de uma exportação administrativa ou de sessões autenticadas dos próprios usuários. Não compartilhar credenciais de serviço em mensagens ou em arquivos do repositório.
 
 As funcionalidades existentes não devem ser trocadas para um backend ainda não configurado; a migração termina somente quando as contas e os dados antigos estiverem acessíveis no destino.
+
+## Edição e mídia de perfil (24/10/2026)
+
+O erro observado na conta pública `@mind` foi rastreado ao preflight HTTP 403 da ponte antiga, cujo CORS não aceitava `https://www.mindapp.icu`. As sessões legadas continuam autenticadas, mas a edição agora usa a API de mesma origem `/api/profile/{ensure,save}` com assinatura JWT verificada e gravação no diretório Supabase. O editor lê o perfil do diretório público existente, e não depende de uma segunda gravação Firestore após salvar. Regras, dados e configuração administrativa Firebase não foram modificados. Sessões Supabase usam a RPC de perfil existente, com restauração da identidade nativa antes da inicialização do editor.
+
+A nova mídia é recortada no servidor com Sharp e armazenada em `mind-profile-images`, de leitura pública e sem política de escrita de cliente. Avatar até 1024px, banner até 2560px, WebP qualidade 95; não se aplica a compressão de aproximadamente 60 KB das imagens de prompts. GIFs preservam quadros/tempos e usam extração multipágina, com validação de tamanho, tipo, resolução total e plano. Fotos de até 12 MB são aceitas pelo editor, com redução prévia em alta qualidade apenas quando excedem o limite de requisição de 4 MB; GIFs enviados têm limite de 4 MB. Resultados de mídia têm limite de 8 MB. Arquivos existentes/URLs permanecem preservados.
+
+A migração foi aplicada e registrada de forma transacional no projeto Mind em 24/10/2026; a leitura posterior confirmou bucket público com tipos restritos, política somente de leitura para clientes e os dois gatilhos de controle de GIF.

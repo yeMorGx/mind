@@ -33,7 +33,7 @@ export async function readBody(request: Request, max = 12000) {
  catch { throw new ServiceError("Confira os dados enviados."); }
 }
 const firebaseKeys = createRemoteJWKSet(new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"));
-export async function identity(request: Request, sessionRpc: "mind_billing_session" | "mind_campaign_session" = "mind_billing_session") {
+export async function identity(request: Request, sessionRpc: "mind_billing_session" | "mind_campaign_session" = "mind_billing_session", requireUsername = true) {
  const token = request.headers.get("authorization")?.match(/^Bearer (.+)$/i)?.[1];
  if (!token || token.length > 16000) throw new ServiceError("Entre na sua conta para continuar.", 401);
  const backend = request.headers.get("x-mind-backend");
@@ -58,9 +58,11 @@ export async function identity(request: Request, sessionRpc: "mind_billing_sessi
   if (account.error || !account.data) throw new ServiceError("Confirme o login e o autenticador, se estiver ativado.", 403);
   actor = account.data;
  } else throw new ServiceError("Entre novamente para confirmar sua sessão.", 401);
+ if (requireUsername) {
  const chosen = await admin.from("mind_usernames").select("username").eq("public_id", actor).maybeSingle();
  if (chosen.error) throw new ServiceError("Não foi possível conferir a conta.", 503);
  if (!chosen.data) throw new ServiceError("Escolha seu @ para continuar.", 403);
+ }
  return { actor, admin };
 }
 export async function isOwner(actor: string) {

@@ -133,3 +133,7 @@ A migração `20261019115240_prompt_copy_usage_and_grants.sql` troca a medição
 `mind_plan_grants` concede Premium de cortesia sem inventar assinaturas ou pagamentos Stripe. A migração resolve a conta solicitada por `auth.users.email` e `mind_accounts`, sem criar outro usuário. Eventos Stripe continuam atualizando exclusivamente os registros de assinatura. A página de assinatura identifica a cortesia; o grant pode ser revogado administrativamente sem tocar em pagamentos.
 
 Aplicada em 19/10/2026 no projeto Mind pela API administrativa, com registro no histórico de migrações na mesma transação. A leitura posterior confirmou Premium para a conta solicitada, cortesia sem expiração e sem assinatura Stripe criada; confirmou também RLS nas duas tabelas, RPC sem execução para clientes autenticados e execução permitida ao serviço. A conexão OAuth da CLI foi renovada; as conexões do conector continuavam sem acesso a este projeto.
+
+## GIFs de perfil (24/10/2026)
+
+O envio de GIFs animados de foto/capa é exclusivo do Plus e Premium (incluindo concessões administrativas). `/api/profile/upload` consulta o plano efetivo da identidade verificada antes de salvar GIF ou qualquer formato animado. A migração `20261024184023_profile_media_and_gif_access.sql` também impede adicionar/trocar URLs GIF no perfil sem plano elegível; editar texto de um perfil que já tenha GIF não bloqueia a conta depois de uma mudança de plano. O recurso não cria assinaturas nem muda cobranças existentes.
