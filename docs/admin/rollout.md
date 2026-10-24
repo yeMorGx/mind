@@ -4,9 +4,9 @@
 
 A base inclui visão geral, busca paginada de perfis, gestão de emblemas com motivo, campanhas, propostas recebidas e histórico. Analytics/performance mostram a integração pendente, sem números simulados. Conteúdo, assinaturas, convites de equipe, relatórios GA4 e telemetria de performance são próximas entregas; não estão implementados como gestão completa neste pacote.
 
-A ativação está **fechada por padrão**. A interface pode ser vista em `/admin`, mas nenhuma consulta ou alteração administrativa é liberada sem as barreiras do modo configurado. O DNS permanece na IONOS. O subdomínio `admin.mindapp.icu` foi associado ao projeto Mind na Vercel; o registro DNS ainda precisa ser salvo na IONOS. O owner inicial é a conta existente `gabrielmcgoes@gmail.com`, resolvida pelo banco; o perfil institucional `@mind` não recebe poderes automaticamente.
+A ativação está **fechada por padrão** no código. Em produção, o DNS IONOS e o HTTPS de `admin.mindapp.icu` foram confirmados em 24/10/2026, e o proprietário confirmou o cadastro do retorno de login no Supabase. As variáveis de habilitação foram configuradas para o domínio administrativo; consultas e alterações continuam exigindo todas as barreiras do modo configurado. O owner inicial é a conta existente `gabrielmcgoes@gmail.com`, resolvida pelo banco; o perfil institucional `@mind` não recebe poderes automaticamente.
 
-O modo escolhido pelo proprietário é `application`: autenticação e autorização no servidor, com MFA obrigatório, sem depender de Cloudflare Access. Ele exige configuração explícita; o padrão continua sendo `cloudflare`, e uma configuração inválida nunca muda automaticamente para outro modo. A variável de produção `MIND_ADMIN_ACCESS_MODE=application` está preparada, mas `MIND_ADMIN_ENABLED=true` ainda não foi ativada.
+O modo escolhido pelo proprietário é `application`: autenticação e autorização no servidor, com MFA obrigatório, sem depender de Cloudflare Access. Ele exige configuração explícita; o padrão continua sendo `cloudflare`, e uma configuração inválida nunca muda automaticamente para outro modo. As variáveis de produção são `MIND_ADMIN_ACCESS_MODE=application`, `MIND_ADMIN_HOST=admin.mindapp.icu` e `MIND_ADMIN_ENABLED=true`. Alterações de ambiente entram em vigor em uma nova publicação.
 
 ## Controles implementados
 
@@ -23,8 +23,8 @@ O modo escolhido pelo proprietário é `application`: autenticação e autoriza�
 ## Configuração externa necessária — IONOS
 
 1. Em IONOS → Domínios e SSL → `mindapp.icu` → DNS, cadastrar `CNAME`, nome `admin`, destino `a53f877b761f8550.vercel-dns-017.com`. Esse é o valor recomendado pela Vercel para este projeto. Se houver A/AAAA/CNAME especificamente em `admin`, substituir somente esses registros conflitantes. Preservar `@`, `www`, MX, TXT e nameservers. Não há migração de zona para Cloudflare.
-2. Conferir a propagação e o certificado HTTPS pela Vercel. A associação ao projeto já foi feita; a verificação atual ainda aponta DNS inválido, com IP IONOS `74.208.236.161`.
-3. No Supabase → Authentication → URL Configuration, adicionar `https://admin.mindapp.icu/auth/callback` aos Redirect URLs, preservando os endereços existentes e o Site URL público. A API administrativa recusou esta configuração (HTTP 403); não foi possível confirmar ou alterar a lista nesta sessão.
+2. Conferir a propagação e o certificado HTTPS pela Vercel. A associação ao projeto e a verificação DNS estão concluídas; a Vercel confirmou o CNAME recomendado, e o acesso HTTPS ao admin retornou 200 com proteção contra enquadramento.
+3. No Supabase → Authentication → URL Configuration, adicionar `https://admin.mindapp.icu/auth/callback` aos Redirect URLs, preservando os endereços existentes e o Site URL público. A API administrativa recusou esta configuração (HTTP 403); o proprietário confirmou que salvou o endereço no painel.
 4. Na Vercel, usar variáveis **de servidor**, nunca `NEXT_PUBLIC_`: `MIND_ADMIN_HOST=admin.mindapp.icu` e `MIND_ADMIN_ACCESS_MODE=application`. Depois de DNS/HTTPS e login configurados, habilitar `MIND_ADMIN_ENABLED=true` e publicar novamente. Não habilitar automaticamente por uma resposta pública de DNS.
 5. Cadastrar e verificar TOTP no Mind; entrar novamente no domínio administrativo e concluir o desafio. O login no admin usa sessão própria dessa origem, sem transportar tokens entre domínios em URLs.
 6. Conferir as negações e o acesso permitido antes de considerar o painel operacional. A IONOS fornece DNS; não há proxy de identidade externo, bloqueio de rede da origem ou alerta externo configurado. Regras adicionais na borda da Vercel dependem do plano e da configuração da conta.
@@ -45,7 +45,7 @@ Se adotada posteriormente, configurar `MIND_ADMIN_ACCESS_MODE=cloudflare`, `CLOU
 - Ações com corpo inválido, origem externa, volume excedido e versão antiga da campanha: bloqueadas.
 - Campanha e emblema com auditoria ausente: a transação deve falhar.
 
-O fluxo completo no subdomínio com MFA real permanece pendente até a configuração externa. O modo Cloudflare não foi ativado nem validado com Access real. Não chamar essa entrega de teste de invasão, auditoria formal concluída ou garantia de invulnerabilidade. As referências complementares da skill `codex-security:threat-model` estavam inacessíveis; não foi produzido um artefato formal dessa skill. Políticas administrativas legadas do Firebase não foram auditadas/alteradas; os poderes do novo admin são decididos exclusivamente na associação privada Supabase.
+O fluxo completo com login e MFA reais do proprietário ainda precisa ser percorrido pelo próprio usuário; nenhuma sessão foi simulada para apresentá-lo como validado. O modo Cloudflare não foi ativado nem validado com Access real. Não chamar essa entrega de teste de invasão, auditoria formal concluída ou garantia de invulnerabilidade. As referências complementares da skill `codex-security:threat-model` estavam inacessíveis; não foi produzido um artefato formal dessa skill. Políticas administrativas legadas do Firebase não foram auditadas/alteradas; os poderes do novo admin são decididos exclusivamente na associação privada Supabase.
 
 ## Manutenção
 
