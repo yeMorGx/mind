@@ -2,7 +2,7 @@
 
 ## Estado
 
-A base inclui visão geral, busca paginada de perfis, gestão de emblemas com motivo, campanhas, propostas recebidas e histórico. Analytics/performance mostram a integração pendente, sem números simulados. Conteúdo, assinaturas, convites de equipe, relatórios GA4 e telemetria de performance são próximas entregas; não estão implementados como gestão completa neste pacote.
+A base inclui visão geral, busca paginada de perfis, gestão de emblemas com motivo, campanhas, propostas recebidas e histórico. A tag GA4 `G-PVW65CG68J` está instalada nas páginas públicas, incluindo a landing por autorização explícita, e seu status aparece no admin. Relatórios GA4 no painel e performance continuam pendentes, sem números simulados. Conteúdo, assinaturas, convites de equipe, relatórios GA4 e telemetria de performance são próximas entregas; não estão implementados como gestão completa neste pacote. O escopo da medição está em `docs/analytics.md`.
 
 A ativação está **fechada por padrão** no código. Em produção, o DNS IONOS e o HTTPS de `admin.mindapp.icu` foram confirmados em 24/10/2026, e o proprietário confirmou o cadastro do retorno de login no Supabase. As variáveis de habilitação foram configuradas para o domínio administrativo; consultas e alterações continuam exigindo todas as barreiras do modo configurado. O owner inicial é a conta existente `gabrielmcgoes@gmail.com`, resolvida pelo banco; o perfil institucional `@mind` não recebe poderes automaticamente.
 

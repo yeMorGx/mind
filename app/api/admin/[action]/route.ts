@@ -1,5 +1,6 @@
 import { requireAdmin, adminApiError, type AdminPermission } from "@/lib/admin/server";
 import { databaseError, noStore, readBody, ServiceError } from "@/lib/billing/server";
+import { GOOGLE_ANALYTICS_ID } from "@/lib/analytics/config";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Context={params:Promise<{action:string}>};
@@ -29,6 +30,6 @@ export async function POST(request:Request,context:Context) {
    const result=await admin.from("mind_admin_audit").select("id,actor_id,action,target_id,details,created_at",{count:"exact"}).order("created_at",{ascending:false}).order("id",{ascending:false}).range(page*25,page*25+24);databaseError(result.error);
    return Response.json({items:result.data,total:result.count},{headers:noStore});
   }
-  return Response.json({ga4Connected:false,performanceConnected:false},{headers:noStore});
+  return Response.json({ga4TagInstalled:true,ga4MeasurementId:GOOGLE_ANALYTICS_ID,ga4Connected:false,performanceConnected:false},{headers:noStore});
  } catch(error){return adminApiError(error);}
 }

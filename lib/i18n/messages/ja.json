@@ -1494,5 +1494,7 @@
   "Visão geral": "概要",
   "Voltar ao site": "ウェブサイトに戻る",
   "Permissões administrativas são gerenciadas separadamente dos emblemas.": "管理権限はバッジとは別に管理されます。",
-  "Explique o motivo desta alteração.": "この変更の理由を説明してください。"
+  "Explique o motivo desta alteração.": "この変更の理由を説明してください。",
+  "Tag de medição instalada.": "測定タグを設置済みです。",
+  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "データは Google アナリティクスで確認できます。この管理画面のレポート連携はまだ設定されていません。"
 }

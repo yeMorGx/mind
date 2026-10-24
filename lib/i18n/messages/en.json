@@ -1497,5 +1497,7 @@
   "Visão geral": "Overview",
   "Voltar ao site": "Return to website",
   "Permissões administrativas são gerenciadas separadamente dos emblemas.": "Administrative permissions are managed separately from badges.",
-  "Explique o motivo desta alteração.": "Explain the reason for this change."
+  "Explique o motivo desta alteração.": "Explain the reason for this change.",
+  "Tag de medição instalada.": "Measurement tag installed.",
+  "Consulte os dados no Google Analytics. Os relatórios neste painel ainda não estão conectados.": "View your data in Google Analytics. Reports in this dashboard are not connected yet."
 }
