@@ -17,6 +17,7 @@ export async function campaignRequest<T>(
     cache: "no-store",
   });
   const value = await response.json();
+  if (!response.ok && value.code === "admin_mfa_required") window.dispatchEvent(new Event("mind:admin-mfa"));
   if (!response.ok)
     throw new Error(value.error || "Não foi possível carregar as campanhas.");
   return value;
@@ -51,6 +52,7 @@ export async function uploadCampaignMedia(user: MindUser, file: File) {
     cache: "no-store",
   });
   const value = await response.json();
+  if (!response.ok && value.code === "admin_mfa_required") window.dispatchEvent(new Event("mind:admin-mfa"));
   if (!response.ok || !value.path || !value.token || !value.publicUrl)
     throw new Error(value.error || "Não foi possível preparar o envio.");
 

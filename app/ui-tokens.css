@@ -1,6 +1,11 @@
 /* Shared semantic tokens for new internal controls. Existing surfaces, including
    the protected landing, do not reference these additions. */
 :root {
+ --ui-admin-width:1440px;
+ --ui-reading-width:720px;
+ --ui-page-title-size:32px;
+ --ui-body-size:14px;
+ --ui-metric-min-width:192px;
  --ui-space-2:8px;
  --ui-space-3:12px;
  --ui-space-4:16px;

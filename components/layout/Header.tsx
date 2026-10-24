@@ -7,7 +7,7 @@ import type { BadgeKind } from "@/lib/firebase/badges";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Plus, Settings, LogOut, UserRound, FileCode2, Megaphone } from "lucide-react";
+import { Plus, Settings, LogOut, UserRound, FileCode2, ShieldCheck } from "lucide-react";
 import HeaderSearch from "@/components/search/HeaderSearch";
 import Logo from "@/components/ui/logo";
 import SiteNavigation from "./SiteNavigation";
@@ -187,7 +187,7 @@ export default function Header({
                 >
                   <FileCode2 size={16} />
                   {t("Arquivos e MCPs")}</Link>
-                {badges?.includes("owner") && <Link href="/home/campaigns" className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><Megaphone size={16}/>{t("Campanhas")}</Link>}
+                {badges?.includes("owner") && <Link href="/admin" className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"><ShieldCheck size={18}/>{t("Administração")}</Link>}
                 <Link
                   href="/home/settings"
                   className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm hover:bg-surface-hover"

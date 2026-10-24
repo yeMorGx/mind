@@ -1,7 +1,7 @@
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { requireFirebaseServices } from "./client";
 import { usingSupabase } from "@/lib/backend";
-import { assignNativeBadges, getNativeBadges } from "@/lib/supabase/mind";
+import { assignNativeBadges, getNativeBadges, getNativePublicCreator } from "@/lib/supabase/mind";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 
 export const badgeKinds = ["owner", "verified", "moderator", "creator", "partner"] as const;
@@ -18,6 +18,8 @@ export async function getAccountBadges(uid: string): Promise<BadgeKind[]> {
   if (isSupabaseConfigured) {
     const published = await getNativeBadges(uid);
     if (published.length) return published;
+    // An existing Supabase profile with an empty set represents an intentional removal.
+    if (await getNativePublicCreator(uid)) return [];
   }
   const { db } = requireFirebaseServices();
   const snapshot = await getDoc(doc(db, "accountBadges", uid));

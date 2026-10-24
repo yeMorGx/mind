@@ -1,3 +1,2 @@
-import InquiryInbox from "@/components/contact/InquiryInbox";
-export const metadata = { title: "Received inquiries · Mind", robots: { index: false, follow: false } };
-export default function Page() { return <InquiryInbox/>; }
+import {redirect} from "next/navigation";
+export default function Page(){redirect("/admin/inbox");}

@@ -251,3 +251,9 @@ O Masonry conserva proporções variadas e a ordem escolhida; após o encaixe na
 Os novos controles de recorte usam `app/ui-tokens.css` como fonte única de tamanhos, espaçamentos, raios, cores de edição, tipografia e elevação. São tokens adicionados para controles internos, sem substituir tokens existentes ou alterar a landing. A ação de recortar preserva a estrutura do editor; não é uma refatoração visual geral. Dependências adicionadas: `react-easy-crop` (gestos, teclado e cálculo do recorte) e `sharp` (processamento de alta qualidade e GIF multipágina), com versões fixadas e licenças incluídas. Os cards e a navegação preexistentes conservam seus estilos; somente a geometria de fechamento do Masonry foi ajustada.
 
 O botão de adicionar/alterar capa fica no canto superior direito da prévia, fora da região sobreposta pelo avatar. A faixa transparente do avatar não captura ponteiros; seus conteúdos mantêm as interações. O seletor de arquivos da capa é acionável por clique, toque e teclado, inclusive após já existir uma capa.
+
+## Administração
+
+O console usa a navegação e os controles compartilhados, com seções próprias para visão geral, usuários, campanhas, propostas, integrações e histórico. Os novos tokens em `app/ui-tokens.css` são `--ui-admin-width` (1440px), `--ui-reading-width` (720px), `--ui-page-title-size` (32px), `--ui-body-size` (14px) e `--ui-metric-min-width` (192px). As cores vêm das superfícies semânticas existentes nos dois temas. Esses tokens não substituem valores da landing.
+
+O acesso fechado foi inspecionado em desktop claro e celular escuro com movimento reduzido. A inspeção das telas autenticadas fica pendente da configuração externa do Access. O procedimento e os limites da entrega estão em `docs/admin/rollout.md`.

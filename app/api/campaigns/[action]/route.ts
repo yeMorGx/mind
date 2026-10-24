@@ -1,11 +1,9 @@
+import {requireAdmin,adminApiError} from "@/lib/admin/server";
 import { createHmac } from "node:crypto";
 import {
   adminClient,
-  apiError,
   assertOrigin,
   databaseError,
-  identity,
-  isOwner,
   noStore,
   readBody,
   ServiceError,
@@ -17,7 +15,7 @@ export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ action: string }> };
 export async function POST(request: Request, context: Context) {
   try {
-    assertOrigin(request);
+    if ((await context.params).action === "event") assertOrigin(request);
     const { action } = await context.params;
     if (action === "event") {
       const body = await readBody(request, 2000);
@@ -49,9 +47,7 @@ export async function POST(request: Request, context: Context) {
       return Response.json({ received: true }, { headers: noStore });
     }
     if (action === "media") {
-      const { actor, admin } = await identity(request, "mind_campaign_session");
-      if (!(await isOwner(actor)))
-        throw new ServiceError("Campanhas são restritas à administração do Mind.", 403);
+      const { actor, admin } = await requireAdmin(request,"campaigns");
       const body = await readBody(request, 1000);
       const type = typeof body.type === "string" ? body.type : "";
       const size = Number(body.size);
@@ -79,12 +75,7 @@ export async function POST(request: Request, context: Context) {
     }
     if (!["list", "save", "state"].includes(action))
       throw new ServiceError("Ação não encontrada.", 404);
-    const { actor, admin } = await identity(request, "mind_campaign_session");
-    if (!(await isOwner(actor)))
-      throw new ServiceError(
-        "Campanhas são restritas à administração do Mind.",
-        403,
-      );
+    const { actor, admin } = await requireAdmin(request,"campaigns");
     const body = await readBody(request, 16000);
     if (action === "list") {
       const page =
@@ -186,6 +177,6 @@ export async function POST(request: Request, context: Context) {
       );
     return Response.json({ campaign: result.data }, { headers: noStore });
   } catch (error) {
-    return apiError(error);
+    return adminApiError(error);
   }
 }
