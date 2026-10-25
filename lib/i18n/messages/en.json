@@ -1587,5 +1587,10 @@
   "30 dias": "30 days",
   "90 dias": "90 days",
   "1 ano": "1 year",
-  "Escolher data": "Choose a date"
+  "Escolher data": "Choose a date",
+  "Capa do card": "Card cover",
+  "Escolha a imagem que aparece no card do prompt. A opção automática mantém a seleção padrão.": "Choose the image shown on the prompt card. Automatic keeps the default selection.",
+  "Automática": "Automatic",
+  "Imagem {v0}": "Image {v0}",
+  "A comparação interativa aparece no prompt. O card mostra a prévia antes/depois.": "The interactive comparison appears on the prompt page. The card shows a before-and-after preview."
 }

@@ -44,15 +44,19 @@ export function ImageCompare({
   /* show the Before and After tags */
   labels = true,
   corner = 20,
+  interactive = true,
+  onImageSize,
 }: {
   beforeSrc: string;
   afterSrc: string;
   beforeAlt?: string;
   afterAlt?: string;
   aspectRatio?: number;
-  onImageError?: () => void;
+  onImageError?: (source?: "before" | "after") => void;
   labels?: boolean;
   corner?: number;
+  interactive?: boolean;
+  onImageSize?: (width: number, height: number) => void;
 }) {
   const [size, setSize] = useState({ width: 540, height: 405 });
   const W = size.width;
@@ -140,25 +144,27 @@ export function ImageCompare({
     <div
       ref={box}
       className="cmp"
+      data-static={!interactive || undefined}
       data-held={held || undefined}
-      role="slider"
-      tabIndex={0}
-      aria-label="Comparar imagem antes e depois"
-      aria-orientation="horizontal"
-      aria-valuetext={`${Math.round(p * 100)}% antes, ${Math.round((1 - p) * 100)}% depois`}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={Math.round(p * 100)}
+      role={interactive ? "slider" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={interactive ? "Comparar imagem antes e depois" : undefined}
+      aria-orientation={interactive ? "horizontal" : undefined}
+      aria-valuetext={interactive ? `${Math.round(p * 100)}% antes, ${Math.round((1 - p) * 100)}% depois` : undefined}
+      aria-valuemin={interactive ? 0 : undefined}
+      aria-valuemax={interactive ? 100 : undefined}
+      aria-valuenow={interactive ? Math.round(p * 100) : undefined}
+      aria-hidden={!interactive || undefined}
       style={{ aspectRatio, borderRadius: r }}
-      onPointerDown={(e) => {
+      onPointerDown={interactive ? (e) => {
         if (!e.isPrimary || e.button !== 0) return;
         try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* a scripted pointer */ }
         const v = at(e.clientX);
         drag.current = { v: 0, t: performance.now(), last: v };
         setHeld(true);
         glide(v);
-      }}
-      onPointerMove={(e) => {
+      } : undefined}
+      onPointerMove={interactive ? (e) => {
         const d = drag.current;
         if (!d) return;
         const v = at(e.clientX);
@@ -167,8 +173,8 @@ export function ImageCompare({
         d.t = now;
         d.last = v;
         place(v);
-      }}
-      onPointerUp={(e) => {
+      } : undefined}
+      onPointerUp={interactive ? (e) => {
         const d = drag.current;
         drag.current = null;
         setHeld(false);
@@ -177,21 +183,21 @@ export function ImageCompare({
         if (d && Math.abs(d.v) > 0.0025) {
           glide(d.v > 0 ? 1 : 0);
         }
-      }}
-      onPointerCancel={() => { drag.current = null; setHeld(false); }}
-      onLostPointerCapture={() => { drag.current = null; setHeld(false); }}
-      onKeyDown={(e) => {
+      } : undefined}
+      onPointerCancel={interactive ? () => { drag.current = null; setHeld(false); } : undefined}
+      onLostPointerCapture={interactive ? () => { drag.current = null; setHeld(false); } : undefined}
+      onKeyDown={interactive ? (e) => {
         if (e.key === "Home") { e.preventDefault(); glide(0); }
         if (e.key === "End") { e.preventDefault(); glide(1); }
         if (e.key === "ArrowLeft") { e.preventDefault(); glide(clamp((target.current ?? cur.current) - 0.1, 0, 1)); }
         if (e.key === "ArrowRight") { e.preventDefault(); glide(clamp((target.current ?? cur.current) + 0.1, 0, 1)); }
-      }}
+      } : undefined}
     >
       {/* the edit underneath, drifting a little with the line */}
-      <img className="cmp-img cmp-after" src={afterSrc} alt={afterAlt} onError={onImageError} draggable={false} />
+      <img className="cmp-img cmp-after" src={afterSrc} alt={interactive ? afterAlt : ""} onLoad={event=>onImageSize?.(event.currentTarget.naturalWidth,event.currentTarget.naturalHeight)} onError={()=>onImageError?.("after")} draggable={false} />
       {/* the raw shot on top, cut off at the line */}
       <div className="cmp-before" style={{ clipPath: cut }}>
-        <img className="cmp-img" src={beforeSrc} alt={beforeAlt} onError={onImageError} draggable={false} />
+        <img className="cmp-img" src={beforeSrc} alt={interactive ? beforeAlt : ""} onError={()=>onImageError?.("before")} draggable={false} />
       </div>
       {labels && (
         <>

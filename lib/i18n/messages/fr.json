@@ -1584,5 +1584,10 @@
   "30 dias": "30 jours",
   "90 dias": "90 jours",
   "1 ano": "1 an",
-  "Escolher data": "Choisir une date"
+  "Escolher data": "Choisir une date",
+  "Capa do card": "Couverture de la carte",
+  "Escolha a imagem que aparece no card do prompt. A opção automática mantém a seleção padrão.": "Choisissez l’image affichée sur la carte du prompt. Le mode automatique conserve la sélection par défaut.",
+  "Automática": "Automatique",
+  "Imagem {v0}": "Image {v0}",
+  "A comparação interativa aparece no prompt. O card mostra a prévia antes/depois.": "La comparaison interactive apparaît sur la page du prompt. La carte affiche un aperçu avant/après."
 }

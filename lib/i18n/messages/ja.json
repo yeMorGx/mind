@@ -1584,5 +1584,10 @@
   "30 dias": "30日",
   "90 dias": "90日",
   "1 ano": "1年",
-  "Escolher data": "日付を選択"
+  "Escolher data": "日付を選択",
+  "Capa do card": "カードのカバー",
+  "Escolha a imagem que aparece no card do prompt. A opção automática mantém a seleção padrão.": "プロンプトカードに表示する画像を選択します。自動ではデフォルトの画像が使われます。",
+  "Automática": "自動",
+  "Imagem {v0}": "画像 {v0}",
+  "A comparação interativa aparece no prompt. O card mostra a prévia antes/depois.": "プロンプトページでは比較を操作できます。カードにはビフォー・アフターのプレビューが表示されます。"
 }

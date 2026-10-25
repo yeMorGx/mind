@@ -1,6 +1,7 @@
 "use client";
 import { useI18n } from "@/components/preferences/PreferencesProvider";
 import { useEffect,useRef,useState } from "react";
+import Image from "next/image";
 import AIModelPicker from "@/components/models/AIModelPicker";
 import PromptVideo from "./PromptVideo";
 import {uploadPromptVideo} from "@/lib/prompt-video";
@@ -9,7 +10,8 @@ import { X } from "lucide-react";
 import type { Prompt } from "@/lib/firebase/data";
 import { UploadDropzone } from "@/components/ui/UploadDropzone";
 import { SelectField } from "@/components/ui/SelectField";
-import { preparePromptImage,validatePromptDetails,MAX_PROMPT_IMAGES,MAX_IMAGES_CHARS,type PromptDetails,type StoredPromptImage,type PromptImageRole } from "@/lib/prompt-media";
+import { preparePromptImage,validatePromptDetails,MAX_PROMPT_IMAGES,MAX_IMAGES_CHARS,type PromptDetails,type StoredPromptImage,type PromptImageRole,type PromptCoverMode } from "@/lib/prompt-media";
+import { ImageCompare } from "@/components/ui/ImageCompare";
 type Props={isOpen:boolean;prompt:Prompt|null;initialTitle?:string;defaults?:{category?:string;model?:string};pending:boolean;error:string;onClose:()=>void;onSave:(title:string,content:string,details:PromptDetails)=>void};
 export default function PromptDialog({isOpen,prompt,initialTitle="",defaults,pending,error,onClose,onSave}:Props){
  const { t, intlLocale } = useI18n();
@@ -18,9 +20,17 @@ export default function PromptDialog({isOpen,prompt,initialTitle="",defaults,pen
   const [category,setCategory]=useState(prompt?.category??defaults?.category??""),[model,setModel]=useState(prompt?.model??defaults?.model??"");
   const [kind,setKind]=useState<PromptKind>(prompt?.kind??"image"),[summary,setSummary]=useState(prompt?.summary??""),[videoUrl,setVideoUrl]=useState(prompt?.videoUrl??""),[videoPath,setVideoPath]=useState(prompt?.videoPath??""),[siteUrl,setSiteUrl]=useState(prompt?.siteUrl??"");
   const [images,setImages]=useState<StoredPromptImage[]>(prompt?.images??[]);
+  const [coverMode,setCoverMode]=useState<PromptCoverMode>(prompt?.coverMode??"auto"),[coverImageId,setCoverImageId]=useState(prompt?.coverImageId??"");
   const [tab,setTab]=useState("text"),[processing,setProcessing]=useState(false),[localError,setLocalError]=useState("");
   const dialog=useRef<HTMLDialogElement>(null),processingRef=useRef(false),submitting=useRef(false);
   const locked=pending||processing;
+  const beforeImage=images.find(image=>image.role==="before"),afterImage=images.find(image=>image.role==="after");
+  const coverImages=images.filter(image=>image.role!=="reference");
+  const automaticCover=coverImages.find(image=>image.role==="gallery"||image.role==="after")??coverImages[0];
+  const hasBeforeAfter=Boolean(beforeImage&&afterImage);
+  const hasSelectedCover=coverImages.some(image=>image.id===coverImageId);
+  const effectiveCoverMode:PromptCoverMode=coverMode==="image"&&hasSelectedCover?"image":coverMode==="compare"&&hasBeforeAfter?"compare":"auto";
+  const effectiveCoverImageId=effectiveCoverMode==="image"?coverImageId:"";
   useEffect(()=>{if(!pending)submitting.current=false;},[pending]);
   useEffect(()=>{
     const element=dialog.current;if(!element)return;
@@ -35,8 +45,16 @@ export default function PromptDialog({isOpen,prompt,initialTitle="",defaults,pen
     try{const prepared=await Promise.all(files.map(preparePromptImage));const next=[...images,...prepared.map(image=>({...image,role}))];if(next.length>MAX_PROMPT_IMAGES||next.reduce((size,image)=>size+image.url.length,0)>MAX_IMAGES_CHARS)throw new Error("As imagens juntas estão muito grandes. Remova algumas ou escolha versões menores.");setImages(next);setLocalError("");}
     finally{processingRef.current=false;setProcessing(false);}
   }
+  function updateImageSet(update:(current:StoredPromptImage[])=>StoredPromptImage[]){
+    const next=update(images);
+    setImages(next);
+    const nextCoverStillExists=next.some(image=>image.id===coverImageId&&image.role!=="reference");
+    const nextHasComparison=next.some(image=>image.role==="before")&&next.some(image=>image.role==="after");
+    if(coverMode==="image"&&!nextCoverStillExists){setCoverMode("auto");setCoverImageId("");}
+    if(coverMode==="compare"&&!nextHasComparison){setCoverMode("auto");setCoverImageId("");}
+  }
   return <dialog ref={dialog} className="prompt-editor" data-tab={tab} aria-labelledby="prompt-dialog-title" onCancel={event=>{event.preventDefault();if(!locked)onClose();}}>
-    <form noValidate onSubmit={event=>{event.preventDefault();if(locked||processingRef.current||submitting.current)return;const details={description,category,model,images,kind,summary,videoUrl:kind==="video"?videoUrl:"",videoPath:kind==="video"?videoPath:"",siteUrl:kind==="website"?siteUrl:""};try{validatePromptDetails(title,content,details);setLocalError("");submitting.current=true;onSave(title,content,details);}catch(failure){submitting.current=false;setTab("text");setLocalError(failure instanceof Error?failure.message:"Confira os dados do prompt.");}}}>
+    <form noValidate onSubmit={event=>{event.preventDefault();if(locked||processingRef.current||submitting.current)return;const details={description,category,model,images,kind,summary,videoUrl:kind==="video"?videoUrl:"",videoPath:kind==="video"?videoPath:"",siteUrl:kind==="website"?siteUrl:"",coverMode:effectiveCoverMode,coverImageId:effectiveCoverImageId};try{validatePromptDetails(title,content,details);setLocalError("");submitting.current=true;onSave(title,content,details);}catch(failure){submitting.current=false;const message=failure instanceof Error?failure.message:"Confira os dados do prompt.";setTab(message.includes("capa")||message.includes("Antes")?"images":"text");setLocalError(message);}}}>
       <header className="prompt-editor-header"><div><h2 id="prompt-dialog-title">{prompt?t("Editar prompt"):t("Novo prompt")}</h2><p>{prompt?.isPublished?t("Este prompt é público. Salvar atualiza sua publicação."):t("Salve na biblioteca. Você pode revisar e publicar depois.")}</p></div><button type="button" aria-label={t("Fechar editor de prompt")} disabled={locked} onClick={onClose}><X size={22}/></button></header>
       <div className="prompt-editor-tabs" aria-label={t("Seções do editor")}><button type="button" aria-pressed={tab==="text"} onClick={()=>setTab("text")}>{t("Texto e detalhes")}</button><button type="button" aria-pressed={tab==="images"} onClick={()=>setTab("images")}>{t("Imagens ·")}{" "}{images.length}</button></div>
       <div className="prompt-editor-body">
@@ -57,9 +75,33 @@ export default function PromptDialog({isOpen,prompt,initialTitle="",defaults,pen
           <UploadDropzone onFiles={files=>addImages(files,isReference?"reference":"gallery")} label={isReference?t("Adicionar imagens de referência"):t("Adicionar imagens de resultado")} disabled={locked} remaining={MAX_PROMPT_IMAGES-images.length}/>
           <div className="prompt-editor-image-grid">{images.filter(image=>(image.role==="reference")===isReference).map((image,index)=><div key={image.id} className="prompt-editor-image">
             {/* eslint-disable-next-line @next/next/no-img-element -- Local optimized image data URLs. */}
-            <img src={image.url} alt={image.label||t("Imagem do prompt")}/><div>{isReference&&<span className="text-xs font-medium">{t("Referência")}{" "}{index+1}</span>}<input aria-label={isReference?t("Descrição da referência {v0}", {v0: (index+1)}):t("Legenda da imagem")} placeholder={isReference?t("Ex.: Imagem base com a silhueta"):t("Legenda")} disabled={locked} maxLength={120} value={image.label} onChange={event=>setImages(current=>current.map(item=>item.id===image.id?{...item,label:event.target.value}:item))}/><SelectField label={t("Função da imagem")} hideLabel className="prompt-image-role-select" value={image.role} disabled={locked} onValueChange={value=>{const role=value as PromptImageRole;setImages(current=>current.map(item=>item.id===image.id?{...item,role}:(role==="before"||role==="after")&&item.role===role?{...item,role:"gallery"}:item));}} options={[{value:"gallery",label:t("Resultado")},{value:"reference",label:t("Referência")},{value:"before",label:t("Antes")},{value:"after",label:t("Depois")}]}/><button type="button" disabled={locked} aria-label={isReference?t("Remover referência {v0}", {v0: (index+1)}):undefined} onClick={()=>setImages(current=>current.filter(item=>item.id!==image.id))}>{t("Remover")}</button></div>
+            <img src={image.url} alt={image.label||t("Imagem do prompt")}/><div>{isReference&&<span className="text-xs font-medium">{t("Referência")}{" "}{index+1}</span>}<input aria-label={isReference?t("Descrição da referência {v0}", {v0: (index+1)}):t("Legenda da imagem")} placeholder={isReference?t("Ex.: Imagem base com a silhueta"):t("Legenda")} disabled={locked} maxLength={120} value={image.label} onChange={event=>setImages(current=>current.map(item=>item.id===image.id?{...item,label:event.target.value}:item))}/><SelectField label={t("Função da imagem")} hideLabel className="prompt-image-role-select" value={image.role} disabled={locked} onValueChange={value=>{const role=value as PromptImageRole;updateImageSet(current=>current.map(item=>item.id===image.id?{...item,role}:(role==="before"||role==="after")&&item.role===role?{...item,role:"gallery"}:item));}} options={[{value:"gallery",label:t("Resultado")},{value:"reference",label:t("Referência")},{value:"before",label:t("Antes")},{value:"after",label:t("Depois")}]}/><button type="button" disabled={locked} aria-label={isReference?t("Remover referência {v0}", {v0: (index+1)}):undefined} onClick={()=>updateImageSet(current=>current.filter(item=>item.id!==image.id))}>{t("Remover")}</button></div>
           </div>)}</div>
           </section>)}
+          <section className="prompt-editor-asset-section" aria-labelledby="prompt-cover-heading">
+            <h4 id="prompt-cover-heading">{t("Capa do card")}</h4>
+            <p>{t("Escolha a imagem que aparece no card do prompt. A opção automática mantém a seleção padrão.")}</p>
+            <div className="prompt-editor-cover-picker" role="group" aria-label={t("Escolher capa")}>
+              <button type="button" className="prompt-editor-cover-choice" aria-pressed={effectiveCoverMode==="auto"} disabled={locked} onClick={()=>{setCoverMode("auto");setCoverImageId("");}}>
+                <span className={`prompt-editor-cover-choice-preview${automaticCover?"":" prompt-editor-cover-auto"}`}>
+                  {automaticCover&&<Image unoptimized src={automaticCover.url} alt="" width={160} height={120}/>}
+                  {!automaticCover&&<span>{t("Automática")}</span>}
+                </span>
+                <span>{t("Automática")}</span>
+              </button>
+              {coverImages.map((image,index)=><button key={image.id} type="button" className="prompt-editor-cover-choice" aria-pressed={effectiveCoverMode==="image"&&effectiveCoverImageId===image.id} disabled={locked} onClick={()=>{setCoverMode("image");setCoverImageId(image.id);}}>
+                <span className="prompt-editor-cover-choice-preview">
+                  <Image unoptimized src={image.url} alt="" width={160} height={120}/>
+                </span>
+                <span>{image.label||t("Imagem {v0}",{v0:index+1})}</span>
+              </button>)}
+              {beforeImage&&afterImage&&<button type="button" className="prompt-editor-cover-choice" aria-pressed={effectiveCoverMode==="compare"} disabled={locked} onClick={()=>{setCoverMode("compare");setCoverImageId("");}}>
+                <span className="prompt-editor-cover-choice-preview"><ImageCompare beforeSrc={beforeImage.url} afterSrc={afterImage.url} beforeAlt="" afterAlt="" interactive={false} labels/></span>
+                <span>{t("Antes e depois")}</span>
+              </button>}
+            </div>
+            {effectiveCoverMode==="compare"&&<p className="prompt-editor-cover-note">{t("A comparação interativa aparece no prompt. O card mostra a prévia antes/depois.")}</p>}
+          </section>
         </section>
       </div>
       <footer className="prompt-editor-footer"><div role="status" className={localError||error?"text-sm text-red-700":"text-sm text-muted"}>{localError||error||(processing?t("Preparando arquivos…"):prompt?.isPublished?t("As alterações serão públicas ao salvar."):t("A publicação é uma etapa separada."))}</div><div><button type="button" disabled={locked} onClick={onClose} className="editor-cancel">{t("Cancelar")}</button><button type="submit" disabled={locked||!title.trim()||!content.trim()} className="editor-save">{pending?t("Salvando…"):prompt?t("Salvar alterações"):t("Salvar na biblioteca")}</button></div></footer>

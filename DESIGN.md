@@ -108,6 +108,9 @@ Explorar e perfil usam largura disponível, com 24 px laterais no desktop e 16 p
 
 Editor em diálogo nativo de tela inteira, sem rolagem externa: cabeçalho e rodapé persistentes, duas áreas com rolagem própria no desktop e abas de conteúdo no celular. Publicação em três etapas com revisão real de texto e imagens e confirmação explícita. Configurações seguem a tipografia, espaçamento e cores semânticas das páginas internas. A comparação antes/depois tem largura máxima de 540 px para evitar ampliação excessiva.
 
+Na aba Imagens do editor, o criador escolhe uma imagem de resultado para a capa do card, mantém a capa automática ou seleciona a comparação Antes/Depois quando ambos os arquivos existem. A escolha fica salva com o prompt e aparece nos cards da biblioteca e do catálogo público. A comparação na capa é uma prévia estática; a página do prompt mantém o comparador interativo.
+O seletor usa os tokens `--prompt-cover-choice-min-width`, `--prompt-cover-choice-gap`, `--prompt-cover-choice-padding`, `--prompt-cover-choice-radius`, `--prompt-cover-preview-radius` e `--prompt-cover-preview-ratio` definidos em `app/globals.css`.
+
 ## Comunidade na landing
 
 Alteração diretamente autorizada em 14/10/2026: seção clara (#fafbfc), texto azul escuro (#102a43), título Instrument Serif e capas 4:3 com metadados fora da imagem. Estilos isolados em `.landing-page .landing-community`; não usar os componentes sociais internos nesta seção. A galeria circular continua automática, sem botão de pausa; mantém a suspensão durante o login e o respeito à preferência de movimento reduzido.

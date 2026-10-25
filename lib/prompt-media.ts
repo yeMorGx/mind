@@ -1,10 +1,11 @@
 export type PromptKind = "image" | "website" | "video";
-export type PromptShowcase = {kind?:PromptKind;summary?:string;videoUrl?:string;videoPath?:string;siteUrl?:string};
+export type PromptCoverMode = "auto" | "image" | "compare";
+export type PromptShowcase = {kind?:PromptKind;summary?:string;videoUrl?:string;videoPath?:string;siteUrl?:string;coverMode?:PromptCoverMode;coverImageId?:string};
 export function safeWebsite(value:string){try{const url=new URL(value);return url.protocol==="https:"&&!url.username&&!url.password&&value.length<=2048;}catch{return false;}}
 export function safeVideo(value:string){return safeWebsite(value)&&/\.(mp4|webm)(\?|$)/i.test(value);}
 export function safeVideoPath(value:string){return /^[A-Za-z0-9_-]{1,128}\/[0-9a-f-]{36}\.(mp4|webm)$/.test(value);}
 export function readShowcase(value:Record<string,unknown>):Required<PromptShowcase>{
- return {kind:value.kind==="website"||value.kind==="video"?value.kind:"image",summary:String(value.summary??"").slice(0,180),videoUrl:typeof value.videoUrl==="string"&&safeVideo(value.videoUrl)?value.videoUrl:"",videoPath:typeof value.videoPath==="string"&&safeVideoPath(value.videoPath)?value.videoPath:"",siteUrl:typeof value.siteUrl==="string"&&safeWebsite(value.siteUrl)?value.siteUrl:""};
+ return {kind:value.kind==="website"||value.kind==="video"?value.kind:"image",summary:String(value.summary??"").slice(0,180),videoUrl:typeof value.videoUrl==="string"&&safeVideo(value.videoUrl)?value.videoUrl:"",videoPath:typeof value.videoPath==="string"&&safeVideoPath(value.videoPath)?value.videoPath:"",siteUrl:typeof value.siteUrl==="string"&&safeWebsite(value.siteUrl)?value.siteUrl:"",coverMode:value.coverMode==="image"||value.coverMode==="compare"?value.coverMode:"auto",coverImageId:typeof value.coverImageId==="string"&&value.coverImageId.length<=128?value.coverImageId:""};
 }
 export type PromptImageRole = "gallery" | "reference" | "before" | "after";
 export type StoredPromptImage = { id: string; url: string; label: string; role: PromptImageRole };
@@ -27,7 +28,11 @@ export function readPromptDetails(value: Record<string, unknown>): PromptDetails
     size += image.url.length;
     images.push({ id: String(image.id ?? images.length), url: image.url, label: String(image.label ?? "").slice(0, 120), role: image.role as PromptImageRole });
   }
-  return { ...readShowcase(value),description: String(value.description ?? "").slice(0, 500), category: String(value.category ?? "").slice(0, 80), model: String(value.model ?? "").slice(0, 80), images };
+  const showcase=readShowcase(value);
+  const hasCoverImage=images.some(image=>image.id===showcase.coverImageId&&image.role!=="reference");
+  const hasComparison=images.some(image=>image.role==="before")&&images.some(image=>image.role==="after");
+  const coverMode=showcase.coverMode==="image"&&hasCoverImage?"image":showcase.coverMode==="compare"&&hasComparison?"compare":"auto";
+  return { ...showcase,coverMode,coverImageId:coverMode==="image"?showcase.coverImageId:"",description: String(value.description ?? "").slice(0, 500), category: String(value.category ?? "").slice(0, 80), model: String(value.model ?? "").slice(0, 80), images };
 }
 
 export function validatePromptDetails(title: string, content: string, details: PromptDetails) {
@@ -39,6 +44,7 @@ export function validatePromptDetails(title: string, content: string, details: P
   if (details.videoUrl&&!safeVideo(details.videoUrl)) throw new Error("Informe um link HTTPS direto para um vídeo MP4 ou WebM.");
   if (details.videoPath&&!safeVideoPath(details.videoPath)) throw new Error("Envie o vídeo novamente.");
   if (details.siteUrl&&!safeWebsite(details.siteUrl)) throw new Error("Informe um link HTTPS válido para o site.");
+  if (!(["auto","image","compare"] as string[]).includes(details.coverMode??"auto")) throw new Error("Escolha uma capa válida para o card.");
   if (details.images.length > MAX_PROMPT_IMAGES) throw new Error("Adicione até 8 imagens por prompt.");
   let size = 0;
   const ids = new Set<string>();
@@ -53,6 +59,8 @@ export function validatePromptDetails(title: string, content: string, details: P
       comparisonRoles.add(image.role);
     }
   }
+  if(details.coverMode==="image"&&!details.images.some(image=>image.id===details.coverImageId&&image.role!=="reference"))throw new Error("Escolha uma imagem de resultado para a capa do card.");
+  if(details.coverMode==="compare"&&(!comparisonRoles.has("before")||!comparisonRoles.has("after")))throw new Error("Adicione uma imagem Antes e outra Depois para usar a comparação na capa.");
   if (size > MAX_IMAGES_CHARS || new TextEncoder().encode(JSON.stringify({ title, content, ...details })).length > 850_000) throw new Error("As imagens juntas estão muito grandes. Remova algumas e tente novamente.");
 }
 
