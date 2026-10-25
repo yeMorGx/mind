@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.117.3";
 import { createRemoteJWKSet, jwtVerify } from "npm:jose@6.1.3";
 
 const keys = createRemoteJWKSet(new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"));
-const allowedOrigins = new Set(["https://mind-lemon.vercel.app", "http://localhost:3000"]);
+const allowedOrigins = new Set(["https://mind-lemon.vercel.app", "https://mindapp.icu", "https://www.mindapp.icu", "http://localhost:3000"]);
 const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false, autoRefreshToken: false } });
 function image(value: unknown) {
   return typeof value === "string" && value.length <= 80000 && /^(https:\/\/|data:image\/(jpeg|png|webp);base64,)/.test(value) ? value : "";

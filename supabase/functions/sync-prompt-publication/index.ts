@@ -3,7 +3,7 @@ import { createRemoteJWKSet, jwtVerify } from "npm:jose@6.1.3";
 
 const keys = createRemoteJWKSet(new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"));
 const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false, autoRefreshToken: false } });
-const origins = new Set(["https://mind-lemon.vercel.app", "http://localhost:3000"]);
+const origins = new Set(["https://mind-lemon.vercel.app", "https://mindapp.icu", "https://www.mindapp.icu", "http://localhost:3000"]);
 const root = "https://firestore.googleapis.com/v1/projects/mind-a9499/databases/(default)/documents";
 type FireValue = { stringValue?: string; booleanValue?: boolean; timestampValue?: string; arrayValue?: { values?: FireValue[] }; mapValue?: { fields?: Record<string, FireValue> } };
 function decode(value: FireValue): unknown {

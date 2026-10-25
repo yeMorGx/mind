@@ -7,6 +7,8 @@ const keys = createRemoteJWKSet(
 );
 const origins = new Set([
   "https://mind-lemon.vercel.app",
+  "https://mindapp.icu",
+  "https://www.mindapp.icu",
   "http://localhost:3000",
 ]);
 const admin = createClient(
