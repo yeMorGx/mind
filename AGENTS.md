@@ -60,6 +60,14 @@ Toda tela e componente novo precisa tratar: vazio, carregando (skeleton), erro, 
 - Sombras leves e raros; prefira separação por espaçamento e superfícies.
 - Antes de concluir qualquer mudança visual: abra a tela no navegador, tire screenshots nos temas claro e escuro e confira contra esta seção. Liste o que ficou fora do padrão.
 
+### 3.7 Leis de UX (revisão obrigatória)
+- Antes de criar ou alterar uma tela, componente ou fluxo, leia `docs/design/ux-laws.md` e avalie as 18 leis ali descritas.
+- Registre na entrega quais princípios foram aplicados e quais não se aplicam, com uma justificativa breve. Quando princípios entrarem em conflito, explique a decisão pelo objetivo da tarefa, pelas evidências disponíveis e pelas necessidades de acessibilidade.
+- Use as leis como lentes de revisão, não como fórmulas: não force todas em cada elemento nem trate heurísticas como resultados garantidos. Acessibilidade, segurança, privacidade, clareza e evidência de uso têm prioridade sobre uma aplicação mecânica.
+- Não use saliência, progresso, incompletude, padrões familiares ou redução de passos para enganar, pressionar ou esconder custos, limitações, riscos, consentimento ou formas de sair.
+- Para fluxos importantes, verifique a experiência completa: escolha, execução, espera, sucesso, erro e recuperação. Considere desktop, toque, teclado e movimento reduzido.
+- Não altere a landing (`/`) ao aplicar essas regras sem autorização direta, conforme a seção 6.
+
 ## 4. Componentes específicos (já existentes)
 
 ### Checkboxes

@@ -84,6 +84,10 @@ Resultados de prompts usam um carrossel horizontal automático, sem imagens dupl
 - Não reintroduzir um tema escuro isolado em perfis, formulários ou biblioteca.
 - Não oferecer emblemas autoconcedidos nem métricas inventadas.
 
+## Leis de UX obrigatórias
+
+Toda mudança de interface ou fluxo deve ser revisada pelas 18 leis de UX de [`docs/design/ux-laws.md`](docs/design/ux-laws.md). A revisão é obrigatória; a aplicação literal de cada lei, em cada componente, não é. A entrega registra quais princípios influenciaram a solução, quais não eram pertinentes e como foram tratados conflitos com acessibilidade, segurança, privacidade e clareza. As leis não justificam dark patterns nem substituem validação com pessoas e dados reais.
+
 ## Identificação de criadores
 
 Cada pessoa escolhe um @ obrigatório e exclusivo, de 3 a 24 caracteres (letras minúsculas, números e _, começando por letra). Contas sem @ devem escolhê-lo na área interna antes de continuar; nunca gerar identificadores automaticamente. A exclusividade é garantida no banco, compartilhada por contas Firebase e Supabase. O perfil permite alterar o @. Explorar oferece busca de pessoas por nome ou @; links /u/@nome resolvem o perfil, preservando os antigos links por UID. A landing permanece protegida.
